@@ -7,7 +7,7 @@ import router from "@/router";
 if (process.env.NODE_ENV === "development") {
   axios.defaults.baseURL = "http://localhost:3000";
 } else {
-  axios.defaults.baseURL = "https://api.camphouse.net";
+  axios.defaults.baseURL = "/api";
 }
 
 export default createStore({
