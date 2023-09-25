@@ -34,19 +34,10 @@ COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
 COPY --from=builder /app/backend/ /usr/local/api/
 
 # Set up reverse proxy with .htaccess
-RUN echo 'RewriteEngine On'\
-    '\nRewriteRule ^/api(.*) http://localhost:3000/$1 [P]'\
-    '\nRewriteCond %{REQUEST_FILENAME} !-f'\
-    '\nRewriteCond %{REQUEST_FILENAME} !-d'\
-    '\nRewriteRule . /index.html [L]'\
-    '\nHeader set Access-Control-Allow-Origin "*"'\
-    > /usr/local/apache2/htdocs/.htaccess
+COPY ./docker/.htaccess /usr/local/apache2/htdocs/.htaccess
 
 # Copy Apache conf to allow .htaccess
-# COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
-
-# # Expose port 80
-# EXPOSE 80
+COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
 
 # Start the backend API and Apache
 # CMD ["/bin/bash", "-c", "node /usr/local/api/app.js"]
