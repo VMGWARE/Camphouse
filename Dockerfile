@@ -20,6 +20,14 @@ COPY backend/ .
 # Use Apache to serve the frontend and proxy to the backend
 FROM httpd:2.4
 
+# Install Node.js in the Apache stage
+RUN apt-get update && \
+    apt-get install -y curl && \
+    curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    apt-get install -y nodejs && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
+
 # Copy frontend build output to Apache's htdocs
 COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/
 
@@ -35,6 +43,9 @@ RUN echo 'RewriteEngine On'\
 
 # Copy Apache conf to allow .htaccess
 COPY ./my-httpd.conf /usr/local/apache2/conf/httpd.conf
+
+# Update the Apache conf to load the prefork MPM
+RUN echo 'LoadModule mpm_prefork_module modules/mod_mpm_prefork.so' >> /usr/local/apache2/conf/httpd.conf
 
 # Start the backend API and Apache
 CMD ["/bin/bash", "-c", "node /usr/local/api/server.js & httpd-foreground"]
