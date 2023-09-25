@@ -24,7 +24,7 @@ const options = {
       },
     ],
   },
-  apis: ["./controllers/*.js"],
+  apis: ["controllers/*.js"],
 };
 
 module.exports = options;
