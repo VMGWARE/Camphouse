@@ -7,6 +7,8 @@ WORKDIR /app
 # Build the frontend
 COPY frontend/package*.json ./frontend/
 WORKDIR /app/frontend
+RUN rm -rf node_modules
+RUN export NODE_OPTIONS=--max_old_space_size=4096
 RUN npm install
 COPY frontend/ .
 RUN npm run build
