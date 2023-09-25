@@ -17,6 +17,59 @@ To get a local copy up and running follow these simple steps.
 - [Node.js](https://nodejs.org/en/)
 - [MongoDB](https://www.mongodb.com/)
 
+### Installation
+
+1. Clone the repo
+
+   ```sh
+   gh repo clone VMGWARE/Camphouse
+   ```
+
+2. cd into the project directory
+
+   ```sh
+   cd Camphouse
+   ```
+
+3. Make a copy of the `.env.example` file and rename it to `.env`
+
+   ```sh
+   cp .env.example .env
+   ```
+
+4. Install NPM packages
+
+   ```sh
+    cd frontend
+    npm install
+    cd ../backend
+    npm install
+   ```
+
+5. Start the backend server
+
+   ```sh
+    cd backend
+    npm run start
+   ```
+
+6. Start the frontend server
+
+   ```sh
+   cd frontend
+   npm run serve
+   ```
+
+7. Open the app in your browser
+
+   ```sh
+    http://localhost:8080
+   ```
+
+## Roadmap
+
+See the [open issues](https://github.com/VMGWARE/Camphouse/issues) for a list of proposed features (and known issues).
+
 ## License
 
 Distributed under the `CC BY-NC-SA 4.0` License. See `LICENSE` for more information.
