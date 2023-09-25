@@ -19,9 +19,9 @@ COPY backend/ .
 # Use Apache to serve the frontend and proxy to the backend
 FROM httpd:2.4
 
-# Install Node.js in the Apache stage
+# Install Node.js, curl, and git in the Apache stage
 RUN apt-get update && \
-    apt-get install -y curl && \
+    apt-get install -y curl git && \
     curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs && \
     apt-get clean && \

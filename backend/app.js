@@ -159,8 +159,13 @@ app.use((req, res) => {
 
 // Start listening for requests
 app.listen(port, () => {
-  const camphouseLogo = fs.readFileSync("./logo.txt", "utf8");
-  console.log(chalk.green(camphouseLogo));
+  try {
+    const camphouseLogo = fs.readFileSync("./logo.txt", "utf8");
+    console.log(chalk.green(camphouseLogo));
+  } catch (err) {
+    console.log(chalk.green("🏕️ Camphouse"));
+  }
+
   console.log(
     chalk.green(`🎉 Camphouse version ${getVersion()} is now running!`)
   );
