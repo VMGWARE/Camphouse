@@ -39,5 +39,20 @@ COPY ./docker/.htaccess /usr/local/apache2/htdocs/.htaccess
 # Copy Apache conf to allow .htaccess
 COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
 
+# Copy the entrypoint script
+COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+
+# Make the entrypoint script executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Set the entrypoint script as the entrypoint
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+
+# Expose port 80
+EXPOSE 80
+
+CMD ["httpd-foreground"]
+
+
 # Start the backend API and Apache
 # CMD ["/bin/bash", "-c", "node /usr/local/api/app.js"]
