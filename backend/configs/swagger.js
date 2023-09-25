@@ -12,15 +12,10 @@ const options = {
         name: "Creative Commons NonCommercial",
         url: "https://creativecommons.org/licenses/by-nc/4.0/",
       },
-      contact: {
-        name: "Camphouse",
-        url: "https://www.camphouse.net/",
-        email: "contact@camphouse.net",
-      },
     },
     servers: [
       {
-        url: "https://api.camphouse.net",
+        url: "https://camphouse.vmgware.dev",
         description: "Production server (uses live data)",
       },
       {
