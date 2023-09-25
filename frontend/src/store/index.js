@@ -5,7 +5,7 @@ import axios from "axios";
 import router from "@/router";
 // If in development mode, use localhost, else use the production url
 if (process.env.NODE_ENV === "development") {
-  axios.defaults.baseURL = "http://localhost:3000";
+  axios.defaults.baseURL = "http://localhost:3000/api";
 } else {
   axios.defaults.baseURL = "/api";
 }
