@@ -43,11 +43,10 @@ RUN echo 'RewriteEngine On'\
     > /usr/local/apache2/htdocs/.htaccess
 
 # Copy Apache conf to allow .htaccess
-COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
+# COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
 
-# Expose port 80
-EXPOSE 80
+# # Expose port 80
+# EXPOSE 80
 
 # Start the backend API and Apache
 # CMD ["/bin/bash", "-c", "node /usr/local/api/app.js"]
-CMD ["/bin/bash", "-c", "httpd-foreground"]
