@@ -46,5 +46,5 @@ COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf
 EXPOSE 80
 
 # Start the backend API and Apache
-# CMD ["/bin/bash", "-c", "node /usr/local/api/app.js"]
-CMD ["/bin/bash", "-c", "httpd-foreground"]
+CMD ["/bin/bash", "-c", "node /usr/local/api/app.js"]
+# CMD ["/bin/bash", "-c", "httpd-foreground"]
