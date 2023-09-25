@@ -1,0 +1,55 @@
+variables:
+  - &node_image "node:18-alpine"
+  - &buildx_image "woodpeckerci/plugin-docker-buildx"
+  - &platforms "linux/amd64,linux/arm64,linux/arm/v7"
+
+services:
+  mongodb:
+    image: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: password
+    ports:
+      - 27017:27017
+
+pipeline:
+  - name: Generate version file
+    image: alpine/git
+    commands:
+      - git describe --always --tags > version
+
+  - name: Deploy to Docker Hub
+    image: *buildx_image
+    secrets: [docker_username, docker_password]
+    settings:
+      repo: insidiousfiddler/camphouse
+      dockerfile: Dockerfile
+      platforms: *platforms
+      tag: latest
+    when:
+      event: push
+
+  - name: Deploy Tagged Version
+    image: *buildx_image
+    secrets: [docker_username, docker_password]
+    settings:
+      repo: insidiousfiddler/camphouse
+      dockerfile: Dockerfile
+      platforms: *platforms
+      tag: [latest, "${CI_COMMIT_TAG#v}"]
+    when:
+      event: tag
+
+  - name: Deploy Pull Request
+    image: *buildx_image
+    secrets: [docker_username, docker_password]
+    settings:
+      repo: insidiousfiddler/camphouse
+      dockerfile: Dockerfile
+      platforms: *platforms
+      tag: pull_${CI_COMMIT_PULL_REQUEST}
+    when:
+      event: pull_request
+
+branches: [main]
+ignore_paths: [README.md, LICENSE, .github, .gitignore]
