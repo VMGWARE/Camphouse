@@ -15,7 +15,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 /**
  * @swagger
- * /v1/likes/{postId}:
+ * /api/v1/likes/{postId}:
  *   get:
  *     tags:
  *       - Likes
@@ -70,7 +70,7 @@ router.get("/:postId", async (req, res) => {
 
 /**
  * @swagger
- * /v1/likes/{postId}:
+ * /api/v1/likes/{postId}:
  *   post:
  *     tags:
  *       - Likes
@@ -171,7 +171,7 @@ router.post("/:postId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/likes/{postId}:
+ * /api/v1/likes/{postId}:
  *   delete:
  *     tags:
  *       - Likes

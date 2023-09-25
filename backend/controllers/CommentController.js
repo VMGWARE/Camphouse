@@ -69,7 +69,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 /**
  * @swagger
- * /v1/comments/post/{postId}:
+ * /api/v1/comments/post/{postId}:
  *   get:
  *     tags:
  *       - Comments
@@ -153,7 +153,7 @@ router.get("/post/:postId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/comments/post/{postId}:
+ * /api/v1/comments/post/{postId}:
  *   post:
  *     tags:
  *       - Comments
@@ -299,7 +299,7 @@ router.post("/post/:postId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/comments/{commentId}:
+ * /api/v1/comments/{commentId}:
  *   put:
  *     tags:
  *       - Comments
@@ -446,7 +446,7 @@ router.put("/:commentId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/comments/{commentId}:
+ * /api/v1/comments/{commentId}:
  *   patch:
  *     tags:
  *       - Comments
@@ -595,7 +595,7 @@ router.patch("/:commentId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/comments/{commentId}:
+ * /api/v1/comments/{commentId}:
  *   delete:
  *     tags:
  *       - Comments

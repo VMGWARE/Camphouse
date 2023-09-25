@@ -90,7 +90,7 @@ const { authenticateJWT, loadUser } = require("../middleware/auth");
 
 /**
  * @swagger
- * /v1/posts:
+ * /api/v1/posts:
  *   get:
  *     tags:
  *       - Posts
@@ -243,7 +243,7 @@ router.get("/", loadUser, async (req, res) => {
 
 /**
  * @swagger
- * /v1/posts/{postId}:
+ * /api/v1/posts/{postId}:
  *   get:
  *     tags:
  *       - Posts
@@ -359,7 +359,7 @@ router.get("/:postId", loadUser, async (req, res) => {
 
 /**
  * @swagger
- * /v1/posts:
+ * /api/v1/posts:
  *   post:
  *     tags:
  *       - Posts
@@ -484,7 +484,7 @@ router.post("/", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/posts/{postId}:
+ * /api/v1/posts/{postId}:
  *   put:
  *     tags:
  *       - Posts
@@ -671,7 +671,7 @@ router.put("/:postId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/posts/{postId}:
+ * /api/v1/posts/{postId}:
  *   delete:
  *     tags:
  *       - Posts

@@ -18,7 +18,7 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
 
 /**
  * @swagger
- * /v1/users/{userRef}/verify:
+ * /api/v1/users/{userRef}/verify:
  *   get:
  *     summary: Verify User's Status
  *     description: |
@@ -132,7 +132,7 @@ router.get("/:userRef/verify", authenticateJWT, isAdmin, async (req, res) => {
 
 /**
  * @swagger
- * /v1/users/{userRef}:
+ * /api/v1/users/{userRef}:
  *   get:
  *     summary: Retrieve a user by their handle or id.
  *     description: Fetches user profile details including the count of followers.
@@ -232,7 +232,7 @@ router.get("/:userRef", async (req, res) => {
 
 /**
  * @swagger
- * /v1/users:
+ * /api/v1/users:
  *   get:
  *     summary: Retrieve a list of all users.
  *     description: Fetches a list of all user profiles excluding sensitive information like passwords and emails.

@@ -81,7 +81,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 /**
  * @swagger
- * /v1/notifications:
+ * /api/v1/notifications:
  *   get:
  *     tags:
  *       - Notifications

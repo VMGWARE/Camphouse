@@ -183,7 +183,7 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
 
 /**
  * @swagger
- * /v1/reports:
+ * /api/v1/reports:
  *   get:
  *     tags:
  *       - Reports
@@ -331,7 +331,7 @@ router.get("/", authenticateJWT, isAdmin, async (req, res) => {
 
 /**
  * @swagger
- * /v1/reports/{reportId}:
+ * /api/v1/reports/{reportId}:
  *   put:
  *     tags:
  *       - Reports
@@ -435,7 +435,7 @@ router.put("/:reportId", authenticateJWT, isAdmin, async (req, res) => {
 
 /**
  * @swagger
- * /v1/reports:
+ * /api/v1/reports:
  *   post:
  *     tags:
  *       - Reports
@@ -636,7 +636,7 @@ router.post("/", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/reports/user/{userId}:
+ * /api/v1/reports/user/{userId}:
  *   get:
  *     tags:
  *       - Reports
@@ -756,7 +756,7 @@ router.get("/user/:userId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/reports/{reportId}:
+ * /api/v1/reports/{reportId}:
  *   get:
  *     tags:
  *       - Reports

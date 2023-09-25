@@ -129,15 +129,15 @@ const NotificationController = require("./controllers/NotificationController");
 const ReportController = require("./controllers/ReportController");
 
 // Setup the routes
-app.use("/v1/posts", PostController);
-app.use("/v1/likes", LikeController);
-app.use("/v1/messages", MessageController);
-app.use("/v1/auth", AuthController);
-app.use("/v1/follows", FollowController);
-app.use("/v1/users", UserController);
-app.use("/v1/comments", CommentController);
-app.use("/v1/notifications", NotificationController);
-app.use("/v1/reports", ReportController);
+app.use("/api/v1/posts", PostController);
+app.use("/api/v1/likes", LikeController);
+app.use("/api/v1/messages", MessageController);
+app.use("/api/v1/auth", AuthController);
+app.use("/api/v1/follows", FollowController);
+app.use("/api/v1/users", UserController);
+app.use("/api/v1/comments", CommentController);
+app.use("/api/v1/notifications", NotificationController);
+app.use("/api/v1/reports", ReportController);
 
 // Swagger documentation
 const options = require("./configs/swagger");

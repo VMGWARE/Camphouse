@@ -254,7 +254,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 /**
  * @swagger
- * /v1/auth/login:
+ * /api/v1/auth/login:
  *   post:
  *     tags:
  *       - Auth
@@ -427,7 +427,7 @@ router.post("/login", async (req, res) => {
 
 /**
  * @swagger
- * /v1/auth/register:
+ * /api/v1/auth/register:
  *   post:
  *     tags:
  *       - Auth
@@ -595,7 +595,7 @@ router.post("/register", async (req, res) => {
 
 /**
  * @swagger
- * /v1/auth/profile:
+ * /api/v1/auth/profile:
  *   get:
  *     tags:
  *       - Auth
@@ -665,7 +665,7 @@ router.get("/profile", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/auth/update-profile:
+ * /api/v1/auth/update-profile:
  *   put:
  *     tags:
  *       - Auth
@@ -891,7 +891,7 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/auth/refresh-token:
+ * /api/v1/auth/refresh-token:
  *   post:
  *     tags:
  *       - Auth
@@ -950,7 +950,7 @@ router.post("/refresh-token", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/auth/logout:
+ * /api/v1/auth/logout:
  *   post:
  *     tags:
  *       - Auth

@@ -58,7 +58,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 /**
  * @swagger
- * /v1/messages/connections:
+ * /api/v1/messages/connections:
  *   get:
  *     tags:
  *       - Messages
@@ -145,7 +145,7 @@ router.get("/connections", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/messages/{userId}:
+ * /api/v1/messages/{userId}:
  *   get:
  *     tags:
  *       - Messages
@@ -232,7 +232,7 @@ router.get("/:userId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/messages/{userId}:
+ * /api/v1/messages/{userId}:
  *   post:
  *     tags:
  *       - Messages
@@ -309,7 +309,7 @@ router.post("/:userId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/messages/{messageId}:
+ * /api/v1/messages/{messageId}:
  *   put:
  *     tags:
  *       - Messages
@@ -424,7 +424,7 @@ router.put("/:messageId", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /v1/messages/{messageId}:
+ * /api/v1/messages/{messageId}:
  *   delete:
  *     tags:
  *       - Messages
