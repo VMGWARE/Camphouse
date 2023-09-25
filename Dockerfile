@@ -1,16 +1,13 @@
 # Use node as the base image for building both frontend and backend
-FROM node:18 AS builder
+FROM node:18.17 AS builder
 
 # Set working directory
-WORKDIR /app
+WORKDIR /app/frontend
 
 # Build the frontend
-COPY frontend/package*.json ./frontend/
-WORKDIR /app/frontend
-RUN rm -rf node_modules
-RUN export NODE_OPTIONS=--max_old_space_size=4096
+COPY frontend/package*.json ./
 RUN npm install
-COPY frontend/ .
+COPY frontend/ ./
 RUN npm run build
 
 # Build the backend
