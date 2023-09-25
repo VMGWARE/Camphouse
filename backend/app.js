@@ -142,7 +142,7 @@ app.use("/api/v1/reports", ReportController);
 // Swagger documentation
 const options = require("./configs/swagger");
 const specs = swaggerJsdoc(options);
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
