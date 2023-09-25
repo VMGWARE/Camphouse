@@ -1,5 +1,5 @@
 # Use node as the base image for building both frontend and backend
-FROM node:16 AS builder
+FROM node:18 AS builder
 
 # Set working directory
 WORKDIR /app

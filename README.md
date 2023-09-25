@@ -4,6 +4,10 @@
 
 Post something amazing. ✨
 
+## About The Project
+
+Camphouse is a simple, open-source, and self-hosted social media platform. It is designed to be easy to use and easy to deploy. It is built with [Node.js](https://nodejs.org/en/), [MongoDB](https://www.mongodb.com/), and [Vue.js](https://vuejs.org/).
+
 ## License
 
 Distributed under the `CC BY-NC-SA 4.0` License. See `LICENSE` for more information.
