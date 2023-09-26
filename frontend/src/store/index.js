@@ -88,19 +88,24 @@ export default createStore({
         console.log(error);
       }
     },
-    logout({ commit }) {
-      commit("setToken", null);
-      commit("setUser", null);
-      commit("setLoggedIn", false);
+    async logout({ commit }) {
+      const response = await axios.post("/v1/auth/logout");
+      if (response.data.code != 200) {
+        throw new Error("Error logging out");
+      } else {
+        commit("setToken", null);
+        commit("setUser", null);
+        commit("setLoggedIn", false);
 
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
+        localStorage.removeItem("token");
+        localStorage.removeItem("user");
 
-      axios.defaults.headers.common["Authorization"] = null;
+        axios.defaults.headers.common["Authorization"] = null;
 
-      document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+        document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 
-      router.push("/login");
+        router.push("/login");
+      }
     },
     // eslint-disable-next-line no-unused-vars
     async getPosts({ commit }, pagination) {
