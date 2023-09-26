@@ -1,10 +1,12 @@
 /* General Styles */
-@import url('https://fonts.cdnfonts.com/css/gt-maru');
+/* @import url('https://fonts.cdnfonts.com/css/gt-maru'); */
+@import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap');
 
 body {
   background-color: #111111;
   color: #ffffff;
-  font-family: 'GT Maru', sans-serif;
+  /* font-family: 'GT Maru', sans-serif; */
+  font-family: 'Fira Code', monospace;
 }
 
 .container {
