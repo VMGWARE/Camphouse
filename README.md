@@ -1,6 +1,7 @@
 # Camphouse
 
 [![License: CC BY-NC-SA 4.0][license-shield]][license-url]
+[![status-badge](https://woodpecker.vahngomes.dev/api/badges/VMGWARE/Camphouse/status.svg)](https://woodpecker.vahngomes.dev/VMGWARE/Camphouse)
 
 Post something amazing. ✨
 
