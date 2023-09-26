@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const UserToken = require("../models/UserToken");
+const crypto = require("crypto");
 
 /**
  * Authenticate the user using the JWT token
@@ -38,6 +40,29 @@ const authenticateJWT = async (req, res, next) => {
         status: "error",
         code: 404,
         message: "The user associated with this token no longer exists.",
+        data: null,
+      });
+    }
+
+    // Set the value of the token, and then hash it with sha256
+    const usertok = crypto
+      .createHash("sha256")
+      .update(decoded.token)
+      .digest("hex");
+
+    // Check if the token is valid
+    const userToken = await UserToken.findOne({
+      user: user._id,
+      token: usertok,
+      isValid: true,
+    });
+
+    // If the token is not valid, return an error
+    if (!userToken) {
+      return res.status(401).json({
+        status: "error",
+        code: 401,
+        message: "Authentication token is invalid.",
         data: null,
       });
     }

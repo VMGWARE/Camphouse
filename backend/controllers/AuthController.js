@@ -241,6 +241,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const User = require("../models/User");
+const UserToken = require("../models/UserToken");
 const Follow = require("../models/Follow");
 const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../utils/general");
@@ -395,6 +396,7 @@ router.post("/login", async (req, res) => {
       updatedAt: user.updatedAt,
       handle: user.handle,
       verified: user.verified,
+      token: await UserToken.generate(user),
     },
     process.env.JWT_SECRET,
     {
@@ -982,7 +984,21 @@ router.post("/refresh-token", authenticateJWT, async (req, res) => {
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post("/logout", authenticateJWT, async (req, res) => {
-  // TODO: Implement this
+  // Get the user object from the request
+  const user = req.user;
+
+  // Hash the user's token
+  const usertoken = crypto
+    .createHash("sha256")
+    .update(req.user.token)
+    .digest("hex");
+
+  // Delete the user's token from the database
+  await UserToken.deleteOne({
+    user: user._id,
+    token: usertoken,
+    isValid: true,
+  });
 
   // Delete the JWT token
   res.json({
