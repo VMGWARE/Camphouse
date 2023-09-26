@@ -73,6 +73,9 @@ const authenticateJWT = async (req, res, next) => {
     // Attach user information to the request
     req.user = user;
 
+    // Attach the token to the request
+    req.user.token = token;
+
     next(); // Move to the next middleware or route handler
   } catch (err) {
     if (err.name === "TokenExpiredError") {

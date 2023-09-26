@@ -246,6 +246,7 @@ const Follow = require("../models/Follow");
 const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../utils/general");
 const router = express.Router();
+const crypto = require("crypto");
 
 // Load environment variables
 require("dotenv").config();
@@ -984,29 +985,39 @@ router.post("/refresh-token", authenticateJWT, async (req, res) => {
  *               $ref: '#/components/schemas/ErrorResponse'
  */
 router.post("/logout", authenticateJWT, async (req, res) => {
-  // Get the user object from the request
-  const user = req.user;
+  try {
+    // Get the user object from the request
+    const user = req.user;
 
-  // Hash the user's token
-  const usertoken = crypto
-    .createHash("sha256")
-    .update(req.user.token)
-    .digest("hex");
+    // Hash the user's token
+    const usertoken = crypto
+      .createHash("sha256")
+      .update(req.user.token)
+      .digest("hex");
 
-  // Delete the user's token from the database
-  await UserToken.deleteOne({
-    user: user._id,
-    token: usertoken,
-    isValid: true,
-  });
+    // Delete the user's token from the database
+    await UserToken.deleteOne({
+      user: user._id,
+      token: usertoken,
+      isValid: true,
+    });
 
-  // Delete the JWT token
-  res.json({
-    status: "success",
-    code: 200,
-    message: "Successfully logged out",
-    data: null,
-  });
+    // Delete the JWT token
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully logged out",
+      data: null,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Error logging out",
+      data: null,
+    });
+  }
 });
 
 // TODO: Add a route to verify the user's email address
