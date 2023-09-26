@@ -119,9 +119,9 @@ const { authenticateJWT, loadUser } = require("../middleware/auth");
  *         required: false
  *         schema:
  *           type: string
- *       - name: handle
+ *       - name: userid
  *         in: query
- *         description: Filter posts by user handle.
+ *         description: The user's id to filter posts by.
  *         required: false
  *         schema:
  *           type: string
@@ -185,16 +185,23 @@ router.get("/", loadUser, async (req, res) => {
   const search = req.query.search || "";
 
   // Search via user handle
-  const handle = req.query.handle || "";
+  const userid = req.query.userid || "";
 
-  // Get the posts
-  const posts = await Post.find({
+  // create an object to hold the search criteria
+  let criteria = {
     $or: [
       { title: { $regex: search, $options: "i" } },
       { content: { $regex: search, $options: "i" } },
-      { handle: { $regex: handle, $options: "i" } },
     ],
-  })
+  };
+
+  // if a userid is provided, adjust the search criteria to also filter by userid
+  if (userid) {
+    criteria.user = userid; // assuming user is the field holding the reference to the user who posted it
+  }
+
+  // Get the posts
+  const posts = await Post.find(criteria)
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
     .limit(limit)
