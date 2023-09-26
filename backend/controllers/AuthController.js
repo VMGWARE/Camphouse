@@ -941,6 +941,8 @@ router.post("/refresh-token", authenticateJWT, async (req, res) => {
       updatedAt: user.updatedAt,
       handle: user.handle,
       verified: user.verified,
+      // We can reuse it as it doesn't expire
+      token: req.user.token,
     },
     process.env.JWT_SECRET,
     {
