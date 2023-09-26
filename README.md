@@ -96,6 +96,7 @@ See the [open issues](https://github.com/VMGWARE/Camphouse/issues) for a list of
 - [ ] Add a page for viewing reported posts/users/comments
 - [ ] Add support for uploading images for user avatars, stored in an S3 bucket
 - [ ] Add footer to the frontend with links to the GitHub repo, license, and author
+- [ ] Email verification for new accounts
 
 ## License
 
