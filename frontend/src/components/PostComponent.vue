@@ -21,7 +21,7 @@
             </p>
           </div>
         </template>
-        <p v-else class="text-danger">User not found for thisPost.</p>
+        <p v-else class="text-danger">User not found for this Post.</p>
       </div>
 
       <p
