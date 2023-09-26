@@ -71,6 +71,16 @@ To get a local copy up and running follow these simple steps.
 
 See the [open issues](https://github.com/VMGWARE/Camphouse/issues) for a list of proposed features (and known issues).
 
+- [ ] Add a admin panel
+- [ ] The panel should allow admins to manage users, posts, and comments
+- [ ] The panel should be able to delete DB entries that contain a specific user id
+- [ ] Add MFA/2FA support for user accounts
+- [ ] Add a list for banned users/ips/emails to the admin panel
+- [ ] Add page for reporting posts/users/comments
+- [ ] Add a page for viewing reported posts/users/comments
+- [ ] Add support for uploading images for user avatars, stored in an S3 bucket
+- [ ] Add footer to the frontend with links to the GitHub repo, license, and author
+
 ## License
 
 Distributed under the `CC BY-NC-SA 4.0` License. See `LICENSE` for more information.
