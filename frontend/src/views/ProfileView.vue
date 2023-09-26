@@ -44,9 +44,12 @@
           </p>
           <hr />
           <h6 class="card-subtitle text-muted mb-2">Bio</h6>
-          <p class="card-text bio">
-            {{ profile.bio || "This user has not set a bio." }}
-          </p>
+          <p
+            class="card-text bio"
+            v-if="profile.bio"
+            v-html="profile.bio.replace(/(?:\r\n|\r|\n)/g, '<br />')"
+          ></p>
+          <p class="card-text bio" v-else>This user has not set a bio yet.</p>
           <hr />
 
           <!-- Add logic for follow button, needs to not allow following self, and also know if following. -->

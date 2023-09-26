@@ -828,7 +828,14 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
     if (req.body.bio.length > 255) {
       errors.bio = "Bio must be at most 255 characters long";
     } else {
-      updates.bio = req.body.bio;
+      // Validate the bio does not contain any HTML tags
+      const regex = /(<([^>]+)>)/gi;
+
+      if (regex.test(req.body.bio)) {
+        errors.bio = "Bio is invalid";
+      } else {
+        updates.bio = req.body.bio;
+      }
     }
   }
   if (req.body.email && req.body.email.length > 0) {
