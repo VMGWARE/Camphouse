@@ -119,6 +119,12 @@ const { authenticateJWT, loadUser } = require("../middleware/auth");
  *         required: false
  *         schema:
  *           type: string
+ *       - name: handle
+ *         in: query
+ *         description: Filter posts by user handle.
+ *         required: false
+ *         schema:
+ *           type: string
  *     responses:
  *       200:
  *         description: Successfully retrieved posts.
@@ -178,11 +184,15 @@ router.get("/", loadUser, async (req, res) => {
   // Search query
   const search = req.query.search || "";
 
+  // Search via user handle
+  const handle = req.query.handle || "";
+
   // Get the posts
   const posts = await Post.find({
     $or: [
       { title: { $regex: search, $options: "i" } },
       { content: { $regex: search, $options: "i" } },
+      { handle: { $regex: handle, $options: "i" } },
     ],
   })
     .sort({ createdAt: -1 })
