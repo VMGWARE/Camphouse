@@ -67,6 +67,22 @@ To get a local copy up and running follow these simple steps.
     http://localhost:8080
    ```
 
+### Docker
+
+1. Pull the image
+
+   ```sh
+   docker pull insidiousfiddler/camphouse
+   ```
+
+2. Run the container with your database credentials
+
+   ```sh
+   docker run -d -p 8000:80 insidiousfiddler/camphouse -e DB_HOST=<host> -e DB_PORT=<port> -e DB_NAME=<database> -e DB_USER=<username> -e DB_PASS=<password> -e SESSION_SECRET=<secret> -e JWT_SECRET=<secret>
+   ```
+
+3. Visit the site at [http://127.0.0.1:8000](http://127.0.0.1:8000)
+
 ## Roadmap
 
 See the [open issues](https://github.com/VMGWARE/Camphouse/issues) for a list of proposed features (and known issues).
