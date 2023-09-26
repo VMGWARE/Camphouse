@@ -1,5 +1,6 @@
 <template>
   <div class="container">
+    <!-- User Profile -->
     <div class="profile-section">
       <div class="card mb-3">
         <div class="card-body">
@@ -75,13 +76,20 @@
         </div>
       </div>
     </div>
+
+    <!-- User Posts -->
+    <ScrollablePostFeed :userid="profile._id" v-if="profile._id" />
   </div>
 </template>
 <script>
 // We need to use the api to get information about the user
 import axios from "axios";
+import ScrollablePostFeed from "@/components/ScrollablePostFeed.vue";
 
 export default {
+  components: {
+    ScrollablePostFeed,
+  },
   data() {
     return {
       profile: {},

@@ -108,7 +108,7 @@ export default createStore({
       }
     },
     // eslint-disable-next-line no-unused-vars
-    async getPosts({ commit }, pagination) {
+    async getPosts({ commit }, request) {
       try {
         if (this.state.token) {
           axios.defaults.headers.common[
@@ -117,8 +117,10 @@ export default createStore({
         }
         const response = await axios.get(`/v1/posts`, {
           params: {
-            page: pagination.page,
-            limit: pagination.limit,
+            page: request.page,
+            limit: request.limit,
+            search: request.search,
+            userid: request.userid,
           },
         });
         var resp = response.data;
