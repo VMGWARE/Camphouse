@@ -51,8 +51,5 @@ ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
 # Expose port 80
 EXPOSE 80
 
+# Start Apache
 CMD ["httpd-foreground"]
-
-
-# Start the backend API and Apache
-# CMD ["/bin/bash", "-c", "node /usr/local/api/app.js"]
