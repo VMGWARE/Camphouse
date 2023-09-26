@@ -946,7 +946,7 @@ router.post("/refresh-token", authenticateJWT, async (req, res) => {
     },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1d",
+      expiresIn: "2h",
     }
   );
 
