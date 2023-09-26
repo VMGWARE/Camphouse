@@ -52,7 +52,7 @@
         </li>
         <li class="nav-item">
           <router-link class="nav-link" to="/search"
-            ><i class="fa fa-search"></i> search</router-link
+            ><i class="fa fa-search"></i> Search</router-link
           >
         </li>
         <li class="nav-item">
