@@ -10,6 +10,7 @@ const chalk = require("chalk");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const { getVersion } = require("./utils/general");
+const path = require("path");
 
 // Load environment variables
 require("dotenv").config();
@@ -160,7 +161,9 @@ app.use((req, res) => {
 // Start listening for requests
 app.listen(port, () => {
   try {
-    const camphouseLogo = fs.readFileSync("./logo.txt", "utf8");
+    const currentPath = path.dirname(__filename);
+    const logoPath = path.join(currentPath, "logo.txt");
+    const camphouseLogo = fs.readFileSync(logoPath, "utf8");
     console.log(chalk.green(camphouseLogo));
   } catch (err) {
     console.log(chalk.green("🏕️ Camphouse"));

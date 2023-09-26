@@ -1,4 +1,8 @@
 const { getVersion } = require("../utils/general");
+const path = require("path");
+
+const currentPath = path.dirname(__filename);
+const controllersPath = path.join(currentPath, "../controllers");
 
 const options = {
   definition: {
@@ -24,7 +28,7 @@ const options = {
       },
     ],
   },
-  apis: ["controllers/*.js"],
+  apis: [`${controllersPath}/*.js`],
 };
 
 module.exports = options;
