@@ -74,7 +74,7 @@ const authenticateJWT = async (req, res, next) => {
     req.user = user;
 
     // Attach the token to the request
-    req.user.token = token;
+    req.user.token = decoded.token;
 
     next(); // Move to the next middleware or route handler
   } catch (err) {

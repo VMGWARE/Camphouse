@@ -44,4 +44,14 @@ TokenSchema.statics.generate = async function (user) {
   return randomString;
 };
 
+// Delete all tokens for a user
+TokenSchema.statics.deleteAll = async function (user) {
+  await this.deleteMany({ user: user._id });
+};
+
+// Delete a token
+TokenSchema.statics.delete = async function (user, token) {
+  await this.deleteOne({ user: user._id, token: token });
+};
+
 module.exports = mongoose.model("UserToken", TokenSchema);
