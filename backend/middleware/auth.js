@@ -54,7 +54,6 @@ const authenticateJWT = async (req, res, next) => {
     const userToken = await UserToken.findOne({
       user: user._id,
       token: usertok,
-      isValid: true,
     });
 
     // If the token is not valid, return an error

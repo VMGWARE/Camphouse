@@ -15,11 +15,6 @@ const TokenSchema = new Schema(
       type: String,
       required: true,
     },
-    // Used to determine if token is valid
-    isValid: {
-      type: Boolean,
-      default: true,
-    },
   },
   { timestamps: true }
 );

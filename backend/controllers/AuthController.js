@@ -1001,7 +1001,6 @@ router.post("/logout", authenticateJWT, async (req, res) => {
     await UserToken.deleteOne({
       user: user._id,
       token: usertoken,
-      isValid: true,
     });
 
     // Delete the JWT token
