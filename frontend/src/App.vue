@@ -116,6 +116,7 @@ export default {
         console.log("Token has expired");
         clearTimeout(this.tokenRefreshTimer);
         this.logout();
+        return;
       }
       if (exp - Date.now() / 1000 < 600 && exp - Date.now() / 1000 > 0) {
         axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -132,24 +133,45 @@ export default {
       }
     },
     setupTokenRefresh() {
-      console.log("setup token refresh");
+      console.log("Setup token refresh");
+
+      // Clear any existing timer before setting up a new one
+      const existingTimerId = localStorage.getItem("tokenRefreshTimer");
+      if (existingTimerId) {
+        console.log("Clearing existing timer", existingTimerId);
+        clearTimeout(existingTimerId);
+        localStorage.removeItem("tokenRefreshTimer");
+      }
+
+      // Setup new timer
       const token = this.$store.state.token;
       const { exp } = jwtDecode(token);
-      this.tokenRefreshTimer = setTimeout(
+      const newTimerId = setTimeout(
         this.check_token,
         (exp - Date.now() / 1000 - 600) * 1000
       );
+
+      // Store new timer ID in localStorage
+      localStorage.setItem("tokenRefreshTimer", newTimerId);
+
       console.log(
-        "Token refresh timer set for",
+        "New token refresh timer set for",
         exp - Date.now() / 1000 - 600,
-        "seconds"
+        "seconds, timerId:",
+        newTimerId
       );
     },
     logout() {
       this.isLoading = true;
-      this.$store.dispatch("logout").then(() => {
-        this.isLoading = false;
-      });
+      this.$store
+        .dispatch("logout")
+        .then(() => {
+          this.isLoading = false;
+        })
+        .catch(() => {
+          this.isLoading = false;
+          //
+        });
     },
   },
   created() {
@@ -157,7 +179,11 @@ export default {
   },
   unmounted() {
     console.log("Remove token refresh timer");
-    clearTimeout(this.tokenRefreshTimer);
+    const timerId = localStorage.getItem("tokenRefreshTimer");
+    if (timerId) {
+      clearTimeout(timerId);
+      localStorage.removeItem("tokenRefreshTimer");
+    }
   },
   // Watch for changes in the store that are relevant to the token
   watch: {
