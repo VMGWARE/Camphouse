@@ -12,6 +12,9 @@ const swaggerUi = require("swagger-ui-express");
 const { getVersion } = require("./utils/general");
 const path = require("path");
 
+// Scripts
+const { createAdminUser } = require("./scripts/createAdminUser"); // Create the admin user
+
 // Load environment variables
 require("dotenv").config();
 
@@ -160,6 +163,7 @@ app.use((req, res) => {
 
 // Start listening for requests
 app.listen(port, () => {
+  // Display the Camphouse logo
   try {
     const currentPath = path.dirname(__filename);
     const logoPath = path.join(currentPath, "logo.txt");
@@ -169,6 +173,10 @@ app.listen(port, () => {
     console.log(chalk.green("🏕️ Camphouse"));
   }
 
+  // Create the admin user
+  createAdminUser();
+
+  // Show the version number and the port that the app is running on
   console.log(
     chalk.green(`🎉 Camphouse version ${getVersion()} is now running!`)
   );
