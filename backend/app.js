@@ -63,26 +63,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-// Middleware for IP logging
-app.use((req, res, next) => {
-  const RequestLog = require("./models/RequestLog");
-
-  var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-  const requestLog = new RequestLog({
-    ip: ip,
-    method: req.method,
-    url: req.url,
-    headers: req.headers,
-  });
-
-  requestLog.save();
-  console.log(
-    chalk.green(`📝 Request logged from ${ip} for ${req.url} | ${req.method}`)
-  );
-
-  next();
-});
-
 // Rate limiting middleware
 const limiter = rateLimit({
   store: new mongoStore({
@@ -109,6 +89,35 @@ const limiter = rateLimit({
 
 // Apply the rate limiter to all requests
 app.use(limiter);
+
+// Middleware for IP logging
+app.use((req, res, next) => {
+  // Model
+  const RequestLog = require("./models/RequestLog");
+
+  // Headers
+  var headers = req.headers;
+
+  // Remove sensitive headers
+  delete headers["cookie"];
+  delete headers["authorization"];
+
+  // IP address
+  var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  const requestLog = new RequestLog({
+    ip: ip,
+    method: req.method,
+    url: req.url,
+    headers: headers,
+  });
+
+  requestLog.save();
+  console.log(
+    chalk.green(`📝 Request logged from ${ip} for ${req.url} | ${req.method}`)
+  );
+
+  next();
+});
 
 // Disable X-Powered-By header
 app.use(helmet.hidePoweredBy());
