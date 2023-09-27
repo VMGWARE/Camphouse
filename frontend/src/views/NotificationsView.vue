@@ -1,33 +1,35 @@
 <template>
-  <div class="container">
-    <p class="text-danger">This is a demo page.</p>
-    <h2>Notifications</h2>
+  <div class="container mt-5">
+    <h2 class="mb-4 text-muted">Notifications</h2>
 
-    <div class="card dark-card">
+    <div class="card bg-dark">
       <div class="card-body">
-        <ul class="list-group dark-list">
+        <ul class="list-group bg-dark">
           <li
-            class="list-group-item dark-item"
+            class="list-group-item bg-dark text-light border-bottom"
             v-for="notification in notifications"
             :key="notification.id"
           >
-            <div class="notification">
-              <div class="notification-icon">
+            <div class="notification d-flex align-items-center">
+              <div class="notification-icon mr-3">
                 <i
-                  class="fa fa-comment"
-                  v-if="notification.type === 'COMMENT'"
-                ></i>
-                <i class="fa fa-heart" v-if="notification.type === 'LIKE'"></i>
-                <i
-                  class="fa fa-envelope"
+                  class="fas fa-mail-bulk"
                   v-if="notification.type === 'MESSAGE'"
+                ></i>
+                <i
+                  class="fas fa-heart"
+                  v-else-if="notification.type === 'LIKE'"
+                ></i>
+                <i
+                  class="fas fa-comment"
+                  v-else-if="notification.type === 'COMMENT'"
                 ></i>
               </div>
               <div class="notification-details">
-                <p class="notification-message">
+                <p class="notification-message mb-1">
                   {{ notification.message }}
                 </p>
-                <p class="notification-time">
+                <p class="notification-time text-muted mb-0">
                   {{ new Date(notification.createdAt).toLocaleString() }}
                 </p>
               </div>
@@ -69,3 +71,30 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.notification-icon i {
+  font-size: 20px;
+}
+
+.notification-details {
+  flex-grow: 1;
+}
+
+.notification-message {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.notification-time {
+  font-size: 14px;
+}
+
+.list-group-item {
+  transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+  background-color: #333;
+}
+</style>
