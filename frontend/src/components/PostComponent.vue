@@ -279,7 +279,7 @@ export default {
         ] = `Bearer ${this.$store.state.token}`;
         // Implement functionality to delete the post
         const response = await axios.delete(`/v1/posts/${this.thisPost._id}`);
-        if (response.code === 200) {
+        if (response.data.code === 200) {
           // Emit an event to the parent component
           this.$emit("postDeleted", this.thisPost._id);
         }

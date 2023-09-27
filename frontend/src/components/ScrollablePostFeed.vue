@@ -6,7 +6,12 @@
       </div>
     </div>
 
-    <PostComponent v-for="post in posts" :key="post._id" :post="post" />
+    <PostComponent
+      v-for="post in posts"
+      :key="post._id"
+      :post="post"
+      @post-deleted="handlePostDeleted"
+    />
   </div>
 </template>
 
@@ -47,7 +52,12 @@ export default {
     };
   },
   methods: {
-    // other methods...
+    handlePostDeleted(deletedPostId) {
+      console.log("Post Deleted: ", deletedPostId);
+
+      // Remove the post with the specified _id from the posts array
+      this.posts = this.posts.filter((post) => post._id !== deletedPostId);
+    },
     getPosts() {
       // If we've reached the bottom, don't load more posts
       if (this.reachedBottom === true) {
