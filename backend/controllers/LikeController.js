@@ -13,6 +13,9 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT } = require("../middleware/auth");
 
+// Services
+const NotificationService = require("../services/NotificationService");
+
 /**
  * @swagger
  * /api/v1/likes/{postId}:
@@ -167,6 +170,16 @@ router.post("/:postId", authenticateJWT, async (req, res) => {
       likes: (await Like.find({ post: post._id })).length,
     },
   });
+
+  // Send a notification to the recipient
+  await NotificationService.create(
+    "LIKE",
+    user._id,
+    post.user,
+    post._id,
+    "Post",
+    `${user.username} liked your post "${post.title}"`
+  );
 });
 
 /**
