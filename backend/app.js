@@ -98,6 +98,9 @@ app.use((req, res, next) => {
   // Headers
   var headers = req.headers;
 
+  // Convert headers to object for easier manipulation and so we don't modify the original headers
+  headers = Object.assign({}, headers);
+
   // Remove sensitive headers
   delete headers["cookie"];
   delete headers["authorization"];
