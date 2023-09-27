@@ -26,8 +26,7 @@ const port = process.env.APP_PORT || 3000;
 require("./db");
 const { DB_URI, DB_NAME } = require("./db");
 
-// app.set("trust proxy", true);
-app.set("trust proxy", 1); // Switched to have proper rate limiting
+app.set("trust proxy", true);
 app.use(express.static("public"));
 
 // Sentry
