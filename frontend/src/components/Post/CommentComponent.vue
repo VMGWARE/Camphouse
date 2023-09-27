@@ -5,7 +5,7 @@
         <router-link :to="'/@' + comment.user.handle">
           <img
             :src="comment.user.profilePicture"
-            alt="Profile Picture"
+            alt=""
             class="comment-profile-picture"
           />
         </router-link>
@@ -34,6 +34,18 @@
     </div>
   </div>
 </template>
+
+<style scoped>
+.comment-profile-picture:before {
+  content: " ";
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  background-color: #ffc34d;
+}
+</style>
 
 <script>
 export default {

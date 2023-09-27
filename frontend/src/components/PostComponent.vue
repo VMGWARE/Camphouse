@@ -7,7 +7,7 @@
             <router-link :to="'/@' + thisPost.user.handle">
               <img
                 :src="thisPost.user.profilePicture"
-                alt="Profile Picture"
+                alt=""
                 class="post-profile-picture"
               />
             </router-link>
@@ -332,6 +332,16 @@ export default {
   height: 50px;
   border-radius: 50%;
   margin-right: 10px;
+}
+
+.post-profile-picture:before {
+  content: " ";
+  display: block;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  background-color: #ffc34d;
 }
 
 .post-content {
