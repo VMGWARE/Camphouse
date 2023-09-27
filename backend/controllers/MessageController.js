@@ -56,6 +56,9 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT } = require("../middleware/auth");
 
+// Services
+const NotificationService = require("../services/NotificationService");
+
 /**
  * @swagger
  * /api/v1/messages/connections:
@@ -305,6 +308,16 @@ router.post("/:userId", authenticateJWT, async (req, res) => {
     message: "Message sent successfully.",
     data: message,
   });
+
+  // Send a notification to the recipient
+  NotificationService.create(
+    "MESSAGE",
+    userId,
+    otherUserId,
+    message._id,
+    "Message",
+    "You have a new message from " + req.user.username + "."
+  );
 });
 
 /**
