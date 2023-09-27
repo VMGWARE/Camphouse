@@ -252,11 +252,13 @@ export default {
               this.content = "";
             } else {
               this.status = "error";
+              this.errors = result.response.data.data.errors;
             }
           })
           .catch((error) => {
+            console.log(error);
             this.status = "error";
-            this.errors = error.response.data.errors;
+            this.errors = error.response.data.data.errors;
           })
           .finally(() => (this.processing = false));
       } else {
