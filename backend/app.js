@@ -27,7 +27,7 @@ require("./db");
 const { DB_URI, DB_NAME } = require("./db");
 
 // app.set("trust proxy", true);
-app.set("trust proxy", "127.0.0.1"); // specify a single subnet
+app.set("trust proxy", 1); // Switched to have proper rate limiting
 app.use(express.static("public"));
 
 // Sentry
