@@ -459,13 +459,31 @@ router.get("/:postId", loadUser, async (req, res) => {
  */
 router.post("/", authenticateJWT, async (req, res) => {
   try {
-    // Make sure the request body is valid
-    if (!req.body.title || !req.body.content) {
+    var errors = {};
+
+    // Make sure the title is valid
+    if (!req.body.title || req.body.title.length < 2) {
+      errors.title = "Title must be at least 2 characters long.";
+    } else if (req.body.title.length > 100) {
+      errors.title = "Title must be less than 100 characters long.";
+    }
+
+    // Make sure the content is valid
+    if (!req.body.content || req.body.content.length < 1) {
+      errors.content = "Content must be at least 1 character long.";
+    } else if (req.body.content.length > 1000) {
+      errors.content = "Content must be less than 1000 characters long.";
+    }
+
+    // If there are any errors, return them in the response
+    if (Object.keys(errors).length > 0) {
       return res.status(400).json({
         status: "error",
         code: 400,
         message: "The request body is missing a required field.",
-        data: null,
+        data: {
+          errors: errors,
+        },
       });
     }
 
