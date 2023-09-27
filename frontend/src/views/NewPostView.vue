@@ -1,133 +1,204 @@
 <template>
   <div class="container mt-5">
-    <div class="row">
-      <div class="col-md-8 offset-md-2">
-        <div class="card">
-          <div class="card-header bg-dark text-white">
-            <h2 class="mb-0">Create a Post</h2>
-            <div class="btn-group">
-              <button
-                class="btn btn-sm btn-secondary"
-                @click="markdownAdd('header')"
-                id="addHeader"
-              >
-                Add Header
-              </button>
-              <button
-                class="btn btn-sm btn-secondary"
-                @click="markdownAdd('bold')"
-                id="addBold"
-              >
-                Add Bold
-              </button>
-              <button
-                class="btn btn-sm btn-secondary"
-                @click="markdownAdd('italic')"
-                id="addItalic"
-              >
-                Add Italic
-              </button>
-              <button
-                class="btn btn-sm btn-secondary"
-                @click="markdownAdd('link')"
-                id="addLink"
-              >
-                Add Link
-              </button>
-              <button
-                class="btn btn-sm btn-secondary"
-                @click="markdownAdd('image')"
-                id="addImage"
-              >
-                Add Image
-              </button>
-              <button
-                class="btn btn-sm btn-secondary"
-                @click="markdownAdd('list')"
-                id="addList"
-              >
-                Add List
-              </button>
-            </div>
-          </div>
-          <div class="card-body">
-            <form @submit.prevent="createPost" method="POST">
-              <div class="form-group">
-                <label for="title">Title</label>
-                <input
-                  type="text"
-                  class="form-control"
-                  id="title"
-                  name="title"
-                  placeholder="Enter the title of your post"
-                  required
-                  v-model="title"
-                  :class="{ 'is-invalid': errors.title }"
-                />
-                <div class="invalid-feedback">{{ errors.title }}</div>
-              </div>
-              <div class="form-group">
-                <label for="content">Content</label>
-                <textarea
-                  class="form-control"
-                  id="content"
-                  name="content"
-                  rows="8"
-                  placeholder="Enter the content of your post"
-                  required
-                  v-model="content"
-                  :class="{ 'is-invalid': errors.content }"
-                ></textarea>
-                <div class="invalid-feedback">
-                  {{ errors.content }}
-                </div>
-                <br />
-                <div
-                  id="preview"
-                  class="form-control"
-                  v-html="convertToMarkdown(content)"
-                ></div>
-                <small id="contentHelp" class="form-text text-muted"
-                  >You can use Markdown to format your content.</small
-                >
-              </div>
-              <br />
-              <div
-                :class="
-                  status === 'success'
-                    ? 'alert alert-success'
-                    : 'alert alert-danger'
-                "
-                role="alert"
-                v-if="status"
-              >
-                <span v-if="status === 'success'"
-                  >Post created successfully!</span
-                >
-                <span v-else>There was an error creating your post.</span>
-              </div>
-              <button
-                type="submit"
-                class="btn btn-primary"
-                :disabled="processing"
-              >
-                <span v-if="processing">
-                  <span
-                    class="spinner-border spinner-border-sm"
-                    role="status"
-                    aria-hidden="true"
-                  ></span>
-                  Creating Post...
-                </span>
-                <span v-else>Create Post</span>
-              </button>
-            </form>
-          </div>
+    <div class="create-post-card">
+      <div class="card-header">
+        <h2>Create a Post</h2>
+        <div class="markdown-toolbar">
+          <button class="icon-btn" @click="markdownAdd('header')">
+            <i class="fa fa-text-height"></i>
+          </button>
+          <button class="icon-btn" @click="markdownAdd('bold')">
+            <i class="fa fa-bold"></i>
+          </button>
+          <button class="icon-btn" @click="markdownAdd('italic')">
+            <i class="fa fa-italic"></i>
+          </button>
+          <button class="icon-btn" @click="markdownAdd('link')">
+            <i class="fa fa-link"></i>
+          </button>
+          <button class="icon-btn" @click="markdownAdd('image')">
+            <i class="fa fa-image"></i>
+          </button>
+          <button class="icon-btn" @click="markdownAdd('list')">
+            <i class="fa fa-list"></i>
+          </button>
         </div>
+      </div>
+
+      <div class="card-body">
+        <form @submit.prevent="createPost" class="post-form">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input
+              type="text"
+              class="form-input"
+              id="title"
+              name="title"
+              placeholder="Enter title"
+              required
+              v-model="title"
+              :class="{ 'is-invalid': errors.title }"
+            />
+            <div class="invalid-feedback">{{ errors.title }}</div>
+          </div>
+
+          <div class="form-group">
+            <label for="content">Content</label>
+            <textarea
+              class="form-input"
+              id="content"
+              name="content"
+              rows="10"
+              placeholder="Enter content"
+              required
+              v-model="content"
+              :class="{ 'is-invalid': errors.content }"
+            ></textarea>
+            <div class="invalid-feedback">{{ errors.content }}</div>
+          </div>
+
+          <div
+            id="preview"
+            class="preview-pane"
+            v-html="convertToMarkdown(content)"
+          ></div>
+
+          <div
+            :class="
+              status === 'success'
+                ? 'alert alert-success'
+                : 'alert alert-danger'
+            "
+            role="alert"
+            v-if="status"
+          >
+            <span v-if="status === 'success'">Post created successfully!</span>
+            <span v-else>There was an error creating your post.</span>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-submit btn-block mt-4"
+            :disabled="processing"
+          >
+            <span v-if="processing"
+              ><i class="bi bi-hourglass"></i> Creating Post...</span
+            >
+            <span v-else><i class="bi bi-check-circle"></i> Create Post</span>
+          </button>
+        </form>
       </div>
     </div>
   </div>
 </template>
+
+<style scoped>
+.container {
+  max-width: 800px;
+  margin: auto;
+  background-color: #121212;
+  color: #ffffff;
+}
+
+.create-post-card {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.card-header {
+  background-color: #121212;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.markdown-toolbar {
+  display: flex;
+  gap: 8px;
+}
+
+.icon-btn {
+  background: #282828;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  font-size: 1rem;
+  color: #bbb;
+}
+
+.icon-btn:hover {
+  background-color: #333;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-input,
+textarea.form-input {
+  background-color: #1e1e1e;
+  color: #ffffff;
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  border: 1px solid #333;
+  border-radius: 4px;
+  outline: none;
+}
+
+.form-input::placeholder,
+textarea.form-input::placeholder {
+  color: #888;
+}
+
+textarea.form-input {
+  resize: vertical;
+}
+
+.invalid-feedback {
+  color: #ff5555;
+  font-size: 0.875rem;
+  margin-top: 8px;
+}
+
+.preview-pane {
+  margin-top: 16px;
+  padding: 16px;
+  background-color: #121212;
+  border-radius: 4px;
+  color: #ffffff;
+}
+
+.btn-submit {
+  background-color: #4caf50;
+  color: white;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-submit:hover {
+  background-color: #45a049;
+}
+
+.alert-success {
+  background-color: #32a852;
+}
+
+.alert-error {
+  background-color: #a83232;
+}
+</style>
 
 <script>
 import showdown from "showdown";
