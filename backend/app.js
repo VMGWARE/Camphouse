@@ -176,5 +176,5 @@ app.listen(port, () => {
     chalk.green(`✨ Camphouse's API is now running and listening at`)
   );
   console.log(chalk.yellow(`🌍 http://localhost:${port}`));
-  console.log(chalk.yellow(`📚 API docs at http://localhost:${port}/docs`));
+  console.log(chalk.yellow(`📚 API docs at http://localhost:${port}/api/docs`));
 });
