@@ -25,19 +25,39 @@
           <p v-else class="text-danger">User not found for this Post.</p>
         </div>
 
-        <div v-if="canEditOrDelete" class="dropdown">
+        <div class="dropdown">
           <button
             class="btn btn-secondary dropdown-toggle"
             type="button"
-            id="dropdownMenuButton"
+            id="dropdownPostOptions"
             data-bs-toggle="dropdown"
             aria-haspopup="true"
             aria-expanded="false"
           >
             <i class="fas fa-ellipsis-h"></i>
           </button>
-          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-            <a class="dropdown-item fake-link" @click="deletePost">
+          <div class="dropdown-menu" aria-labelledby="dropdownPostOptions">
+            <!-- TODO: This dropdown can also hold the report button -->
+            <a
+              class="dropdown-item fake-link custom-dropdown-item text-dark"
+              href="#"
+            >
+              <i class="fas fa-flag"></i>
+              Report Post</a
+            >
+            <a
+              v-if="canEditOrDelete"
+              class="dropdown-item fake-link custom-dropdown-item text-primary"
+              href="#"
+            >
+              <i class="fas fa-edit"></i>
+              Edit Post</a
+            >
+            <a
+              v-if="canEditOrDelete"
+              class="dropdown-item fake-link custom-dropdown-item text-danger"
+              @click="deletePost"
+            >
               <i class="fas fa-trash"></i>
               Delete Post</a
             >
@@ -329,5 +349,17 @@ export default {
 .btn:active {
   outline: none;
   box-shadow: none;
+}
+
+.custom-dropdown-item {
+  color: #000000;
+}
+
+.custom-dropdown-item:hover {
+  background-color: #e9ecef;
+}
+
+.custom-dropdown-item:active {
+  background-color: #e9ecef;
 }
 </style>
