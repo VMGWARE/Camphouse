@@ -70,6 +70,7 @@
                 : 'alert alert-danger'
             "
             role="alert"
+            class="mt-4"
             v-if="status"
           >
             <span v-if="status === 'success'">Post created successfully!</span>
