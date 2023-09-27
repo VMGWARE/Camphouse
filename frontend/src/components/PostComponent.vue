@@ -1,27 +1,48 @@
 <template>
   <div class="card mb-3">
     <div class="card-body">
-      <div class="d-flex align-items-center mb-3">
-        <template v-if="thisPost.user">
-          <router-link :to="'/@' + thisPost.user.handle">
-            <img
-              :src="thisPost.user.profilePicture"
-              alt="Profile Picture"
-              class="post-profile-picture"
-            />
-          </router-link>
-          <div>
-            <router-link :to="'/post/' + thisPost._id" class="text-dark">
-              <h5 class="card-title mb-0">
-                {{ thisPost.title }}
-              </h5>
+      <div class="d-flex align-items-center justify-content-between mb-3">
+        <div class="d-flex align-items-center mb-3">
+          <template v-if="thisPost.user">
+            <router-link :to="'/@' + thisPost.user.handle">
+              <img
+                :src="thisPost.user.profilePicture"
+                alt="Profile Picture"
+                class="post-profile-picture"
+              />
             </router-link>
-            <p class="card-subtitle text-muted mb-0">
-              @{{ thisPost.user.handle }}
-            </p>
+            <div>
+              <router-link :to="'/post/' + thisPost._id" class="text-dark">
+                <h5 class="card-title mb-0">
+                  {{ thisPost.title }}
+                </h5>
+              </router-link>
+              <p class="card-subtitle text-muted mb-0">
+                @{{ thisPost.user.handle }}
+              </p>
+            </div>
+          </template>
+          <p v-else class="text-danger">User not found for this Post.</p>
+        </div>
+
+        <div v-if="canEditOrDelete" class="dropdown">
+          <button
+            class="btn btn-secondary dropdown-toggle"
+            type="button"
+            id="dropdownMenuButton"
+            data-bs-toggle="dropdown"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            <i class="fas fa-ellipsis-h"></i>
+          </button>
+          <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+            <a class="dropdown-item fake-link" @click="deletePost">
+              <i class="fas fa-trash"></i>
+              Delete Post</a
+            >
           </div>
-        </template>
-        <p v-else class="text-danger">User not found for this Post.</p>
+        </div>
       </div>
 
       <p
@@ -100,6 +121,7 @@ import showdown from "showdown";
 import { useToast } from "vue-toastification";
 import CommentComponent from "@/components/Post/CommentComponent.vue";
 import axios from "axios";
+import { mapState } from "vuex";
 
 export default {
   name: "PostComponent",
@@ -125,6 +147,10 @@ export default {
       const likedPostIds =
         JSON.parse(localStorage.getItem("likedPostIds")) || [];
       return likedPostIds.includes(this.thisPost._id);
+    },
+    ...mapState(["user"]),
+    canEditOrDelete() {
+      return this.user && this.user._id === this.thisPost.user._id;
     },
   },
   methods: {
@@ -244,6 +270,22 @@ export default {
         useToast().error(
           "Error liking/unliking thisPost. Please try again later."
         );
+      }
+    },
+    async deletePost() {
+      try {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${this.$store.state.token}`;
+        // Implement functionality to delete the post
+        const response = await axios.delete(`/v1/posts/${this.thisPost._id}`);
+        if (response.code === 200) {
+          // Emit an event to the parent component
+          this.$emit("postDeleted", this.thisPost._id);
+        }
+      } catch (error) {
+        console.error("Error deleting post:", error);
+        useToast().error("Error deleting post. Please try again later.");
       }
     },
   },
