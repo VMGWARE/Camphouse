@@ -17,12 +17,16 @@
                   v-if="notification.type === 'MESSAGE'"
                 ></i>
                 <i
+                  class="fas fa-comment"
+                  v-else-if="notification.type === 'COMMENT'"
+                ></i>
+                <i
                   class="fas fa-heart"
                   v-else-if="notification.type === 'LIKE'"
                 ></i>
                 <i
-                  class="fas fa-comment"
-                  v-else-if="notification.type === 'COMMENT'"
+                  class="fas fa-user-plus"
+                  v-else-if="notification.type === 'FOLLOW'"
                 ></i>
               </div>
               <div class="notification-details">
