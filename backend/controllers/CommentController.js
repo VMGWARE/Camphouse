@@ -257,6 +257,9 @@ router.post("/post/:postId", authenticateJWT, async (req, res) => {
     });
   }
 
+  // Get the id of the post owner
+  const postOwner = await Post.findById(post, "user");
+
   // Validate comment
   if (!comment) {
     return res.json({
@@ -293,12 +296,12 @@ router.post("/post/:postId", authenticateJWT, async (req, res) => {
     // Send a notification to the recipient
     if (req.user._id !== postExists.user) {
       await NotificationService.create(
-        "COMMENT",
-        req.user._id,
-        postExists.user,
-        post,
-        "Post",
-        `${req.user.handle} commented on your post.`
+        "COMMENT", // type
+        req.user._id, // sender
+        postOwner.user, // receiver
+        post, // onModelId
+        "Post", // onModel
+        `${req.user.handle} commented on your post.` // message
       );
     }
   } catch (error) {
