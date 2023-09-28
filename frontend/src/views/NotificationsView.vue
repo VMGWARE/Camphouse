@@ -37,6 +37,14 @@
                   {{ new Date(notification.createdAt).toLocaleString() }}
                 </p>
               </div>
+              <div class="notification-action">
+                <button
+                  class="btn btn-sm btn-primary"
+                  @click="goToAction(notification)"
+                >
+                  View
+                </button>
+              </div>
             </div>
           </li>
         </ul>
@@ -68,6 +76,43 @@ export default {
         .catch((error) => {
           console.log(error);
         });
+    },
+    async goToAction(notification) {
+      // If it was a message, send to messages
+      if (notification.type === "MESSAGE") {
+        this.$router.push({
+          name: "Messages",
+          params: { userId: notification.sender },
+        });
+      }
+      // If it was a like, send to post
+      else if (notification.type === "LIKE") {
+        this.$router.push({
+          name: "post",
+          params: { id: notification.referenceId },
+        });
+      }
+      // If it was a comment, send to post
+      else if (notification.type === "COMMENT") {
+        this.$router.push({
+          name: "post",
+          params: { id: notification.referenceId },
+        });
+      }
+      // If it was a follow, send to user profile
+      else if (notification.type === "FOLLOW") {
+        // Make request to get user handle from id
+        const response = await axios.get(`/v1/users/${notification.sender}`);
+
+        // Make sure response is not null or error
+        if (response.data.data) {
+          // Then push to user profile
+          this.$router.push({
+            name: "profile",
+            params: { handle: response.data.data.handle },
+          });
+        }
+      }
     },
   },
   created() {
