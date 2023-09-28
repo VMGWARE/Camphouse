@@ -155,21 +155,22 @@ const { authenticateJWT } = require("../middleware/auth");
  */
 router.get("/", authenticateJWT, async (req, res) => {
   try {
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
     const isRead = req.query.isRead || "0";
 
     let readFilter = {};
     if (isRead === "1") {
-      readFilter.isRead = true;
+      readFilter.read = true;
     } else if (isRead === "2") {
-      readFilter.isRead = false;
+      readFilter.read = false;
     }
 
     const notifications = await Notification.find({
       receiver: req.user._id,
       ...readFilter,
     })
+      .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
 

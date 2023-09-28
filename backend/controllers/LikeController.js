@@ -172,7 +172,7 @@ router.post("/:postId", authenticateJWT, async (req, res) => {
   });
 
   // Send a notification to the recipient
-  if (req.user._id != post.user) {
+  if (req.user._id.toString() != post.user.toString()) {
     await NotificationService.create(
       "LIKE",
       user._id,
