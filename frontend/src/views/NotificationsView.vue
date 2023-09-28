@@ -34,7 +34,7 @@
                   {{ notification.message }}
                 </p>
                 <p class="notification-time text-muted mb-0">
-                  {{ new Date(notification.createdAt).toLocaleString() }}
+                  {{ timeAgo(notification.createdAt) }}
                 </p>
               </div>
               <div class="notification-action">
@@ -112,6 +112,29 @@ export default {
             params: { handle: response.data.data.handle },
           });
         }
+      }
+    },
+    timeAgo(date) {
+      const now = new Date();
+      const notificationDate = new Date(date);
+      const secondsPast = (now.getTime() - notificationDate.getTime()) / 1000;
+
+      if (secondsPast < 60)
+        return `${parseInt(secondsPast)} second${
+          parseInt(secondsPast) > 1 ? "s" : ""
+        } ago`;
+      if (secondsPast < 3600)
+        return `${parseInt(secondsPast / 60)} minute${
+          parseInt(secondsPast / 60) > 1 ? "s" : ""
+        } ago`;
+      if (secondsPast <= 86400)
+        return `${parseInt(secondsPast / 3600)} hour${
+          parseInt(secondsPast / 3600) > 1 ? "s" : ""
+        } ago`;
+      if (secondsPast > 86400) {
+        const days = parseInt(secondsPast / 86400);
+        if (days <= 1) return "yesterday";
+        return `${days} day${days > 1 ? "s" : ""} ago`;
       }
     },
   },
