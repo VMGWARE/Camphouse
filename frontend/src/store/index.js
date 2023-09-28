@@ -89,23 +89,23 @@ export default createStore({
       }
     },
     async logout({ commit }) {
-      const response = await axios.post("/v1/auth/logout");
-      if (response.data.code != 200) {
-        throw new Error("Error logging out");
-      } else {
-        commit("setToken", null);
-        commit("setUser", null);
-        commit("setLoggedIn", false);
+      // Even if the request fails, logout the user
+      // As the request may fail due to network issues or server issues
+      // The userToken is only part of the validation process so it should be fine
+      await axios.post("/v1/auth/logout");
 
-        localStorage.removeItem("token");
-        localStorage.removeItem("user");
+      commit("setToken", null);
+      commit("setUser", null);
+      commit("setLoggedIn", false);
 
-        axios.defaults.headers.common["Authorization"] = null;
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
 
-        document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+      axios.defaults.headers.common["Authorization"] = null;
 
-        router.push("/login");
-      }
+      document.cookie = `token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+
+      router.push("/login");
     },
     // eslint-disable-next-line no-unused-vars
     async getPosts({ commit }, request) {
