@@ -92,7 +92,11 @@ export default createStore({
       // Even if the request fails, logout the user
       // As the request may fail due to network issues or server issues
       // The userToken is only part of the validation process so it should be fine
-      await axios.post("/v1/auth/logout");
+      try {
+        await axios.post("/v1/auth/logout");
+      } catch (error) {
+        // eslint-disable-next-line no-empty
+      }
 
       commit("setToken", null);
       commit("setUser", null);
