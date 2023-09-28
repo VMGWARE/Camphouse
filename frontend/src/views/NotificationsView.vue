@@ -63,10 +63,7 @@ export default {
       await axios
         .get("/v1/notifications")
         .then((response) => {
-          let notifications = response.data.data.notifications;
-          // Flip the order of the notifications so the newest is first
-          notifications = notifications.reverse();
-          this.notifications = notifications;
+          this.notifications = response.data.data.notifications;
         })
         .catch((error) => {
           console.log(error);
