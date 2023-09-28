@@ -15,10 +15,15 @@ To get a local copy up and running follow these simple steps.
 
 ### Prerequisites
 
-- [Node.js](https://nodejs.org/en/)
-- [MongoDB](https://www.mongodb.com/)
+Before starting with the installation, ensure that the following prerequisites are installed and properly configured on your system.
+
+- [Node.js](https://nodejs.org/en/) - Necessary to run the server and execute the JavaScript code.
+- [MongoDB](https://www.mongodb.com/) - The database used by Camphouse to store user data and other information.
+- [Docker](https://www.docker.com/) (Optional) - If you prefer running the application inside a container.
 
 ### Installation
+
+Follow the steps below for installation and setup:
 
 1. Clone the repo
 
@@ -26,46 +31,68 @@ To get a local copy up and running follow these simple steps.
    gh repo clone VMGWARE/Camphouse
    ```
 
-2. cd into the project directory
+2. Navigate into the project directory
 
    ```sh
    cd Camphouse
    ```
 
-3. Make a copy of the `.env.example` file and rename it to `.env`
+3. Copy the `.env.example` file and rename it to `.env`.
 
    ```sh
    cp .env.example .env
    ```
 
-4. Install NPM packages
+4. Open the `.env` file with your favorite text editor and fill in the configuration details.
 
-   ```sh
-    cd frontend
-    npm install
-    cd ../backend
-    npm install
+   ```plaintext
+   # Application configuration
+   APP_PORT=3000                   # The port on which the app will run.
+   SESSION_SECRET=<your_secret>    # A secret string used to secure user sessions.
+
+   # Database configuration
+   DB_NAME=aquirilla               # The name of your MongoDB database.
+   DB_HOST=localhost               # The host where your MongoDB server is running.
+   DB_PORT=27017                   # The port on which your MongoDB server is accessible.
+   DB_USER=<db_username>           # The username for your MongoDB database.
+   DB_PASS=<db_password>           # The password for your MongoDB database.
+
+   # JWT
+   JWT_SECRET=<jwt_secret>         # A secret string used to sign JSON Web Tokens.
+
+   # Admin
+   ADMIN_HANDLE=<admin_handle>     # The handle for the initial admin account.
+   ADMIN_EMAIL=<admin_email>       # The email address for the initial admin account.
+   ADMIN_PASSWORD=<admin_password> # The password for the initial admin account.
+   ADMIN_USERNAME=<admin_username> # The username for the initial admin account.
    ```
 
-5. Start the backend server
+   Replace the placeholder text (e.g., `<your_secret>`, `<db_username>`) with your actual information. Keep these details confidential.
+
+5. Continue with the installation of NPM packages and starting the servers as provided in the original guide.
 
    ```sh
-    cd backend
-    npm run start
+   cd frontend
+   npm install
+   cd ../backend
+   npm install
    ```
 
-6. Start the frontend server
+Start the backend server:
+
+   ```sh
+   cd backend
+   npm run start
+   ```
+
+Start the frontend server:
 
    ```sh
    cd frontend
    npm run serve
    ```
 
-7. Open the app in your browser
-
-   ```sh
-    http://localhost:8080
-   ```
+6. Access the application through your browser at `http://localhost:8080`.
 
 ### Docker
 
