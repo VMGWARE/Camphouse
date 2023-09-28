@@ -1,4 +1,6 @@
 const mongoose = require("mongoose");
+const Comment = require("./Comment");
+const Like = require("./Like");
 
 /**
  * Post Schema
@@ -25,5 +27,7 @@ const PostSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// TODO: Ad pre hook to delete all comments and likes for the post
 
 module.exports = mongoose.model("Post", PostSchema);
