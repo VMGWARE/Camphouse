@@ -190,4 +190,309 @@ router.get("/", authenticateJWT, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/v1/notifications/count:
+ *   get:
+ *     tags:
+ *       - Notifications
+ *     summary: Retrieve the number of unread notifications for the authenticated user
+ *     description: Retrieve the number of unread notifications for the authenticated user
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved notification counts
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully retrieved notification counts
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     unreadNotifications:
+ *                       type: integer
+ *                       example: 2
+ *                     totalNotifications:
+ *                       type: integer
+ *                       example: 10
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized access
+ *                 data:
+ *                   type: null
+ */
+router.get("/count", authenticateJWT, async (req, res) => {
+  try {
+    const unread = await Notification.countDocuments({
+      receiver: req.user._id,
+      read: false,
+    });
+    const total = await Notification.countDocuments({
+      receiver: req.user._id,
+    });
+
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully retrieved notification counts",
+      data: { unread, total },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Unable to retrieve notification counts",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/notifications/{id}:
+ *   patch:
+ *     tags:
+ *       - Notifications
+ *     summary: Mark a specific notification as read for the authenticated user
+ *     description: Mark a specific notification as read for the authenticated user
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the notification to mark as read
+ *     responses:
+ *       200:
+ *         description: Successfully marked notification as read
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully marked notification as read
+ *                 data:
+ *                   $ref: '#/components/schemas/Notification'
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized access
+ *                 data:
+ *                   type: null
+ *       404:
+ *         description: Notification not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: Notification not found
+ *                 data:
+ *                   type: null
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Unable to mark notification as read
+ *                 data:
+ *                   type: null
+ */
+router.patch("/:id", authenticateJWT, async (req, res) => {
+  try {
+    const notification = await Notification.findOneAndUpdate(
+      { _id: req.params.id, receiver: req.user._id },
+      { read: true },
+      { new: true }
+    );
+
+    if (!notification) {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "Notification not found",
+        data: null,
+      });
+    }
+
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully marked notification as read",
+      data: { notification },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Unable to mark notification as read",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/notifications:
+ *   patch:
+ *     tags:
+ *       - Notifications
+ *     summary: Mark all notifications as read for the authenticated user
+ *     description: Mark all notifications as read for the authenticated user
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully marked all notifications as read
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully marked all notifications as read
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     notifications:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Notification'
+ *       401:
+ *         description: Unauthorized access
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized access
+ *                 data:
+ *                   type: null
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Unable to mark all notifications as read
+ *                 data:
+ *                   type: null
+ */
+router.patch("/", authenticateJWT, async (req, res) => {
+  try {
+    const notifications = await Notification.updateMany(
+      { receiver: req.user._id, read: false },
+      { read: true }
+    );
+
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully marked all notifications as read",
+      data: { notifications },
+    });
+  } catch (err) {
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Unable to mark all notifications as read",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;
