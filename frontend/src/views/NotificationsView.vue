@@ -1,54 +1,36 @@
 <template>
   <div class="container mt-5">
-    <h2 class="mb-4 text-muted">Notifications</h2>
-
-    <div class="card bg-dark">
-      <div class="card-body">
-        <ul class="list-group bg-dark">
-          <li
-            class="list-group-item bg-dark text-light border-bottom"
-            v-for="notification in notifications"
-            :key="notification.id"
-          >
-            <div class="notification d-flex align-items-center">
-              <div class="notification-icon mr-3">
-                <i
-                  class="fas fa-mail-bulk"
-                  v-if="notification.type === 'MESSAGE'"
-                ></i>
-                <i
-                  class="fas fa-comment"
-                  v-else-if="notification.type === 'COMMENT'"
-                ></i>
-                <i
-                  class="fas fa-heart"
-                  v-else-if="notification.type === 'LIKE'"
-                ></i>
-                <i
-                  class="fas fa-user-plus"
-                  v-else-if="notification.type === 'FOLLOW'"
-                ></i>
-              </div>
-              <div class="notification-details">
-                <p class="notification-message mb-1">
-                  {{ notification.message }}
-                </p>
-                <p class="notification-time text-muted mb-0">
-                  {{ timeAgo(notification.createdAt) }}
-                </p>
-              </div>
-              <div class="notification-action">
-                <button
-                  class="btn btn-sm btn-primary"
-                  @click="goToAction(notification)"
-                >
-                  View
-                </button>
-              </div>
+    <h2 class="mb-4">Notifications</h2>
+    <div v-if="notifications.length === 0" class="no-notifications">
+      <p>No notifications available</p>
+    </div>
+    <div v-else class="card">
+      <ul class="list-group">
+        <li
+          class="list-group-item"
+          v-for="notification in notifications"
+          :key="notification.id"
+        >
+          <div class="notification d-flex align-items-center">
+            <div class="notification-icon mr-3">
+              <i class="fas" :class="getIconClass(notification.type)"></i>
             </div>
-          </li>
-        </ul>
-      </div>
+            <div class="notification-details flex-grow-1">
+              <p class="notification-message mb-1">
+                {{ notification.message }}
+              </p>
+              <p class="notification-time text-muted mb-0">
+                {{ timeAgo(notification.createdAt) }}
+              </p>
+            </div>
+            <div class="notification-action">
+              <button class="btn btn-primary" @click="goToAction(notification)">
+                View
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
     </div>
   </div>
 </template>
@@ -137,6 +119,20 @@ export default {
         return `${days} day${days > 1 ? "s" : ""} ago`;
       }
     },
+    getIconClass(type) {
+      switch (type) {
+        case "MESSAGE":
+          return "fa-mail-bulk";
+        case "COMMENT":
+          return "fa-comment";
+        case "LIKE":
+          return "fa-heart";
+        case "FOLLOW":
+          return "fa-user-plus";
+        default:
+          return "fa-bell"; // default icon
+      }
+    },
   },
   created() {
     this.getNotifications();
@@ -145,17 +141,49 @@ export default {
 </script>
 
 <style scoped>
+.container {
+  max-width: 600px;
+  color: #ddd;
+}
+
+h2 {
+  font-weight: 700;
+  color: #ffffff; /* White Color for Heading */
+}
+
+.no-notifications {
+  text-align: center;
+  color: #aaa;
+}
+
+.card {
+  background-color: #333;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0px 0px 5px #111;
+}
+
+.list-group-item {
+  border: none;
+  background-color: #444; /* Dark Background Color */
+  padding: 20px;
+  transition: background-color 0.3s ease;
+}
+
+.list-group-item:hover {
+  background-color: #555; /* Slightly lighter dark color on hover */
+}
+
 .notification-icon i {
   font-size: 20px;
-  color: #ffc34d;
+  color: #cc9c3d; /* Bright color for icons for better visibility on dark background */
 }
 
 .notification-details {
-  flex-grow: 1;
+  font-size: 16px;
 }
 
 .notification-message {
-  font-size: 16px;
   font-weight: 600;
 }
 
@@ -163,11 +191,14 @@ export default {
   font-size: 14px;
 }
 
-.list-group-item {
-  transition: background-color 0.3s ease;
+.notification-action button {
+  background-color: #cc9c3d; /* Matching bright color for button */
+  border: none;
+  color: #ffffff; /* White text color for button */
+  padding: 6px 12px;
 }
 
-.list-group-item:hover {
-  background-color: #333;
+.notification-action button:hover {
+  background-color: #ddae4c; /* Slightly lighter color on hover */
 }
 </style>
