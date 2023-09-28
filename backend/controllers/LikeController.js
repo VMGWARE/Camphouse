@@ -172,14 +172,16 @@ router.post("/:postId", authenticateJWT, async (req, res) => {
   });
 
   // Send a notification to the recipient
-  await NotificationService.create(
-    "LIKE",
-    user._id,
-    post.user,
-    post._id,
-    "Post",
-    `${user.username} liked your post "${post.title}"`
-  );
+  if (req.user._id !== post.user) {
+    await NotificationService.create(
+      "LIKE",
+      user._id,
+      post.user,
+      post._id,
+      "Post",
+      `${user.username} liked your post "${post.title}"`
+    );
+  }
 });
 
 /**
