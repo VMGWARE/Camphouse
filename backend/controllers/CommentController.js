@@ -291,12 +291,12 @@ router.post("/post/:postId", authenticateJWT, async (req, res) => {
     });
 
     // Send a notification to the recipient
-    if (req.user._id.toString() !== post.user.toString()) {
+    if (req.user._id.toString() !== postExists.user.toString()) {
       await NotificationService.create(
         "COMMENT",
         req.user._id,
-        post.user,
-        post._id,
+        postExists.user,
+        post,
         "Post",
         `${req.user.handle} commented on your post.`
       );
