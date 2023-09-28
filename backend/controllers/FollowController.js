@@ -46,6 +46,9 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT } = require("../middleware/auth");
 
+// Services
+const NotificationService = require("../services/NotificationService");
+
 /**
  * @swagger
  * /api/v1/follows:
@@ -239,6 +242,16 @@ router.post("/:userId", authenticateJWT, async (req, res) => {
       message: "Successfully followed the user.",
       data: { follow },
     });
+
+    // Send a notification to the recipient
+    NotificationService.create(
+      "FOLLOW",
+      req.user.id,
+      req.params.userId,
+      req.user.id,
+      "User",
+      `${req.user.username} is now following you.`
+    );
   } catch (err) {
     res.status(500).json({
       status: "error",

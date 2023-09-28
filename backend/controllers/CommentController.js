@@ -67,6 +67,9 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT } = require("../middleware/auth");
 
+// Services
+const NotificationService = require("../services/NotificationService");
+
 /**
  * @swagger
  * /api/v1/comments/post/{postId}:
@@ -286,6 +289,18 @@ router.post("/post/:postId", authenticateJWT, async (req, res) => {
       message: "Successfully created comment.",
       data: newComment,
     });
+
+    // Send a notification to the recipient
+    if (req.user._id.toString() !== post.user.toString()) {
+      await NotificationService.create(
+        "COMMENT",
+        req.user._id,
+        post.user,
+        post._id,
+        "Post",
+        `${req.user.handle} commented on your post.`
+      );
+    }
   } catch (error) {
     console.error(error);
     res.json({
