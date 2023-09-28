@@ -31,7 +31,7 @@ app.use(express.static("public"));
 
 // Sentry
 Sentry.init({
-  dsn: "https://5194a9dd607da159b03d6e8398041032@o4504137778659328.ingest.sentry.io/4505800043528192",
+  dsn: process.env.SENTRY_DSN,
   integrations: [
     // enable HTTP calls tracing
     new Sentry.Integrations.Http({
