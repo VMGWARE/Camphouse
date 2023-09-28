@@ -6,11 +6,11 @@ const NotificationModel = require("../models/Notification");
 class NotificationService {
   /**
    * Creates a new notification.
-   * @param {string} type - The type of the notification, should be one of ["MESSAGE", "LIKE", "COMMENT"].
+   * @param {string} type - The type of the notification, should be one of ["MESSAGE", "COMMENT", "LIKE", "UNLIKE", "FOLLOW", "UNFOLLOW"].
    * @param {string} sender - The ID of the user sending the notification.
    * @param {string} receiver - The ID of the user receiving the notification.
    * @param {string} referenceId - The ID of the referenced model (either Post or Message).
-   * @param {string} onModel - The name of the model to which the notification is related, should be one of ["Post", "Message"].
+   * @param {string} onModel - The name of the model to which the notification is related, should be one of ["Post", "Message", "User"].
    * @param {string} message - The message content of the notification.
    * @returns {Promise<Object>} - A promise that resolves to the created notification object.
    * @throws {Error} - Throws an error if validation fails or unable to save the notification.
@@ -18,11 +18,20 @@ class NotificationService {
   static async create(type, sender, receiver, referenceId, onModel, message) {
     try {
       // Validate type
-      if (!["MESSAGE", "LIKE", "COMMENT"].includes(type))
+      if (
+        ![
+          "MESSAGE",
+          "COMMENT",
+          "LIKE",
+          "UNLIKE",
+          "FOLLOW",
+          "UNFOLLOW",
+        ].includes(type)
+      )
         throw new Error("Invalid type");
 
       // Validate onModel
-      if (!["Post", "Message"].includes(onModel))
+      if (!["Post", "Message", "User"].includes(onModel))
         throw new Error("Invalid onModel");
 
       // Validate sender, receiver, and referenceId
