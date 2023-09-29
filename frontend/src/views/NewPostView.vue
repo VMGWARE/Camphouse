@@ -269,22 +269,28 @@ export default {
     markdownAdd(type) {
       if (type === "header") {
         this.content += "# Replace with text...";
+        this.content += "\n";
       }
       if (type === "bold") {
         this.content += "**Replace with text...**";
+        this.content += "\n";
       }
       if (type === "italic") {
         this.content += "*Replace with text...*";
+        this.content += "\n";
       }
       if (type === "link") {
-        this.content += "[Link Text](https://app.camphouse.com/)";
+        this.content += "[Link Text](https://camphouse.vmgware.dev/)";
+        this.content += "\n";
       }
       if (type === "image") {
         this.content +=
-          "![Alt Text](https://app.camphouse.com/images/branding/Camphouse-Icon-Light.png)";
+          "![A Default profile icon!](https://camphouse.vmgware.dev/images/profiles/ProfilePicture.png)";
+        this.content += "\n";
       }
       if (type === "list") {
         this.content += "- Replace with list item...";
+        this.content += "\n";
       }
     },
   },
