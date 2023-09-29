@@ -316,7 +316,7 @@ router.post("/:userId", authenticateJWT, async (req, res) => {
     otherUserId,
     message._id,
     "Message",
-    "You have a new message from " + req.user.username + "."
+    "You have a new message from " + req.user.handle + "."
   );
 });
 

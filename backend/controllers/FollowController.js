@@ -250,7 +250,7 @@ router.post("/:userId", authenticateJWT, async (req, res) => {
       req.params.userId,
       req.user.id,
       "User",
-      `${req.user.username} is now following you.`
+      `${req.user.handle} is now following you.`
     );
   } catch (err) {
     res.status(500).json({

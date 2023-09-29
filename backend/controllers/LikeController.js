@@ -179,7 +179,7 @@ router.post("/:postId", authenticateJWT, async (req, res) => {
       post.user,
       post._id,
       "Post",
-      `${user.username} liked your post "${post.title}"`
+      `${user.handle} liked your post "${post.title}"`
     );
   }
 });
