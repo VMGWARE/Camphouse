@@ -252,7 +252,8 @@ router.get("/", loadUser, async (req, res) => {
     data: {
       posts: enrichedPosts,
       page: page,
-      maxPages: Math.ceil((await Post.countDocuments().exec()) / limit),
+      // Calculate the maximum number of pages based on the total number of posts that match the search criteria
+      maxPages: Math.ceil((await Post.countDocuments(criteria)) / limit),
       limit: limit,
     },
   });
