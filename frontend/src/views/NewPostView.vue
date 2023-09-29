@@ -53,7 +53,14 @@
               required
               v-model="content"
               :class="{ 'is-invalid': errors.content }"
+              maxlength="1000"
             ></textarea>
+            <div
+              class="char-counter"
+              :class="{ 'char-limit': content.length >= 1000 }"
+            >
+              {{ content.length }} / 1000
+            </div>
             <div class="invalid-feedback">{{ errors.content }}</div>
           </div>
 
@@ -198,6 +205,16 @@ textarea.form-input {
 
 .alert-error {
   background-color: #a83232;
+}
+
+.char-counter {
+  margin-top: 4px;
+  color: #bbb;
+  font-size: 0.875rem;
+}
+
+.char-limit {
+  color: #ff5555;
 }
 </style>
 
