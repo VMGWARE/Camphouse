@@ -1049,7 +1049,6 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
     if (user.profilePicture) {
       const urlParts = user.profilePicture.split("/");
       const oldObjectName = `profile-pictures/` + urlParts[urlParts.length - 1];
-      console.log(`bucketName: ${bucketName} | objectName: ${oldObjectName}`);
       await minioClient.removeObject(bucketName, oldObjectName, function (err) {
         if (err) throw err;
       });
