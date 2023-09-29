@@ -125,7 +125,10 @@ app.use((req, res, next) => {
 // Express File Upload middleware
 app.use(
   fileUpload({
-    limits: { fileSize: 50 * 1024 * 1024 },
+    limits: {
+      // Max file size is 10MB
+      fileSize: 10 * 1024 * 1024,
+    },
     // useTempFiles: true,
     // tempFileDir: "/tmp/",
   })
