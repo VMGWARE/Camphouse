@@ -2,25 +2,40 @@
   <div class="container">
     <h2>Settings</h2>
 
+    <!-- Profile Picture Card -->
     <div class="card">
       <div class="card-body">
-        <h5 class="card-title">General</h5>
-        <form @submit.prevent="saveGeneralSettings">
+        <h5 class="card-title">Profile Picture</h5>
+        <form @submit.prevent="uploadProfilePicture">
           <div class="form-group">
-            <label for="profilePicture">Profile Picture</label>
+            <label for="profilePicture">Upload Profile Picture</label>
             <input
-              type="text"
-              class="form-control dark-card"
+              type="file"
+              class="form-control-file"
               id="profilePicture"
-              v-model="this.currentUser.profilePicture"
-              placeholder="Profile picture URL"
-              :class="{ 'is-invalid': errors.profilePicture }"
+              @change="onFileChange"
+              accept="image/*"
             />
             <div class="invalid-feedback" v-if="errors.profilePicture">
               {{ errors.profilePicture }}
             </div>
           </div>
           <br />
+          <button type="submit" class="btn btn-primary" :disabled="processing">
+            <span v-if="processing">
+              <i class="fas fa-spinner fa-spin"></i> Uploading...
+            </span>
+            <span v-else>Upload</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- General Settings Form -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">General</h5>
+        <form @submit.prevent="saveGeneralSettings">
           <div class="form-group">
             <label for="handle">Handle</label>
             <input
@@ -125,11 +140,11 @@ export default {
   data() {
     return {
       currentUser: {
-        profilePicture: "",
         handle: "",
         username: "",
         email: "",
         bio: "",
+        selectedFile: null,
       },
       errors: {},
       privacySetting: "public",
@@ -167,7 +182,6 @@ export default {
 
         // Send a PUT request to update user's general settings
         const response = await axios.put("/v1/auth/update-profile", {
-          profilePicture: this.currentUser.profilePicture,
           handle: this.currentUser.handle,
           username: this.currentUser.username,
           email: this.currentUser.email,
@@ -202,6 +216,42 @@ export default {
       } catch (error) {
         console.error("Error saving privacy settings:", error);
         // Handle the error, e.g., show an error message to the user
+      }
+    },
+    onFileChange(e) {
+      this.selectedFile = e.target.files[0]; // Assign selected file to the data property
+    },
+    async uploadProfilePicture() {
+      if (!this.selectedFile) return; // Exit if no file is selected
+
+      this.processing = true;
+      this.errors = {};
+
+      let formData = new FormData();
+      formData.append("profilePicture", this.selectedFile);
+
+      try {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${this.$store.state.token}`;
+
+        const response = await axios.post(
+          "/v1/auth/upload-profile-picture",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+
+        console.log("Profile Picture updated:", response.data);
+        this.processing = false;
+
+        // Optionally, refresh user info to update the displayed profile picture
+        this.fetchUserInfo();
+      } catch (error) {
+        console.error("Error uploading profile picture:", error);
+        this.errors.profilePicture = "Failed to upload the profile picture"; // Or assign the error message from the server
+        this.processing = false;
       }
     },
   },
