@@ -11,6 +11,7 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const { getVersion } = require("./utils/general");
 const path = require("path");
+const fileUpload = require("express-fileupload");
 
 // Scripts
 const { createAdminUser } = require("./scripts/createAdminUser"); // Create the admin user
@@ -120,6 +121,15 @@ app.use((req, res, next) => {
 
   next();
 });
+
+// Express File Upload middleware
+app.use(
+  fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 },
+    // useTempFiles: true,
+    // tempFileDir: "/tmp/",
+  })
+);
 
 // Disable X-Powered-By header
 app.use(helmet.hidePoweredBy());

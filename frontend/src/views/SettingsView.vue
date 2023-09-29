@@ -235,7 +235,7 @@ export default {
           "Authorization"
         ] = `Bearer ${this.$store.state.token}`;
 
-        const response = await axios.post(
+        const response = await axios.put(
           "/v1/auth/upload-profile-picture",
           formData,
           {

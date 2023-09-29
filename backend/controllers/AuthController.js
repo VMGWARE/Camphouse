@@ -247,6 +247,7 @@ const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../utils/general");
 const router = express.Router();
 const crypto = require("crypto");
+const Minio = require("minio");
 
 // Load environment variables
 require("dotenv").config();
@@ -894,6 +895,187 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
       status: "error",
       code: 500,
       message: "Error updating profile",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/auth/upload-profile-picture:
+ *   put:
+ *     tags:
+ *       - Auth
+ *     summary: Upload user profile picture
+ *     description: |
+ *       Uploads a new profile picture to the MinIO bucket and updates the user’s profile with the new picture URL.
+ *       Also, deletes the old profile picture from the MinIO bucket if it exists.
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               profilePicture:
+ *                 type: file
+ *                 description: The file to upload
+ *     responses:
+ *       200:
+ *         description: Profile picture updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Profile picture updated successfully
+ *                 data:
+ *                   $ref: '#/components/schemas/User'
+ *       400:
+ *         description: Bad Request, e.g. no file provided.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: File is required
+ *                 data:
+ *                   type: null
+ *       500:
+ *         description: Server error while uploading profile picture.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while uploading the profile picture
+ *                 data:
+ *                   type: null
+ */
+router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
+  try {
+    // Check if Minio credentials are provided
+    if (
+      !process.env.MINIO_ENDPOINT ||
+      !process.env.MINIO_ACCESS_KEY ||
+      !process.env.MINIO_SECRET_KEY ||
+      !process.env.MINIO_BUCKET
+    ) {
+      return res.status(500).json({
+        status: "error",
+        code: 500,
+        message: "This server is not configured to upload profile pictures",
+        data: null,
+      });
+    }
+
+    // Create a new Minio client
+    const minioClient = new Minio.Client({
+      endPoint: process.env.MINIO_ENDPOINT,
+      useSSL: false, // Change to true if your Minio server uses SSL
+      accessKey: process.env.MINIO_ACCESS_KEY,
+      secretKey: process.env.MINIO_SECRET_KEY,
+    });
+
+    // Check if a file is provided
+    const file = req.files.profilePicture;
+
+    // If no file is provided, return an error
+    if (!file) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "File is required",
+        data: null,
+      });
+    }
+
+    // Make sure the file is an image
+    if (!file.mimetype.startsWith("image")) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "File must be an image",
+        data: null,
+      });
+    }
+
+    // Define the bucket and object name
+    const bucketName = process.env.MINIO_BUCKET;
+    const objectName = `profile-pictures/${req.user._id}-${Date.now()}.${
+      file.mimetype.split("/")[1]
+    }`;
+
+    // Upload the file to Minio
+    await minioClient.putObject(
+      bucketName,
+      objectName,
+      file.data,
+      function (err, etag) {
+        if (err) throw err;
+      }
+    );
+
+    // Find the user
+    const user = await User.findById(req.user._id);
+
+    // Delete the old profile picture from Minio if it exists
+    if (user.profilePicture) {
+      const urlParts = user.profilePicture.split("/");
+      const oldObjectName = `profile-pictures/` + urlParts[urlParts.length - 1];
+      console.log(`bucketName: ${bucketName} | objectName: ${oldObjectName}`);
+      await minioClient.removeObject(bucketName, oldObjectName, function (err) {
+        if (err) throw err;
+      });
+    }
+
+    // Update the user's profile with the new picture URL
+    const newProfilePictureURL = `https://${process.env.MINIO_ENDPOINT}/${bucketName}/${objectName}`;
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { profilePicture: newProfilePictureURL },
+      { new: true }
+    );
+
+    // Return the updated user
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Profile picture updated successfully",
+      data: updatedUser,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "An error occurred while uploading the profile picture",
       data: null,
     });
   }
