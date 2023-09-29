@@ -6,6 +6,19 @@
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Profile Picture</h5>
+
+        <!-- Display current profile picture -->
+        <div v-if="currentUser && currentUser.profilePicture">
+          <img
+            :src="currentUser.profilePicture"
+            alt="Profile Picture"
+            class="img-thumbnail"
+            width="80"
+            height="80"
+          />
+        </div>
+
+        <!-- Form to upload new profile picture -->
         <form @submit.prevent="uploadProfilePicture">
           <div class="form-group">
             <label for="profilePicture">Upload Profile Picture</label>
