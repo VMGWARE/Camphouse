@@ -12,8 +12,8 @@ class NotificationService {
    * @param {string} referenceId - The ID of the referenced model (either Post or Message).
    * @param {string} onModel - The name of the model to which the notification is related, should be one of ["Post", "Message", "User"].
    * @param {string} message - The message content of the notification.
-   * @returns {Promise<Object>} - A promise that resolves to the created notification object.
-   * @throws {Error} - Throws an error if validation fails or unable to save the notification.
+   * @returns {Promise<Object>} A promise that resolves to the created notification object.
+   * @throws {Error} Throws an error if validation fails or unable to save the notification.
    */
   static async create(type, sender, receiver, referenceId, onModel, message) {
     try {
