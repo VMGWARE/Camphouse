@@ -184,6 +184,28 @@ export default {
         });
       });
   },
+  // When the route changes, load the new user's profile
+  watch: {
+    $route(to) {
+      console.log("Loading profile for @" + to.params.handle);
+
+      // If the current user is the same as the user in the route, to avoid empty profile
+      if (this.$store.state.user.handle === to.params.handle) {
+        this.profile = this.$store.state.user;
+      }
+
+      // Load the user's profile
+      this.getUser(to.params.handle)
+        .then(() => {
+          console.log("Profile loaded.");
+        })
+        .catch(() => {
+          this.$router.push({
+            name: "not-found",
+          });
+        });
+    },
+  },
 };
 </script>
 

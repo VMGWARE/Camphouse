@@ -139,5 +139,22 @@ export default {
     // Remove event listener for the scroll event
     this.$refs.scrollableFeed.removeEventListener("scroll", this.handleScroll);
   },
+  // If the userid or search props change, reset the posts array and pagination
+  watch: {
+    userid() {
+      this.posts = [];
+      this.page = 0;
+      this.maxPages = null;
+      this.reachedBottom = false;
+      this.getPosts();
+    },
+    search() {
+      this.posts = [];
+      this.page = 0;
+      this.maxPages = null;
+      this.reachedBottom = false;
+      this.getPosts();
+    },
+  },
 };
 </script>
