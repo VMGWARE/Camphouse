@@ -683,9 +683,6 @@ router.get("/profile", authenticateJWT, async (req, res) => {
  *           schema:
  *             type: object
  *             properties:
- *               profilePicture:
- *                 type: string
- *                 description: Updated profile picture URL
  *               handle:
  *                 type: string
  *                 description: Updated unique handle
@@ -780,9 +777,6 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
   if (req.body.email && req.body.email.length === 0) {
     errors.email = "Email field cannot be empty";
   }
-  if (req.body.profilePicture && req.body.profilePicture.length === 0) {
-    errors.profilePicture = "Profile picture field cannot be empty";
-  }
   if (req.body.handle && req.body.handle.length === 0) {
     errors.handle = "Handle field cannot be empty";
   }
@@ -791,9 +785,6 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
   }
 
   // Handle the ones that are not empty
-  if (req.body.profilePicture && req.body.profilePicture.length > 0) {
-    updates.profilePicture = req.body.profilePicture;
-  }
   if (req.body.handle && req.body.handle.length > 0) {
     // Check if handle is valid
     if (req.body.handle.length < 3) {
