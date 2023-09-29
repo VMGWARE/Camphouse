@@ -933,7 +933,7 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
  *                 data:
  *                   $ref: '#/components/schemas/User'
  *       400:
- *         description: Bad Request, e.g. no file provided.
+ *         description: Bad Request, e.g. no file provided or file must be an image or smaller than 5MB.
  *         content:
  *           application/json:
  *             schema:
@@ -950,6 +950,45 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
  *                   example: File is required
  *                 data:
  *                   type: null
+ *
+ *       401:
+ *         description: Unauthorized, e.g. invalid or missing token.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 message:
+ *                   type: string
+ *                   example: Unauthorized
+ *                 data:
+ *                   type: null
+ *
+ *       422:
+ *         description: Unprocessable Entity, e.g. invalid file format.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 422
+ *                 message:
+ *                   type: string
+ *                   example: Invalid file format
+ *                 data:
+ *                   type: null
+ *
  *       500:
  *         description: Server error while uploading profile picture.
  *         content:
@@ -1013,6 +1052,16 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
         status: "error",
         code: 400,
         message: "File must be an image",
+        data: null,
+      });
+    }
+
+    // Max file size is 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "File must be smaller than 5MB",
         data: null,
       });
     }
