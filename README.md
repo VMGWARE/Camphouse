@@ -110,6 +110,8 @@ Start the frontend server:
 
 3. Visit the site at [http://127.0.0.1:8000](http://127.0.0.1:8000)
 
+A Quick warning. If you have LOCAL_STORAGE set to true. Make sure to assign a volume to the `/usr/local/api/public/storage` path. Otherwise, you will lose all your images when you restart the container.
+
 ## Roadmap
 
 See the [open issues](https://github.com/VMGWARE/Camphouse/issues) for a list of proposed features (and known issues).
