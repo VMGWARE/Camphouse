@@ -65,6 +65,16 @@ Follow the steps below for installation and setup:
    ADMIN_EMAIL=<admin_email>       # The email address for the initial admin account.
    ADMIN_PASSWORD=<admin_password> # The password for the initial admin account.
    ADMIN_USERNAME=<admin_username> # The username for the initial admin account.
+
+   # Sentry
+   SENTRY_DSN=<sentry_dsn>         # The DSN for your Sentry project.
+
+   # Storage
+   MINIO_ACCESS_KEY=<minio_key>    # The access key for your MinIO server.
+   MINIO_SECRET_KEY=<minio_secret> # The secret key for your MinIO server.
+   MINIO_BUCKET=<minio_bucket>     # The name of the bucket to store images in.
+   MINIO_ENDPOINT=<minio_endpoint> # The endpoint for your MinIO server.
+   LOCAL_STORAGE=<true/false>      # Whether to store images locally. If MinIO is configured, this will be ignored.
    ```
 
    Replace the placeholder text (e.g., `<your_secret>`, `<db_username>`) with your actual information. Keep these details confidential.
