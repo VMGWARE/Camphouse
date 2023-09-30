@@ -30,7 +30,7 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "https://app.camphouse.net/images/profiles/ProfilePicture.png",
+      default: "https://camphouse.vmgware.dev/images/profiles/ProfilePicture.png",
     },
     bio: {
       type: String,
