@@ -93,11 +93,14 @@
   <div id="main" class="clear-top">
     <router-view />
   </div>
+  <ModalsContainer />
 </template>
 
 <script>
 import jwtDecode from "jwt-decode";
 import axios from "axios";
+import { ModalsContainer } from "vue-final-modal";
+
 export default {
   data() {
     return {
@@ -190,6 +193,9 @@ export default {
     "$store.state.token": function () {
       this.check_token();
     },
+  },
+  components: {
+    ModalsContainer,
   },
 };
 </script>

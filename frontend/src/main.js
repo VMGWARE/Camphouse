@@ -15,6 +15,12 @@ import "bootstrap";
 import Toast from "vue-toastification";
 import "vue-toastification/dist/index.css";
 
+// Vue Modal
+import { createVfm } from "vue-final-modal";
+const vfm = createVfm();
+import "vue-final-modal/style.css";
+
+// Vue Toastification Options
 const ToastOptions = {
   position: "bottom-right",
   timeout: 3000,
@@ -37,4 +43,5 @@ const app = createApp({
 app.use(store);
 app.use(router);
 app.use(Toast, ToastOptions);
+app.use(vfm);
 app.mount("#app");
