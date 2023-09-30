@@ -248,6 +248,8 @@ const { validateEmail } = require("../utils/general");
 const router = express.Router();
 const crypto = require("crypto");
 const Minio = require("minio");
+const fs = require("fs");
+const path = require("path");
 
 // Load environment variables
 require("dotenv").config();
@@ -1017,98 +1019,191 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
       !process.env.MINIO_SECRET_KEY ||
       !process.env.MINIO_BUCKET
     ) {
-      return res.status(500).json({
-        status: "error",
-        code: 500,
-        message: "This server is not configured to upload profile pictures",
-        data: null,
-      });
-    }
+      // Check if LOCAL_STORAGE is true
+      if (process.env.LOCAL_STORAGE === "true") {
+        const file = req.files.profilePicture;
 
-    // Create a new Minio client
-    const minioClient = new Minio.Client({
-      endPoint: process.env.MINIO_ENDPOINT,
-      useSSL: false, // Change to true if your Minio server uses SSL
-      accessKey: process.env.MINIO_ACCESS_KEY,
-      secretKey: process.env.MINIO_SECRET_KEY,
-    });
+        // If no file is provided, return an error
+        if (!file) {
+          return res.status(400).json({
+            status: "error",
+            code: 400,
+            message: "File is required",
+            data: null,
+          });
+        }
 
-    // Check if a file is provided
-    const file = req.files.profilePicture;
+        // Make sure the file is an image
+        if (!file.mimetype.startsWith("image")) {
+          return res.status(400).json({
+            status: "error",
+            code: 400,
+            message: "File must be an image",
+            data: null,
+          });
+        }
 
-    // If no file is provided, return an error
-    if (!file) {
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "File is required",
-        data: null,
-      });
-    }
+        // Max file size is 5MB
+        if (file.size > 5 * 1024 * 1024) {
+          return res.status(400).json({
+            status: "error",
+            code: 400,
+            message: "File must be smaller than 5MB",
+            data: null,
+          });
+        }
 
-    // Make sure the file is an image
-    if (!file.mimetype.startsWith("image")) {
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "File must be an image",
-        data: null,
-      });
-    }
+        const currentPath = path.dirname(__filename);
+        const profilePicturesPath = path.join(
+          currentPath,
+          "../public/storage/profile-pictures"
+        );
 
-    // Max file size is 5MB
-    if (file.size > 5 * 1024 * 1024) {
-      return res.status(400).json({
-        status: "error",
-        code: 400,
-        message: "File must be smaller than 5MB",
-        data: null,
-      });
-    }
+        // Create the storage directory if it does not exist
+        if (!fs.existsSync(profilePicturesPath)) {
+          fs.mkdirSync(profilePicturesPath, {
+            recursive: true,
+          });
+        }
 
-    // Define the bucket and object name
-    const bucketName = process.env.MINIO_BUCKET;
-    const objectName = `profile-pictures/${req.user._id}-${Date.now()}.${
-      file.mimetype.split("/")[1]
-    }`;
+        // If the user already has a profile picture, delete it
+        const userOldProfilePicture = await User.findById(req.user._id).select(
+          "profilePicture"
+        );
 
-    // Upload the file to Minio
-    await minioClient.putObject(
-      bucketName,
-      objectName,
-      file.data,
-      function (err, etag) {
-        if (err) throw err;
+        // Delete the old profile picture from local storage if it exists
+        if (userOldProfilePicture.profilePicture) {
+          const urlParts = userOldProfilePicture.profilePicture.split("/");
+          const oldProfilePicturePath =
+            profilePicturesPath + "/" + urlParts[urlParts.length - 1];
+          fs.unlinkSync(oldProfilePicturePath);
+        }
+
+        // Define local storage path
+        const storagePath = path.join(
+          profilePicturesPath,
+          `${req.user._id}-${Date.now()}.${file.mimetype.split("/")[1]}`
+        );
+
+        // Write the file to local storage
+        fs.writeFileSync(storagePath, file.data);
+
+        // If the server is running in production, add the /api prefix to the URL
+        const isProduction =
+          process.env.NODE_ENV === "production" ? "/api" : "";
+
+        // Update user profile picture URL and return the updated user as done in the original code
+        const newProfilePictureURL = `http://${req.get("host")}${isProduction}/storage/profile-pictures/${path.basename(storagePath)}`;
+        const updatedUser = await User.findByIdAndUpdate(
+          req.user._id,
+          { profilePicture: newProfilePictureURL },
+          { new: true }
+        );
+        return res.json({
+          status: "success",
+          code: 200,
+          message: "Profile picture updated successfully",
+          data: updatedUser,
+        });
+      } else {
+        return res.status(500).json({
+          status: "error",
+          code: 500,
+          message: "This server is not configured to upload profile pictures",
+          data: null,
+        });
       }
-    );
+    } else {
+      // Create a new Minio client
+      const minioClient = new Minio.Client({
+        endPoint: process.env.MINIO_ENDPOINT,
+        useSSL: false, // Change to true if your Minio server uses SSL
+        accessKey: process.env.MINIO_ACCESS_KEY,
+        secretKey: process.env.MINIO_SECRET_KEY,
+      });
 
-    // Find the user
-    const user = await User.findById(req.user._id);
+      // Check if a file is provided
+      const file = req.files.profilePicture;
 
-    // Delete the old profile picture from Minio if it exists
-    if (user.profilePicture) {
-      const urlParts = user.profilePicture.split("/");
-      const oldObjectName = `profile-pictures/` + urlParts[urlParts.length - 1];
-      await minioClient.removeObject(bucketName, oldObjectName, function (err) {
-        if (err) throw err;
+      // If no file is provided, return an error
+      if (!file) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "File is required",
+          data: null,
+        });
+      }
+
+      // Make sure the file is an image
+      if (!file.mimetype.startsWith("image")) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "File must be an image",
+          data: null,
+        });
+      }
+
+      // Max file size is 5MB
+      if (file.size > 5 * 1024 * 1024) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "File must be smaller than 5MB",
+          data: null,
+        });
+      }
+
+      // Define the bucket and object name
+      const bucketName = process.env.MINIO_BUCKET;
+      const objectName = `profile-pictures/${req.user._id}-${Date.now()}.${
+        file.mimetype.split("/")[1]
+      }`;
+
+      // Upload the file to Minio
+      await minioClient.putObject(
+        bucketName,
+        objectName,
+        file.data,
+        function (err, etag) {
+          if (err) throw err;
+        }
+      );
+
+      // Find the user
+      const user = await User.findById(req.user._id);
+
+      // Delete the old profile picture from Minio if it exists
+      if (user.profilePicture) {
+        const urlParts = user.profilePicture.split("/");
+        const oldObjectName =
+          `profile-pictures/` + urlParts[urlParts.length - 1];
+        await minioClient.removeObject(
+          bucketName,
+          oldObjectName,
+          function (err) {
+            if (err) throw err;
+          }
+        );
+      }
+
+      // Update the user's profile with the new picture URL
+      const newProfilePictureURL = `https://${process.env.MINIO_ENDPOINT}/${bucketName}/${objectName}`;
+      const updatedUser = await User.findByIdAndUpdate(
+        req.user._id,
+        { profilePicture: newProfilePictureURL },
+        { new: true }
+      );
+
+      // Return the updated user
+      res.json({
+        status: "success",
+        code: 200,
+        message: "Profile picture updated successfully",
+        data: updatedUser,
       });
     }
-
-    // Update the user's profile with the new picture URL
-    const newProfilePictureURL = `https://${process.env.MINIO_ENDPOINT}/${bucketName}/${objectName}`;
-    const updatedUser = await User.findByIdAndUpdate(
-      req.user._id,
-      { profilePicture: newProfilePictureURL },
-      { new: true }
-    );
-
-    // Return the updated user
-    res.json({
-      status: "success",
-      code: 200,
-      message: "Profile picture updated successfully",
-      data: updatedUser,
-    });
   } catch (err) {
     console.error(err);
     res.status(500).json({
