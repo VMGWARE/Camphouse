@@ -342,7 +342,6 @@ export default {
           },
           onError(error) {
             console.error("Error submitting report:", error);
-            close();
           },
         },
       });
