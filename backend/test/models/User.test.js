@@ -60,7 +60,7 @@ describe("User model tests", function () {
 
     assert.equal(
       savedUser.profilePicture,
-      "https://app.www.camphouse.net/images/profiles/ProfilePicture.png",
+      "https://camphouse.vmgware.dev/images/profiles/ProfilePicture.png",
       "Default profile picture should be set"
     );
     assert.equal(
