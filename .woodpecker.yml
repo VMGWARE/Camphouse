@@ -28,11 +28,13 @@ pipeline:
   - name: Test Backend
     image: *node_image
     environment:
+      SESSION_SECRET: 64ee54e91d5ea65c2fff46f7bf0d6b2c
       DB_NAME: camphouse
       DB_HOST: mongodb
       DB_PORT: "27017"
       DB_USER: admin
       DB_PASS: password
+      JWT_SECRET: bff572ca273261b7bd0cb4a2f201913e
     commands:
       - cd backend
       - npm test
