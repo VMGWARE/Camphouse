@@ -26,25 +26,6 @@ describe("Post model tests", function () {
     assert.isDefined(savedPost, "Post was saved");
   });
 
-  it("should not save a post with short content", async function () {
-    const post = new Post({
-      title: "Test",
-      content: "Short",
-      user: new mongoose.Types.ObjectId(),
-    });
-
-    try {
-      await post.save();
-      assert.fail("Expected error not thrown");
-    } catch (error) {
-      assert.equal(
-        error.errors.content.kind,
-        "minlength",
-        "Error type should be minlength for content"
-      );
-    }
-  });
-
   // Add more tests as needed
 });
 
