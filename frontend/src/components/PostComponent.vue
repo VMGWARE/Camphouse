@@ -41,6 +41,13 @@
             <a
               class="dropdown-item fake-link custom-dropdown-item text-dark"
               href="#"
+              @click="
+                openModalWithInfo(
+                  `Reporting ${thisPost.user.handle}'s post '${thisPost.title}'.`,
+                  thisPost._id,
+                  'Post'
+                )
+              "
             >
               <i class="fas fa-flag"></i>
               Report Post</a
@@ -131,7 +138,6 @@
           Login to Comment
         </button>
       </div>
-      <!-- TODO: Add way to post comment -->
     </div>
   </div>
 </template>
@@ -142,6 +148,8 @@ import { useToast } from "vue-toastification";
 import CommentComponent from "@/components/Post/CommentComponent.vue";
 import axios from "axios";
 import { mapState } from "vuex";
+import { useModal } from "vue-final-modal";
+import ModalReport from "@/components/Modal/ModalReport.vue";
 
 export default {
   name: "PostComponent",
@@ -312,6 +320,31 @@ export default {
   mounted() {
     // Check if the post is liked
     this.isLiked = this.thisPost.isLiked;
+  },
+  setup() {
+    const openModalWithInfo = (info, id, type) => {
+      console.log("Opening modal with info: " + info);
+
+      // Assign the modal instance to a variable
+      const modalInstance = useModal({
+        component: ModalReport,
+        attrs: {
+          id,
+          info,
+          type,
+          onConfirm() {
+            close();
+          },
+        },
+      });
+
+      // Open the modal
+      modalInstance.open();
+    };
+
+    return {
+      openModalWithInfo,
+    };
   },
 };
 </script>
