@@ -1,5 +1,5 @@
 variables:
-  - &node_image "node:18-alpine"
+  - &node_image "node:18"
   - &buildx_image "woodpeckerci/plugin-docker-buildx"
   - &platforms "linux/amd64"
 
