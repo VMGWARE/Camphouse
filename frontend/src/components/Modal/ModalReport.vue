@@ -6,12 +6,24 @@ import axios from "axios";
 const props = defineProps(["info", "id", "type"]);
 
 const emit = defineEmits(["cancel", "submit", "error"]);
+
+// Set variables
 const reportReason = ref("");
 const reportError = ref("");
 const reportSuccess = ref("");
+var reportProcessing = ref(false);
 
 const submitReport = async () => {
   try {
+    reportProcessing = true;
+
+    // Check if report reason is empty
+    if (reportReason.value === "") {
+      reportError.value = "Please enter a reason for reporting.";
+      reportProcessing = false;
+      return;
+    }
+
     // Clear error and success messages
     reportError.value = "";
     reportSuccess.value = "";
@@ -33,6 +45,7 @@ const submitReport = async () => {
     await new Promise((resolve) => setTimeout(resolve, 3000));
 
     // Emit submit event
+    reportProcessing = false;
     emit("submit", {
       id: props.id,
       info: props.info,
@@ -42,6 +55,7 @@ const submitReport = async () => {
     console.error("Error submitting report:", error);
     emit("error", error);
     reportError.value = error.response.data.message;
+    reportProcessing = false;
   }
 };
 </script>
@@ -82,7 +96,12 @@ const submitReport = async () => {
         <button class="btn btn-primary me-2" @click="emit('cancel')">
           <i class="fas fa-times"></i>
         </button>
-        <button class="btn btn-primary" @click="submitReport">
+        <button
+          class="btn btn-primary"
+          @click="submitReport"
+          :disabled="reportProcessing"
+        >
+          <i v-if="reportProcessing" class="fas fa-spinner fa-spin"></i>
           <i class="fas fa-check"></i>
         </button>
       </div>
