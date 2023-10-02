@@ -1,11 +1,34 @@
 <script setup>
 import { VueFinalModal } from "vue-final-modal";
 import { defineProps, defineEmits, ref } from "vue";
+import axios from "axios";
 
 const props = defineProps(["info", "id", "type"]);
 
-const emit = defineEmits(["cancel", "submit"]);
+const emit = defineEmits(["cancel", "submit", "error"]);
 const reportReason = ref("");
+
+const submitReport = async () => {
+  try {
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${localStorage.getItem("token")}`;
+    await axios.post("/v1/reports", {
+      type: props.type,
+      contentId: props.id,
+      reason: reportReason.value,
+    });
+    emit("submit", {
+      id: props.id,
+      info: props.info,
+      reportReason: reportReason.value,
+    });
+  } catch (error) {
+    console.error("Error submitting report:", error);
+    // Optionally, you can emit an event here to inform the parent component of the error.
+    emit("error", error);
+  }
+};
 </script>
 
 <template>
@@ -32,12 +55,7 @@ const reportReason = ref("");
         <button class="btn btn-primary me-2" @click="emit('cancel')">
           <i class="fas fa-times"></i>
         </button>
-        <button
-          class="btn btn-primary"
-          @click="
-            emit('submit', { id, info, reportReason: reportReason.value })
-          "
-        >
+        <button class="btn btn-primary" @click="submitReport">
           <i class="fas fa-check"></i>
         </button>
       </div>
