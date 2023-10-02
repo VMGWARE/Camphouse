@@ -326,20 +326,29 @@ export default {
       console.log("Opening modal with info: " + info);
 
       // Assign the modal instance to a variable
-      const modalInstance = useModal({
+      const { open, close } = useModal({
         component: ModalReport,
         attrs: {
           id,
           info,
           type,
-          onConfirm() {
+          onSubmit(resp) {
+            console.log("Submitted report:", resp);
+            close();
+          },
+          onCancel() {
+            console.log("Cancelled report");
+            close();
+          },
+          onError(error) {
+            console.error("Error submitting report:", error);
             close();
           },
         },
       });
 
       // Open the modal
-      modalInstance.open();
+      open();
     };
 
     return {
