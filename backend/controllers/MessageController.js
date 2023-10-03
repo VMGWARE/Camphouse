@@ -115,26 +115,42 @@ router.get("/connections", authenticateJWT, async (req, res) => {
       ),
     ];
 
-    // Get unique chat partners details
-    const uniqueChatPartners = uniqueChatPartnersIds
+    const promises = uniqueChatPartnersIds
       .filter((id) => id !== userId.toString()) // Remove the current user's ID from the list
-      .map((id) => {
+      .map(async (id) => {
         const foundMessage = chatPartners.find(
           (msg) =>
             msg.sender._id.toString() === id ||
             msg.recipient._id.toString() === id
         );
-        return foundMessage.sender._id.toString() === id
-          ? foundMessage.sender
-          : foundMessage.recipient;
+
+        const partner =
+          foundMessage.sender._id.toString() === id
+            ? foundMessage.sender
+            : foundMessage.recipient;
+
+        // Find the number of unread messages from this partner to the user
+        const unreadCount = await Message.countDocuments({
+          sender: id,
+          recipient: userId,
+          isRead: false,
+        });
+
+        return {
+          ...partner,
+          unreadCount,
+        };
       });
 
-    // Return the list of chat partners
+    // Resolve all the promises
+    const connectionsWithUnreadCount = await Promise.all(promises);
+
+    // Return the list of chat partners with unread message count
     res.json({
       status: "success",
       code: 200,
       message: "Connections retrieved successfully.",
-      data: uniqueChatPartners,
+      data: connectionsWithUnreadCount,
     });
   } catch (error) {
     res.status(500).json({

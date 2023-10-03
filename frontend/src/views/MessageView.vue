@@ -20,13 +20,20 @@
           >
             {{ user.username }}
             <div class="small-text">@{{ user.handle }}</div>
+            <!-- Circle with number of unread messages in it -->
+            <span
+              v-if="user.unreadCount > 0"
+              class="badge badge-primary unread-count"
+              >{{ user.unreadCount }}</span
+            >
           </a>
           <span v-if="connections.length === 0" class="text-muted">
             <i class="fas fa-spinner fa-spin"></i>
-            No connections yet.</span
-          >
+            No connections yet.
+          </span>
         </div>
       </div>
+
       <div class="col-md-9">
         <!-- Messages container -->
         <div class="messages-card-container card dark-card">
@@ -374,6 +381,30 @@
   color: #dcddde;
   cursor: not-allowed;
 }
+
+.unread-count {
+  font-size: 0.8em;
+  background-color: #7289da;
+  color: #ffffff;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.unread-count {
+  position: absolute; /* Take it out of the flow */
+  right: 10px; /* Move it to the right side */
+  top: 50%; /* Center it vertically */
+  transform: translateY(-50%); /* Adjust positioning */
+  z-index: 1; /* Ensure it's above other elements */
+  background-color: #7289da;
+  color: #ffffff;
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.user-item {
+  position: relative; /* Makes it the reference for absolutely positioned children */
+}
 </style>
 
 <script>
@@ -499,6 +530,7 @@ export default {
           }
           return message;
         });
+        this.selectedConnection.unreadCount--;
         console.log("Marked message as read:", messageId);
         // After marking the message as read, fetch the messages again to update the list
         this.fetchMessages(this.selectedConnection._id);
