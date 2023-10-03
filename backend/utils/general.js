@@ -1,6 +1,5 @@
 const crypto = require("crypto");
 const fs = require("fs");
-var pjson = require("../package.json");
 
 /**
  * Check if the given email is valid or not.
@@ -44,15 +43,10 @@ function getVersion() {
   } catch {
     const { execSync } = require("child_process");
     try {
-      // Check if a .git directory exists
-      if (!fs.existsSync(".git")) {
-        return pjson.version;
-      }
-
       version = execSync("git describe --always --tags --dirty").toString();
       version = version.replace("v", "").trim();
     } catch {
-      return pjson.version;
+      return process.env.npm_package_version;
     }
     fs.writeFileSync("version", version);
     return version;
