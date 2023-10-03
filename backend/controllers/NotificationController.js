@@ -1,7 +1,5 @@
 const express = require("express");
 const Notification = require("../models/Notification");
-const User = require("../models/User");
-const Post = require("../models/Post");
 const router = express.Router();
 
 // Middleware

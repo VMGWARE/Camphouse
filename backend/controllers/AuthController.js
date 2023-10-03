@@ -1093,7 +1093,11 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
           process.env.NODE_ENV === "production" ? "/api" : "";
 
         // Update user profile picture URL and return the updated user as done in the original code
-        const newProfilePictureURL = `http://${req.get("host")}${isProduction}/storage/profile-pictures/${path.basename(storagePath)}`;
+        const newProfilePictureURL = `http://${req.get(
+          "host"
+        )}${isProduction}/storage/profile-pictures/${path.basename(
+          storagePath
+        )}`;
         const updatedUser = await User.findByIdAndUpdate(
           req.user._id,
           { profilePicture: newProfilePictureURL },
@@ -1166,7 +1170,7 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
         bucketName,
         objectName,
         file.data,
-        function (err, etag) {
+        function (err) {
           if (err) throw err;
         }
       );

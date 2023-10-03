@@ -5,5 +5,3 @@ const chalk = require("chalk");
 const secret = crypto.randomBytes(16).toString("hex");
 
 console.log(chalk.green(`✅ Your session secret is: ${secret}`));
-
-return;

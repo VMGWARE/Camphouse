@@ -1,6 +1,4 @@
 const mongoose = require("mongoose");
-const Comment = require("./Comment");
-const Like = require("./Like");
 
 /**
  * Post Schema
