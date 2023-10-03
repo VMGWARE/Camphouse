@@ -1,26 +1,32 @@
 module.exports = {
-    "env": {
-        "es2021": true,
-        "node": true
+  env: {
+    es2021: true,
+    node: true,
+    mocha: true,
+  },
+  extends: "eslint:recommended",
+  plugins: ["chai-friendly"],
+  overrides: [
+    {
+      env: {
+        node: true,
+      },
+      files: [".eslintrc.{js,cjs}"],
+      parserOptions: {
+        sourceType: "script",
+      },
     },
-    "extends": "eslint:recommended",
-    "overrides": [
-        {
-            "env": {
-                "node": true
-            },
-            "files": [
-                ".eslintrc.{js,cjs}"
-            ],
-            "parserOptions": {
-                "sourceType": "script"
-            }
-        }
-    ],
-    "parserOptions": {
-        "ecmaVersion": "latest",
-        "sourceType": "module"
+    {
+      files: "*.test.js",
+      rules: {
+        "no-unused-expressions": "off",
+        "chai-friendly/no-unused-expressions": "error",
+      },
     },
-    "rules": {
-    }
-}
+  ],
+  parserOptions: {
+    ecmaVersion: "latest",
+    sourceType: "commonjs",
+  },
+  rules: {},
+};

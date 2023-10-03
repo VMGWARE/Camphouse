@@ -38,13 +38,16 @@ const ALGORITHM = {
 exports.ALGORITHM = ALGORITHM;
 
 const getIV = () => crypto.randomBytes(ALGORITHM.IV_BYTE_LEN);
-exports.getRandomKey = getRandomKey = () =>
-  crypto.randomBytes(ALGORITHM.KEY_BYTE_LEN);
+exports.getRandomKey = function getRandomKey() {
+  return crypto.randomBytes(ALGORITHM.KEY_BYTE_LEN);
+};
 
 /**
  * To prevent rainbow table attacks
  * */
-exports.getSalt = getSalt = () => crypto.randomBytes(ALGORITHM.SALT_BYTE_LEN);
+exports.getSalt = function getSalt() {
+  return crypto.randomBytes(ALGORITHM.SALT_BYTE_LEN);
+};
 
 /**
  *
@@ -55,7 +58,7 @@ exports.getSalt = getSalt = () => crypto.randomBytes(ALGORITHM.SALT_BYTE_LEN);
  * the Buffer after the key generation to prevent the password
  * from lingering in the memory
  */
-exports.getKeyFromPassword = getKeyFromPassword = (password, salt) => {
+exports.getKeyFromPassword = function getKeyFromPassword(password, salt) {
   return crypto.scryptSync(password, salt, ALGORITHM.KEY_BYTE_LEN);
 };
 
@@ -68,7 +71,7 @@ exports.getKeyFromPassword = getKeyFromPassword = (password, salt) => {
  * the Buffer after the encryption to prevent the message text
  * and the key from lingering in the memory
  */
-exports.encrypt = encrypt = (messagetext, key) => {
+exports.encrypt = function encrypt(messagetext, key) {
   const iv = getIV();
   const cipher = crypto.createCipheriv(ALGORITHM.BLOCK_CIPHER, key, iv, {
     authTagLength: ALGORITHM.AUTH_TAG_BYTE_LEN,
@@ -87,7 +90,7 @@ exports.encrypt = encrypt = (messagetext, key) => {
  * the Buffer after the decryption to prevent the message text
  * and the key from lingering in the memory
  */
-exports.decrypt = decrypt = (ciphertext, key) => {
+exports.decrypt = function decrypt(ciphertext, key) {
   const authTag = ciphertext.slice(-16);
   const iv = ciphertext.slice(0, 12);
   const encryptedMessage = ciphertext.slice(12, -16);

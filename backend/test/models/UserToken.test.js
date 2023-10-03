@@ -58,7 +58,6 @@ describe("UserToken model tests", function () {
 
   it("Should delete a specific token for a user", async function () {
     const generatedToken1 = await UserToken.generate({ _id: mockUserId });
-    const generatedToken2 = await UserToken.generate({ _id: mockUserId });
     const userHashedToken = crypto
       .createHash("sha256")
       .update(generatedToken1)
