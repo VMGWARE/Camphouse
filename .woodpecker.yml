@@ -13,17 +13,24 @@ services:
       - 27017:27017
 
 pipeline:
-  - name: Install Dependencies
+  - name: Generate version file
+    image: alpine/git
+    commands:
+      - git describe --always --tags > version
+
+  - name: Install Backend Dependencies
     image: *node_image
     commands:
       - cd backend
       - npm install
       - cd ..
 
-  - name: Generate version file
-    image: alpine/git
+  - name: Install Frontend Dependencies
+    image: *node_image
     commands:
-      - git describe --always --tags > version
+      - cd frontend
+      - npm install
+      - cd ..
 
   - name: Test Backend
     image: *node_image
@@ -38,6 +45,27 @@ pipeline:
     commands:
       - cd backend
       - npm test
+      - cd ..
+
+  - name: Test Frontend
+    image: *node_image
+    commands:
+      - cd frontend
+      - npm run test:unit
+      - cd ..
+
+  # - name: Lint Backend
+  #   image: *node_image
+  #   commands:
+  #     - cd backend
+  #     - npm run lint
+  #     - cd ..
+
+  - name: Lint Frontend
+    image: *node_image
+    commands:
+      - cd frontend
+      - npm run lint
       - cd ..
 
   - name: Deploy to Docker Hub
