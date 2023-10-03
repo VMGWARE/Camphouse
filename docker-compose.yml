@@ -1,0 +1,42 @@
+# WARNING: This docker-compose.yml file is for development only. And should NEVER be used in production.
+
+version: "3.6"
+services:
+  app:
+    # TODO: Fix the build process grabbing the node_modules from the host machine.
+    # build: .
+    image: insidiousfiddler/camphouse
+    volumes:
+      - /usr/local/api/public/storage:/data/storage
+    ports:
+      - 8000:80
+    depends_on:
+      - db
+    environment:
+      # App
+      SESSION_SECRET: 588ceea9cb916cc9748d7f0ed553d6e4
+      # DB
+      DB_NAME: camphouse
+      DB_HOST: db
+      DB_PORT: 27017
+      DB_USER: root
+      DB_PASS: root
+      # JWT
+      JWT_SECRET: f3b911dec7043dd20a597abad61ab143
+      # Admin
+      ADMIN_HANDLE: admin
+      ADMIN_EMAIL: admin@admin.com
+      ADMIN_PASSWORD: 123456
+      ADMIN_USERNAME: admin
+      # Storage
+      LOCAL_STORAGE: false
+  db:
+    image: mongo:3.6
+    volumes:
+      - /usr/local/api/db:/data/db
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: camphouse
