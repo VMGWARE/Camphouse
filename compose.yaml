@@ -2,7 +2,6 @@
 
 services:
   app:
-    # TODO: Fix the build process grabbing the node_modules from the host machine.
     build: .
     # image: insidiousfiddler/camphouse
     volumes:

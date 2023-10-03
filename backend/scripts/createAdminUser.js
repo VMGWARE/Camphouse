@@ -16,6 +16,21 @@ const createAdminUser = async () => {
     return;
   }
 
+  // If the input is not provided, return
+  if (
+    !process.env.ADMIN_HANDLE ||
+    !process.env.ADMIN_EMAIL ||
+    !process.env.ADMIN_PASSWORD ||
+    !process.env.ADMIN_USERNAME
+  ) {
+    console.log(
+      chalk.yellow(
+        "Please provide the admin handle, email, password and username in the .env file if you want to create an admin user"
+      )
+    );
+    return;
+  }
+
   // Create the admin user
   const adminUser = new User({
     handle: process.env.ADMIN_HANDLE,
