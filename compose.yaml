@@ -1,11 +1,10 @@
 # WARNING: This docker-compose.yml file is for development only. And should NEVER be used in production.
 
-version: "3.6"
 services:
   app:
     # TODO: Fix the build process grabbing the node_modules from the host machine.
-    # build: .
-    image: insidiousfiddler/camphouse
+    build: .
+    # image: insidiousfiddler/camphouse
     volumes:
       - /usr/local/api/public/storage:/data/storage
     ports:
