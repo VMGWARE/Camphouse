@@ -1,0 +1,23 @@
+{
+"schemaVersion": 2,
+"dockerfileLines": [
+"FROM node:18.17 AS builder",
+"WORKDIR /app/frontend",
+"COPY frontend/ ./",
+
+"WORKDIR /app/backend",
+"COPY backend/ .",
+
+"FROM httpd:2.4",
+"RUN apt-get update && apt-get install -y curl git && curl -sL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs && apt-get clean && rm -rf /var/lib/apt/lists/*",
+"COPY --from=builder /app/frontend/dist/ /usr/local/apache2/htdocs/",
+"COPY --from=builder /app/backend/ /usr/local/api/",
+"COPY ./docker/.htaccess /usr/local/apache2/htdocs/.htaccess",
+"COPY ./docker/my-httpd.conf /usr/local/apache2/conf/httpd.conf",
+"COPY ./docker/entrypoint.sh /usr/local/bin/entrypoint.sh",
+"RUN chmod +x /usr/local/bin/entrypoint.sh",
+"ENTRYPOINT [\"/usr/local/bin/entrypoint.sh\"]",
+"EXPOSE 80",
+"CMD [\"httpd-foreground\"]"
+]
+}

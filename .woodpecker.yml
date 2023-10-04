@@ -68,6 +68,34 @@ pipeline:
       - npm run lint
       - cd ..
 
+  - name: Build Frontend
+    image: *node_image
+    commands:
+      - cd frontend
+      - npm run build
+      - cd ..
+
+  - name: Create Tarball for Deployment
+    image: alpine
+    commands:
+      - tar -czvf deploy.tar backend/ frontend/dist/ docker/ .git/ captain-definition
+
+  - name: Deploy to CapRover
+    image: alpine
+    environment:
+      CAPROVER_SERVER: from_secret
+      APP_NAME: from_secret
+      APP_TOKEN: from_secret
+    commands:
+      - |
+        apk add --no-cache curl
+        curl -H "Content-Type: application/x-tar" \
+             --data-binary "@deploy.tar" \
+             "https://$CAPROVER_SERVER/user/apps/app/$APP_NAME" \
+             -H "Authorization: $APP_TOKEN"
+    when:
+      event: [push, pull_request]
+
   - name: Deploy to Docker Hub
     image: *buildx_image
     secrets: [docker_username, docker_password]
