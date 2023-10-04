@@ -1,3 +1,7 @@
+when:
+  path:
+    exclude: [README.md, LICENSE, .github, .gitignore]
+
 variables:
   - &node_image "node:18"
   - &buildx_image "woodpeckerci/plugin-docker-buildx"
