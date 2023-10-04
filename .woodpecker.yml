@@ -1,6 +1,6 @@
 when:
   event: [push, tag, pull_request]
-  branch: [master, release/*]
+  branch: [main, release/*]
   path:
     exclude: [README.md, LICENSE, .github, .gitignore]
 
