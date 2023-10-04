@@ -1,5 +1,4 @@
 when:
-  event: [push, tag, pull_request]
   path:
     exclude: ["README.md", "LICENSE", ".github", ".gitignore"]
 
