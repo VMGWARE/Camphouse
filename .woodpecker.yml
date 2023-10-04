@@ -1,3 +1,9 @@
+when:
+  event: [push, tag, pull_request]
+  branch: [main, release/*]
+  path:
+    exclude: [README.md, LICENSE, .github, .gitignore]
+
 variables:
   - &node_image "node:18"
   - &buildx_image "woodpeckerci/plugin-docker-buildx"
@@ -100,6 +106,3 @@ steps:
       tag: pull_${CI_COMMIT_PULL_REQUEST}
     when:
       event: pull_request
-
-branches: [main]
-ignore_paths: [README.md, LICENSE, .github, .gitignore]
