@@ -30,7 +30,8 @@ const UserSchema = new mongoose.Schema(
     },
     profilePicture: {
       type: String,
-      default: "https://camphouse.vmgware.dev/images/profiles/ProfilePicture.png",
+      default:
+        "https://camphouse.vmgware.dev/images/profiles/ProfilePicture.png",
     },
     bio: {
       type: String,
@@ -44,6 +45,17 @@ const UserSchema = new mongoose.Schema(
     admin: {
       type: Boolean,
       default: false,
+    },
+    // 2FA stuff
+    twoFactorAuth: {
+      type: Object,
+      default: {
+        enabled: false,
+        secret: "",
+        temp_secret: "",
+        temp_qr_code: "",
+        secret_created: "",
+      },
     },
   },
   { timestamps: true }
