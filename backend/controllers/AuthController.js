@@ -250,7 +250,7 @@ const crypto = require("crypto");
 const Minio = require("minio");
 const fs = require("fs");
 const path = require("path");
-// const speakeasy = require("speakeasy");
+const speakeasy = require("speakeasy");
 // const QRCode = require("qrcode");
 
 // Load environment variables
@@ -258,6 +258,15 @@ require("dotenv").config();
 
 // Middleware
 const { authenticateJWT } = require("../middleware/auth");
+
+// Helper Functions
+async function validateTwoFactorCode(user, twoFactorCode) {
+  return speakeasy.totp.verify({
+    secret: user.twoFactorAuth.secret, // This should be stored in the user record when 2FA was set up
+    encoding: "base32",
+    token: twoFactorCode,
+  });
+}
 
 /**
  * @swagger
@@ -363,7 +372,7 @@ router.post("/login", async (req, res) => {
   // Check if the email and password are provided
   const user = await User.findOne({
     email: email,
-  });
+  }).select("+twoFactorAuth");
 
   // Check if the user exists
   if (!user) {
@@ -389,7 +398,33 @@ router.post("/login", async (req, res) => {
       .status(401);
   }
 
-  // TODO: If 2FA enabled, require a 2FA token to also be provided
+  // Check for 2FA
+  if (user.twoFactorAuth && user.twoFactorAuth.enabled) {
+    const twoFactorCode = req.body.twoFactorCode;
+
+    if (!twoFactorCode) {
+      return res.status(401).json({
+        status: "error",
+        code: 401,
+        message: "2FA code is required.",
+        data: null,
+      });
+    }
+
+    const isTwoFactorCodeValid = await validateTwoFactorCode(
+      user,
+      twoFactorCode
+    );
+
+    if (!isTwoFactorCodeValid) {
+      return res.status(401).json({
+        status: "error",
+        code: 401,
+        message: "Invalid 2FA code provided.",
+        data: null,
+      });
+    }
+  }
 
   // Create a JWT token
   const token = jwt.sign(
