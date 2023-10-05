@@ -184,7 +184,6 @@ export default {
             twoFactorCode: this.twofaToken,
           })
           .then((result) => {
-            console.log(result);
             if (result.code === 200) {
               let urlParams = new URLSearchParams(window.location.search);
               let redirect = urlParams.get("redirect");
