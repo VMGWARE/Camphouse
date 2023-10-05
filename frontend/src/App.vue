@@ -18,6 +18,8 @@
         width="150"
         class="d-inline-block align-text-top me-2"
       />
+      <!-- Alpha Badge -->
+      <span class="alpha-badge">ALPHA</span>
     </router-link>
     <button
       class="navbar-toggler"
@@ -207,5 +209,15 @@ export default {
 #main {
   min-height: 100%;
   overflow: auto;
+}
+.alpha-badge {
+  background-color: #ff4500; /* orange-red color */
+  color: #ffffff; /* white text color */
+  padding: 2px 8px; /* some padding for spacing */
+  border-radius: 4px; /* rounded corners */
+  font-size: 0.8em; /* smaller font size than regular text */
+  font-weight: bold; /* bold text */
+  vertical-align: middle; /* align it with the logo and site name */
+  margin-left: 5px; /* spacing from the logo or site name */
 }
 </style>
