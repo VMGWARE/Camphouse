@@ -374,20 +374,8 @@ router.post("/login", async (req, res) => {
     email: email,
   }).select("+twoFactorAuth");
 
-  // Check if the user exists
-  if (!user) {
-    return res
-      .json({
-        status: "error",
-        code: 401,
-        message: "Your email or password is incorrect!",
-        data: null,
-      })
-      .status(401);
-  }
-
-  // Check if the password is correct
-  if (!bcrypt.compare(password, user.password)) {
+  // Check if the user exists and the password is correct
+  if (!user || !bcrypt.compare(password, user.password)) {
     return res
       .json({
         status: "error",

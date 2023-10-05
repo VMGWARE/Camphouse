@@ -39,6 +39,10 @@
                   />
                   <div class="invalid-feedback">{{ errors.password }}</div>
                 </div>
+                <!-- Show login error -->
+                <div class="alert alert-danger" v-if="errors.login">
+                  {{ errors.login }}
+                </div>
                 <div class="form-group mb-3">
                   <button
                     type="submit"
@@ -180,6 +184,7 @@ export default {
             twoFactorCode: this.twofaToken,
           })
           .then((result) => {
+            console.log(result);
             if (result.code === 200) {
               let urlParams = new URLSearchParams(window.location.search);
               let redirect = urlParams.get("redirect");
@@ -188,14 +193,20 @@ export default {
               } else {
                 this.$router.push("/");
               }
-            }
-            if (
+            } else if (
+              result.code != 200 &&
+              result.message === "Your email or password is incorrect!" &&
+              result.code === 401
+            ) {
+              this.errors.login = "Invalid credentials.";
+            } else if (
+              result.code != 200 &&
               result.response.data.message === "2FA code is required." &&
               result.response.data.code === 401
             ) {
               this.twofaEnabled = true;
-            }
-            if (
+            } else if (
+              result.code != 200 &&
               result.response.data.message === "Invalid 2FA code provided." &&
               result.response.data.code === 401
             ) {
