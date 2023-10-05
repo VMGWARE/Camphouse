@@ -155,6 +155,7 @@ const UserController = require("./controllers/UserController");
 const CommentController = require("./controllers/CommentController");
 const NotificationController = require("./controllers/NotificationController");
 const ReportController = require("./controllers/ReportController");
+const TwoFAController = require("./controllers/TwoFAController");
 
 // Setup the routes
 app.use("/api/v1/posts", PostController);
@@ -166,6 +167,7 @@ app.use("/api/v1/users", UserController);
 app.use("/api/v1/comments", CommentController);
 app.use("/api/v1/notifications", NotificationController);
 app.use("/api/v1/reports", ReportController);
+app.use("/api/v1/2fa", TwoFAController);
 
 // Swagger documentation
 const options = require("./configs/swagger");
