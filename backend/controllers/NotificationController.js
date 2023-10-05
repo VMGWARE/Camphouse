@@ -132,6 +132,15 @@ const { authenticateJWT } = require("../middleware/auth");
  *                       type: array
  *                       items:
  *                         $ref: '#/components/schemas/Notification'
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     maxPage:
+ *                       type: integer
+ *                       example: 2
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
  *       401:
  *         description: Unauthorized access
  *         content:
@@ -150,6 +159,24 @@ const { authenticateJWT } = require("../middleware/auth");
  *                   example: Unauthorized access
  *                 data:
  *                   type: null
+ *       500:
+ *         description: Internal Server Error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Unable to retrieve notifications
+ *                 data:
+ *                   type: null
  */
 router.get("/", authenticateJWT, async (req, res) => {
   try {
@@ -164,10 +191,9 @@ router.get("/", authenticateJWT, async (req, res) => {
       readFilter.read = false;
     }
 
-    const notifications = await Notification.find({
-      receiver: req.user._id,
-      ...readFilter,
-    })
+    let criteria = { receiver: req.user._id, ...readFilter };
+
+    const notifications = await Notification.find(criteria)
       .sort({ createdAt: -1 })
       .skip((page - 1) * limit)
       .limit(limit);
@@ -176,7 +202,14 @@ router.get("/", authenticateJWT, async (req, res) => {
       status: "success",
       code: 200,
       message: "Successfully retrieved notifications",
-      data: { notifications },
+      data: {
+        notifications,
+        page: page,
+        maxPage: Math.ceil(
+          (await Notification.countDocuments(criteria)) / limit
+        ), // Calculate the maximum number of pages (round up
+        limit: limit,
+      },
     });
   } catch (err) {
     res.status(500).json({

@@ -5,6 +5,9 @@
       <p>No notifications available</p>
     </div>
     <div v-else class="card">
+      <div v-if="fetchingNotifications" class="text-center mt-3 mb-3">
+        <i class="fas fa-spinner fa-spin fa-2x"></i>
+      </div>
       <ul class="list-group">
         <li
           class="list-group-item"
@@ -31,6 +34,29 @@
           </div>
         </li>
       </ul>
+      <div v-if="notifications.length > 0" class="pagination-controls">
+        <button
+          :disabled="currentPage === 1"
+          @click="
+            currentPage--;
+            getNotifications();
+          "
+          class="mr-2 btn btn-primary"
+        >
+          Previous
+        </button>
+        <span>Page {{ currentPage }} of {{ totalPages }}</span>
+        <button
+          :disabled="currentPage === totalPages"
+          @click="
+            currentPage++;
+            getNotifications();
+          "
+          class="ml-2 btn btn-primary"
+        >
+          Next
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -43,22 +69,35 @@ export default {
   data() {
     return {
       notifications: [],
+      currentPage: 1,
+      totalPages: 0,
+      limit: 10,
+      fetchingNotifications: false,
     };
   },
+
   methods: {
     async getNotifications() {
+      this.fetchingNotifications = true;
+
+      // Set authorization header
       axios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${localStorage.getItem("token")}`;
+
       await axios
-        .get("/v1/notifications")
+        .get(`/v1/notifications?page=${this.currentPage}&limit=${this.limit}`)
         .then((response) => {
           this.notifications = response.data.data.notifications;
+          this.totalPages = response.data.data.maxPage;
+          this.fetchingNotifications = false;
         })
         .catch((error) => {
           console.log(error);
+          this.fetchingNotifications = false;
         });
     },
+
     async goToAction(notification) {
       // If it was a message, send to messages
       if (notification.type === "MESSAGE") {
@@ -200,5 +239,13 @@ h2 {
 
 .notification-action button:hover {
   background-color: #ddae4c; /* Slightly lighter color on hover */
+}
+
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 20px;
 }
 </style>
