@@ -78,6 +78,7 @@ export default {
 
   methods: {
     async getNotifications() {
+      // Set fetching to true
       this.fetchingNotifications = true;
 
       // Set authorization header
@@ -85,13 +86,16 @@ export default {
         "Authorization"
       ] = `Bearer ${localStorage.getItem("token")}`;
 
+      // Make request to get notifications
       await axios
         .get(`/v1/notifications?page=${this.currentPage}&limit=${this.limit}`)
+        // If successful, set notifications and total pages
         .then((response) => {
           this.notifications = response.data.data.notifications;
           this.totalPages = response.data.data.maxPage;
           this.fetchingNotifications = false;
         })
+        // If error, log error and set fetching to false
         .catch((error) => {
           console.log(error);
           this.fetchingNotifications = false;
