@@ -268,6 +268,11 @@ export default {
               this.status = "success";
               this.title = "";
               this.content = "";
+
+              // Wait 3 seconds then redirect to the new post
+              setTimeout(() => {
+                this.$router.push(`/post/${result.data._id}`);
+              }, 1000);
             } else {
               this.status = "error";
               this.errors = result.response.data.data.errors;
