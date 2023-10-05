@@ -1346,6 +1346,201 @@ router.post("/logout", authenticateJWT, async (req, res) => {
 });
 
 // TODO: Add a route to verify the user's email address
-// TODO: Update the user's password, must provide the current password and the new password (confirm the new password)
+
+/**
+ * @swagger
+ * /api/v1/auth/update-password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Update user password
+ *     description: Update the logged in user's password
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       description: User registration details
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: Current password
+ *               newPassword:
+ *                 type: string
+ *                 description: New password
+ *               confirmNewPassword:
+ *                 type: string
+ *                 description: Confirm new password
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Password updated successfully
+ *                 data:
+ *                   type: null
+ *       400:
+ *         description: Missing required fields or invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Error updating password
+ *                 data:
+ *                   type: null
+ *       401:
+ *         description: Authentication token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 message:
+ *                   type: string
+ *                   example: Authentication token is missing.
+ *                 data:
+ *                   type: null
+ *       500:
+ *         description: An error occurred while updating password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while updating password
+ *                 data:
+ *                   type: null
+ */
+router.post("/update-password", authenticateJWT, async (req, res) => {
+  try {
+    // Get the user object from the request
+    const user = User.findById(req.user._id);
+
+    // Check if the current password is provided
+    if (!req.body.currentPassword) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Current password is required",
+        data: null,
+      });
+    }
+
+    // Check if the new password is provided
+    if (!req.body.newPassword) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "New password is required",
+        data: null,
+      });
+    }
+
+    // Check if the confirm new password is provided
+    if (!req.body.confirmNewPassword) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Confirm new password is required",
+        data: null,
+      });
+    }
+
+    // Check if the current password is correct
+    if (!bcrypt.compare(req.body.currentPassword, user.password)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Current password is incorrect",
+        data: null,
+      });
+    }
+
+    // Check if the new password and confirm new password match
+    if (req.body.newPassword !== req.body.confirmNewPassword) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "New password and confirm new password do not match",
+        data: null,
+      });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+
+    // Update the user's password
+    const updatedUser = User.findByIdAndUpdate(
+      req.user._id,
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    // Check if the user was updated successfully
+    if (!updatedUser) {
+      return res.status(500).json({
+        status: "error",
+        code: 500,
+        message: "Error updating password",
+        data: null,
+      });
+    }
+
+    // Return a success message
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Password updated successfully",
+      data: null,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Error updating password",
+      data: null,
+    });
+  }
+});
 
 module.exports = router;
