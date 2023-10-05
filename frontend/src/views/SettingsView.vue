@@ -136,7 +136,9 @@
     </div>
 
     <!-- Privacy Settings Form -->
-    <!-- Implement Privacy Settings Form Similarly -->
+
+    <!-- Update Password Section -->
+    <UpdatePasswordSection />
 
     <!-- Two-Factor Authentication (2FA) Section -->
     <div class="card">
@@ -221,6 +223,7 @@
 
 <script>
 import axios from "axios";
+import UpdatePasswordSection from "@/components/Settings/UpdatePasswordSection.vue";
 
 export default {
   data() {
@@ -232,6 +235,11 @@ export default {
         bio: "",
         selectedFile: null,
         twoFactorAuth: { enabled: false },
+      },
+      updatePassword: {
+        currentPassword: "",
+        newPassword: "",
+        confirmPassword: "",
       },
       errors: {},
       privacySetting: "public",
@@ -405,6 +413,9 @@ export default {
         // Handle the error, e.g., show an error message to the user
       }
     },
+  },
+  components: {
+    UpdatePasswordSection,
   },
 };
 </script>
