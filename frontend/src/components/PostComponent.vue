@@ -20,6 +20,9 @@
               <p class="card-subtitle text-muted mb-0">
                 @{{ thisPost.user.handle }}
               </p>
+              <p class="card-subtitle text-muted mb-0">
+                Posted on {{ formatDate(thisPost.createdAt) }}
+              </p>
             </div>
           </template>
           <p v-else class="text-danger">User not found for this Post.</p>
@@ -316,6 +319,10 @@ export default {
         useToast().error("Error deleting post. Please try again later.");
       }
     },
+    formatDate(dateString) {
+      const options = { year: "numeric", month: "long", day: "numeric" };
+      return new Date(dateString).toLocaleDateString(undefined, options);
+    },
   },
   mounted() {
     // Check if the post is liked
@@ -412,5 +419,9 @@ export default {
 
 .custom-dropdown-item:active {
   background-color: #e9ecef;
+}
+
+.card-subtitle {
+  margin-bottom: 5px;
 }
 </style>
