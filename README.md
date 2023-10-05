@@ -128,7 +128,7 @@ See the [open issues](https://github.com/VMGWARE/Camphouse/issues) for a list of
 
 ### General
 
-- [ ] Add MFA/2FA support for user accounts
+- [x] Add MFA/2FA support for user accounts
 - [ ] Add page for reporting posts/users/comments
 - [x] Add support for uploading images for user avatars, stored in an S3 bucket
 - [ ] Add footer to the frontend with links to the GitHub repo, license, and author
