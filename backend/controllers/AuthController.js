@@ -1423,7 +1423,7 @@ router.post("/logout", authenticateJWT, async (req, res) => {
 router.post("/2fa/setup", authenticateJWT, async (req, res) => {
   try {
     // Check if the user already has 2FA enabled
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).select("+twoFactorAuth");
     if (user.twoFactorAuth.enabled) {
       return res.status(400).json({
         status: "error",
@@ -1511,7 +1511,7 @@ router.post("/2fa/setup", authenticateJWT, async (req, res) => {
  *                   type: string
  *                   example: 2FA enabled successfully
  *                 data:
-  *                   type: null
+ *                   type: null
  *       400:
  *         description: 2FA is already enabled for this user
  *         content:
@@ -1552,7 +1552,7 @@ router.post("/2fa/setup", authenticateJWT, async (req, res) => {
 router.post("/2fa/enable", authenticateJWT, async (req, res) => {
   try {
     // Check if the user already has 2FA enabled
-    const user = await User.findById(req.user._id);
+    const user = await User.findById(req.user._id).select("+twoFactorAuth");
     if (user.twoFactorAuth.enabled) {
       return res.status(400).json({
         status: "error",
