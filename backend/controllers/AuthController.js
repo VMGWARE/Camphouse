@@ -375,7 +375,7 @@ router.post("/login", async (req, res) => {
   }).select("+twoFactorAuth");
 
   // Check if the user exists and the password is correct
-  if (!user || !bcrypt.compare(password, user.password)) {
+  if (!user || !(await bcrypt.compare(password, user.password))) {
     return res
       .json({
         status: "error",
