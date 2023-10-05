@@ -638,7 +638,9 @@ router.post("/register", async (req, res) => {
 router.get("/profile", authenticateJWT, async (req, res) => {
   try {
     // Assuming authenticateJWT adds the user's ID to req.user._id
-    const user = await User.findById(req.user._id).select("-password"); // Excluding password from the returned data
+    const user = await User.findById(req.user._id).select(
+      "-password +twoFactorAuth"
+    ); // Excluding password from the returned data
 
     if (!user) {
       return res.status(404).json({
@@ -655,6 +657,17 @@ router.get("/profile", authenticateJWT, async (req, res) => {
     // Add the number of followers
     const followers = await Follow.find({ following: user._id });
     enrichedUser.followers = followers.length;
+
+    // If 2FA exists, remove the secret from the returned data
+    if (enrichedUser.twoFactorAuth.enabled != null) {
+      // Doing it this ensures no secure data is returned
+      var twoFactorAuth = {
+        enabled: enrichedUser.twoFactorAuth.enabled,
+      };
+
+      delete enrichedUser.twoFactorAuth;
+      enrichedUser.twoFactorAuth = twoFactorAuth;
+    }
 
     res.json({
       status: "success",
