@@ -47,9 +47,11 @@
     "mysql": "^2.18.1",
     "mysql2": "^3.5.2",
     "node-fetch": "^3.2.6",
+    "qrcode": "^1.5.3",
     "rate-limit-mongo": "^2.3.2",
     "sinon-chai": "^3.7.0",
     "sitemap": "^7.1.1",
+    "speakeasy": "^2.0.0",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.0",
     "zlib": "^1.0.5"

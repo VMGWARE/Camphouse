@@ -250,12 +250,23 @@ const crypto = require("crypto");
 const Minio = require("minio");
 const fs = require("fs");
 const path = require("path");
+const speakeasy = require("speakeasy");
+// const QRCode = require("qrcode");
 
 // Load environment variables
 require("dotenv").config();
 
 // Middleware
 const { authenticateJWT } = require("../middleware/auth");
+
+// Helper Functions
+async function validateTwoFactorCode(user, twoFactorCode) {
+  return speakeasy.totp.verify({
+    secret: user.twoFactorAuth.secret, // This should be stored in the user record when 2FA was set up
+    encoding: "base32",
+    token: twoFactorCode,
+  });
+}
 
 /**
  * @swagger
@@ -361,10 +372,10 @@ router.post("/login", async (req, res) => {
   // Check if the email and password are provided
   const user = await User.findOne({
     email: email,
-  });
+  }).select("+twoFactorAuth");
 
-  // Check if the user exists
-  if (!user) {
+  // Check if the user exists and the password is correct
+  if (!user || !(await bcrypt.compare(password, user.password))) {
     return res
       .json({
         status: "error",
@@ -375,16 +386,32 @@ router.post("/login", async (req, res) => {
       .status(401);
   }
 
-  // Check if the password is correct
-  if (!bcrypt.compare(password, user.password)) {
-    return res
-      .json({
+  // Check for 2FA
+  if (user.twoFactorAuth && user.twoFactorAuth.enabled) {
+    const twoFactorCode = req.body.twoFactorCode;
+
+    if (!twoFactorCode) {
+      return res.status(401).json({
         status: "error",
         code: 401,
-        message: "Your email or password is incorrect!",
+        message: "2FA code is required.",
         data: null,
-      })
-      .status(401);
+      });
+    }
+
+    const isTwoFactorCodeValid = await validateTwoFactorCode(
+      user,
+      twoFactorCode
+    );
+
+    if (!isTwoFactorCodeValid) {
+      return res.status(401).json({
+        status: "error",
+        code: 401,
+        message: "Invalid 2FA code provided.",
+        data: null,
+      });
+    }
   }
 
   // Create a JWT token
@@ -634,7 +661,9 @@ router.post("/register", async (req, res) => {
 router.get("/profile", authenticateJWT, async (req, res) => {
   try {
     // Assuming authenticateJWT adds the user's ID to req.user._id
-    const user = await User.findById(req.user._id).select("-password"); // Excluding password from the returned data
+    const user = await User.findById(req.user._id).select(
+      "-password +twoFactorAuth"
+    ); // Excluding password from the returned data
 
     if (!user) {
       return res.status(404).json({
@@ -651,6 +680,17 @@ router.get("/profile", authenticateJWT, async (req, res) => {
     // Add the number of followers
     const followers = await Follow.find({ following: user._id });
     enrichedUser.followers = followers.length;
+
+    // If 2FA exists, remove the secret from the returned data
+    if (enrichedUser.twoFactorAuth.enabled != null) {
+      // Doing it this ensures no secure data is returned
+      var twoFactorAuth = {
+        enabled: enrichedUser.twoFactorAuth.enabled,
+      };
+
+      delete enrichedUser.twoFactorAuth;
+      enrichedUser.twoFactorAuth = twoFactorAuth;
+    }
 
     res.json({
       status: "success",
@@ -1342,6 +1382,201 @@ router.post("/logout", authenticateJWT, async (req, res) => {
 });
 
 // TODO: Add a route to verify the user's email address
-// TODO: Update the user's password, must provide the current password and the new password (confirm the new password)
+
+/**
+ * @swagger
+ * /api/v1/auth/update-password:
+ *   post:
+ *     tags:
+ *       - Auth
+ *     summary: Update user password
+ *     description: Update the logged in user's password
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       description: User registration details
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               currentPassword:
+ *                 type: string
+ *                 description: Current password
+ *               newPassword:
+ *                 type: string
+ *                 description: New password
+ *               confirmNewPassword:
+ *                 type: string
+ *                 description: Confirm new password
+ *     responses:
+ *       200:
+ *         description: Password updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Password updated successfully
+ *                 data:
+ *                   type: null
+ *       400:
+ *         description: Missing required fields or invalid input
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Error updating password
+ *                 data:
+ *                   type: null
+ *       401:
+ *         description: Authentication token is missing or invalid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 401
+ *                 message:
+ *                   type: string
+ *                   example: Authentication token is missing.
+ *                 data:
+ *                   type: null
+ *       500:
+ *         description: An error occurred while updating password
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while updating password
+ *                 data:
+ *                   type: null
+ */
+router.post("/update-password", authenticateJWT, async (req, res) => {
+  try {
+    // Get the user object from the request
+    const user = User.findById(req.user._id);
+
+    // Check if the current password is provided
+    if (!req.body.currentPassword) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Current password is required",
+        data: null,
+      });
+    }
+
+    // Check if the new password is provided
+    if (!req.body.newPassword) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "New password is required",
+        data: null,
+      });
+    }
+
+    // Check if the confirm new password is provided
+    if (!req.body.confirmNewPassword) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Confirm new password is required",
+        data: null,
+      });
+    }
+
+    // Check if the current password is correct
+    if (!bcrypt.compare(req.body.currentPassword, user.password)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Current password is incorrect",
+        data: null,
+      });
+    }
+
+    // Check if the new password and confirm new password match
+    if (req.body.newPassword !== req.body.confirmNewPassword) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "New password and confirm new password do not match",
+        data: null,
+      });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+
+    // Update the user's password
+    const updatedUser = User.findByIdAndUpdate(
+      req.user._id,
+      { password: hashedPassword },
+      { new: true }
+    );
+
+    // Check if the user was updated successfully
+    if (!updatedUser) {
+      return res.status(500).json({
+        status: "error",
+        code: 500,
+        message: "Error updating password",
+        data: null,
+      });
+    }
+
+    // Return a success message
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Password updated successfully",
+      data: null,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Error updating password",
+      data: null,
+    });
+  }
+});
 
 module.exports = router;

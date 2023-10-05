@@ -75,6 +75,7 @@ export default createStore({
         }
       } catch (error) {
         console.log(error);
+        return error;
       }
     },
     // eslint-disable-next-line no-unused-vars

@@ -6,58 +6,104 @@
           <div class="card-body">
             <h2 class="card-title">Login</h2>
             <form @submit.prevent="handleLogin" method="POST">
-              <div class="form-group mb-3">
-                <label for="email">Email</label>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="email"
-                  name="email"
-                  placeholder="Enter your email"
-                  required
-                  v-model="email"
-                  :class="{ 'is-invalid': errors.email || errors.invalidEmail }"
-                />
-                <div class="invalid-feedback">
-                  {{ errors.email || errors.invalidEmail }}
+              <div v-if="!twofaEnabled">
+                <div class="form-group mb-3">
+                  <label for="email">Email</label>
+                  <input
+                    type="email"
+                    class="form-control"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    required
+                    v-model="email"
+                    :class="{
+                      'is-invalid': errors.email || errors.invalidEmail,
+                    }"
+                  />
+                  <div class="invalid-feedback">
+                    {{ errors.email || errors.invalidEmail }}
+                  </div>
                 </div>
-              </div>
-              <div class="form-group mb-3">
-                <label for="password">Password</label>
-                <input
-                  type="password"
-                  class="form-control"
-                  id="password"
-                  name="password"
-                  placeholder="Enter your password"
-                  required
-                  v-model="password"
-                  :class="{ 'is-invalid': errors.password }"
+                <div class="form-group mb-3">
+                  <label for="password">Password</label>
+                  <input
+                    type="password"
+                    class="form-control"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    required
+                    v-model="password"
+                    :class="{ 'is-invalid': errors.password }"
+                  />
+                  <div class="invalid-feedback">{{ errors.password }}</div>
+                </div>
+                <!-- Show login error -->
+                <div class="alert alert-danger" v-if="errors.login">
+                  {{ errors.login }}
+                </div>
+                <div class="form-group mb-3">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    :disabled="processing"
+                  >
+                    <span v-if="processing">
+                      <span
+                        class="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Logging in...
+                    </span>
+                    <span v-else>Login</span>
+                  </button>
+                </div>
+                <div
+                  v-if="redirectMessage"
+                  class="mt-2 text-muted"
+                  v-html="redirectMessage"
                 />
-                <div class="invalid-feedback">{{ errors.password }}</div>
               </div>
-              <div class="form-group mb-3">
-                <button
-                  type="submit"
-                  class="btn btn-primary"
-                  :disabled="processing"
-                >
-                  <span v-if="processing">
-                    <span
-                      class="spinner-border spinner-border-sm"
-                      role="status"
-                      aria-hidden="true"
-                    ></span>
-                    Logging in...
-                  </span>
-                  <span v-else>Login</span>
-                </button>
+              <div v-else>
+                <div class="form-group mb-3">
+                  <label for="twofaToken">2FA Code</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    id="twofaToken"
+                    name="twofaToken"
+                    placeholder="Enter your 2FA code"
+                    required
+                    v-model="twofaToken"
+                    :class="{ 'is-invalid': errors.twofaToken }"
+                  />
+                  <div class="invalid-feedback">{{ errors.twofaToken }}</div>
+                </div>
+                <div class="form-group mb-3">
+                  <button
+                    type="submit"
+                    class="btn btn-primary"
+                    :disabled="processing"
+                  >
+                    <span v-if="processing">
+                      <span
+                        class="spinner-border spinner-border-sm"
+                        role="status"
+                        aria-hidden="true"
+                      ></span>
+                      Logging in...
+                    </span>
+                    <span v-else>Login</span>
+                  </button>
+                </div>
+                <div
+                  v-if="redirectMessage"
+                  class="mt-2 text-muted"
+                  v-html="redirectMessage"
+                />
               </div>
-              <div
-                v-if="redirectMessage"
-                class="mt-2 text-muted"
-                v-html="redirectMessage"
-              />
             </form>
           </div>
         </div>
@@ -78,6 +124,8 @@ export default {
         login: "", // Add a new error field for login errors
       },
       processing: false,
+      twofaEnabled: false,
+      twofaToken: "",
     };
   },
   computed: {
@@ -122,7 +170,7 @@ export default {
       if (this.password === "") {
         this.errors.password = "Please enter your password.";
       }
-      7;
+
       // If there are no errors, submit the form
       if (
         !this.errors.email &&
@@ -133,8 +181,10 @@ export default {
           .dispatch("login", {
             email: this.email,
             password: this.password,
+            twoFactorCode: this.twofaToken,
           })
           .then((result) => {
+            console.log(result);
             if (result.code === 200) {
               let urlParams = new URLSearchParams(window.location.search);
               let redirect = urlParams.get("redirect");
@@ -143,6 +193,24 @@ export default {
               } else {
                 this.$router.push("/");
               }
+            } else if (
+              result.code != 200 &&
+              result.message === "Your email or password is incorrect!" &&
+              result.code === 401
+            ) {
+              this.errors.login = "Invalid credentials.";
+            } else if (
+              result.code != 200 &&
+              result.response.data.message === "2FA code is required." &&
+              result.response.data.code === 401
+            ) {
+              this.twofaEnabled = true;
+            } else if (
+              result.code != 200 &&
+              result.response.data.message === "Invalid 2FA code provided." &&
+              result.response.data.code === 401
+            ) {
+              this.errors.twofaToken = "Invalid 2FA code provided.";
             } else {
               this.errors.login = "Invalid credentials.";
             }

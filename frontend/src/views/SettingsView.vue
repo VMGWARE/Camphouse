@@ -137,12 +137,85 @@
 
     <!-- Privacy Settings Form -->
     <!-- Implement Privacy Settings Form Similarly -->
+
+    <!-- Two-Factor Authentication (2FA) Section -->
+    <div class="card">
+      <div class="card-body">
+        <h5 class="card-title">Two-Factor Authentication</h5>
+        <p class="card-text">
+          Two-factor authentication (2FA) is an extra layer of security for your
+          account.
+        </p>
+
+        <div v-if="!currentUser.twoFactorAuth.enabled">
+          <button type="button" class="btn btn-primary mb-3" @click="setup2FA">
+            Enable 2FA
+          </button>
+
+          <!-- QR Code Display and Input Token -->
+          <div v-if="qrCode">
+            <!-- QR Code Container -->
+            <div v-if="qrCode" class="qr-code-container">
+              <img :src="qrCode" alt="2FA QR Code" />
+            </div>
+            <div class="form-group">
+              <label for="token">Enter Token from App</label>
+              <input
+                type="text"
+                class="form-control"
+                v-model="twoFactorToken"
+                id="token"
+                placeholder="Enter your token"
+                :class="{ 'is-invalid': errors.twofa }"
+              />
+              <div class="invalid-feedback" v-if="errors.twofa">
+                {{ errors.twofa }}
+              </div>
+              <button
+                type="button"
+                class="btn btn-primary mt-2"
+                @click="enable2FA"
+              >
+                Confirm
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div v-else-if="currentUser.twoFactorAuth.enabled">
+          <div class="form-group">
+            <label for="disableToken">Enter Token to Disable</label>
+            <input
+              type="text"
+              class="form-control"
+              v-model="disableTwoFactorToken"
+              id="disableToken"
+              placeholder="Enter your token"
+              :class="{ 'is-invalid': errors.twofa }"
+            />
+            <div class="invalid-feedback" v-if="errors.twofa">
+              {{ errors.twofa }}
+            </div>
+          </div>
+          <button type="button" class="btn btn-danger mt-3" @click="disable2FA">
+            Disable 2FA
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <style scoped>
 .invalid-feedback {
   color: #dc3545;
+}
+
+.qr-code-container {
+  display: flex;
+  justify-content: center; /* Horizontal centering */
+  align-items: center; /* Vertical centering */
+  height: 200px; /* Or whatever height you prefer */
 }
 </style>
 
@@ -158,12 +231,16 @@ export default {
         email: "",
         bio: "",
         selectedFile: null,
+        twoFactorAuth: { enabled: false },
       },
       errors: {},
       privacySetting: "public",
       emailNotifications: false,
       processing: false,
       hasSaved: false,
+      qrCode: null, // This will hold the QR code data URL
+      twoFactorToken: "", // This will hold the token the user inputs
+      disableTwoFactorToken: "", // This will hold the token for disabling 2FA
     };
   },
   created() {
@@ -265,6 +342,67 @@ export default {
         console.error("Error uploading profile picture:", error);
         this.errors.profilePicture = "Failed to upload the profile picture"; // Or assign the error message from the server
         this.processing = false;
+      }
+    },
+    // Fetch QR Code for 2FA setup
+    async setup2FA() {
+      try {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${this.$store.state.token}`;
+
+        const response = await axios.post("/v1/2fa/setup");
+        this.qrCode = response.data.data.qr_code;
+      } catch (error) {
+        console.error("Error setting up 2FA:", error);
+        // Handle the error, e.g., show an error message to the user
+      }
+    },
+    // Confirm and enable 2FA with provided token
+    async enable2FA() {
+      if (!this.twoFactorToken) return;
+
+      try {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${this.$store.state.token}`;
+
+        const response = await axios.post("/v1/2fa/enable", {
+          token: this.twoFactorToken,
+        });
+
+        console.log("2FA enabled:", response.data);
+        this.qrCode = null;
+        this.twoFactorToken = "";
+        this.fetchUserInfo(); // Update user's 2FA status
+      } catch (error) {
+        console.error("Error enabling 2FA:", error);
+        this.errors.twofa = "Failed to enable 2FA"; // Or assign the error message from the server
+        // Handle the error, e.g., show an error message to the user
+      }
+    },
+    // Disable 2FA with provided token
+    async disable2FA() {
+      if (!this.disableTwoFactorToken) return;
+
+      try {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${this.$store.state.token}`;
+
+        const response = await axios.delete("/v1/2fa/disable", {
+          data: {
+            token: this.disableTwoFactorToken,
+          },
+        });
+
+        console.log("2FA disabled:", response.data);
+        this.disableTwoFactorToken = "";
+        this.fetchUserInfo(); // Update user's 2FA status
+      } catch (error) {
+        console.error("Error disabling 2FA:", error);
+        this.errors.twofa = "Failed to disable 2FA"; // Or assign the error message from the server
+        // Handle the error, e.g., show an error message to the user
       }
     },
   },
