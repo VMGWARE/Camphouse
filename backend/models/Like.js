@@ -14,6 +14,7 @@ const LikeSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Post",
       required: true,
+      index: true,
     },
   },
   { timestamps: true }

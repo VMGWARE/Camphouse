@@ -14,6 +14,7 @@ const CommentSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "Post",
       required: true,
+      index: true,
     },
     comment: {
       type: String,

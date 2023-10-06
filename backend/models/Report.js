@@ -7,24 +7,28 @@ const reportSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     // The user who created the content
     reported: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     // The content that was reported
     reportedContentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Content",
       required: true,
+      index: true,
     },
     // The type of content that was reported
     reportedContentType: {
       type: String,
       enum: ["Post", "Comment", "Message", "User"], // User is for when a user is reported like in the case of a fake account or inappropriate profile picture
-      required: true, 
+      required: true,
+      index: true,
     },
     // A snapshot of the content at the time of the report
     snapshot: {

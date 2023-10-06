@@ -9,11 +9,13 @@ const TokenSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     // Hashed token value
     token: {
       type: String,
       required: true,
+      index: true,
     },
   },
   { timestamps: true }
