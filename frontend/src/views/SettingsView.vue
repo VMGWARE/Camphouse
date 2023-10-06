@@ -19,8 +19,9 @@
 
         <!-- Form to upload new profile picture -->
         <form @submit.prevent="uploadProfilePicture">
-          <div class="form-group">
+          <div class="form-group mt-3">
             <label for="profilePicture">Upload Profile Picture</label>
+            <br />
             <input
               type="file"
               class="form-control-file"
