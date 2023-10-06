@@ -535,6 +535,7 @@ img-tag {
 
 .dropdown-menu .dropdown-item {
   color: #ffc34d;
+  border-bottom: 1px solid #333333;
 }
 
 .dropdown-menu .dropdown-item:hover {
