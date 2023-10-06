@@ -547,11 +547,31 @@ img-tag {
   background-color: #333333;
 }
 
-.form-group .form-control {
+.form-group .form-control,
+.form-control {
   background-color: #333333;
   color: #ffffff;
   border: none;
   border-radius: 8px;
+}
+
+.form-group .form-control:focus,
+.form-control:focus {
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px #ffc34d;
+}
+
+.form-group .form-control::placeholder,
+.form-control::placeholder {
+  color: #999999;
+}
+
+.form-group .form-control:focus::placeholder,
+.form-control:focus::placeholder {
+  color: #999999;
 }
 
 .navbar-toggler {
