@@ -267,6 +267,7 @@
   overflow-y: auto;
   max-height: calc(100vh - 200px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
 }
 
 #connectionsSidebar a {

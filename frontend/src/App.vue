@@ -219,7 +219,7 @@ export default {
 }
 #main {
   min-height: 100%;
-  overflow: auto;
+  /* overflow: auto; */
 }
 .alpha-badge {
   background-color: #ff4500; /* orange-red color */
