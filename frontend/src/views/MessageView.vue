@@ -230,12 +230,13 @@
 }
 .context-menu {
   position: absolute;
-  background-color: #ffffff;
-  border: 1px solid #ccc;
+  background-color: #202225;
+  border: 1px solid #34373c;
+  color: #ffffff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   padding: 5px;
-  color: #333;
+  /* color: #333; */
   font-size: 0.8em;
   /* Curve corners */
   border-radius: 5px;
@@ -259,7 +260,8 @@
   transition: background-color 0.3s;
 }
 .context-menu li:hover {
-  background-color: #f0f0f0;
+  background-color: #7289da;
+  border-radius: 5px;
 }
 #connectionsSidebar {
   background-color: #202225;
