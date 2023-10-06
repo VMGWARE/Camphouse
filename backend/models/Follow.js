@@ -9,11 +9,13 @@ const FollowSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     following: {
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
   },
   { timestamps: true }

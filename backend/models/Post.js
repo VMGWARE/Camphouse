@@ -10,6 +10,7 @@ const PostSchema = new mongoose.Schema(
       required: true,
       minLength: 2,
       maxLength: 100,
+      index: true,
     },
     content: {
       type: String,
@@ -21,6 +22,7 @@ const PostSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
   },
   { timestamps: true }

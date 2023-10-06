@@ -16,16 +16,19 @@ const NotificationSchema = new mongoose.Schema(
       type: mongoose.Types.ObjectId,
       ref: "User",
       required: true,
+      index: true,
     },
     referenceId: {
       type: mongoose.Types.ObjectId,
       refPath: "onModel",
       required: true,
+      index: true,
     },
     onModel: {
       type: String,
       required: true,
       enum: ["Post", "Message", "User"],
+      index: true,
     },
     message: {
       type: String,
@@ -34,6 +37,7 @@ const NotificationSchema = new mongoose.Schema(
     read: {
       type: Boolean,
       default: false,
+      index: true,
     },
   },
   { timestamps: true }

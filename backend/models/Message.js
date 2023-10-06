@@ -7,18 +7,20 @@ const MessageSchema = new mongoose.Schema(
   {
     sender: {
       type: mongoose.Types.ObjectId,
-      ref: 'User', // Reference to the User model
+      ref: "User", // Reference to the User model
       required: true,
+      index: true,
     },
     recipient: {
       type: mongoose.Types.ObjectId,
-      ref: 'User', // Reference to the User model
+      ref: "User", // Reference to the User model
       required: true,
+      index: true,
     },
     content: {
       type: String,
       required: true,
-      minLength:1,
+      minLength: 1,
       maxLength: 255,
     },
     isRead: {
