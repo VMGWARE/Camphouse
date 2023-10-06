@@ -21,7 +21,7 @@ body {
 
 .scrollable-feed {
   /* max-height: 600px; */
-  overflow-y: scroll;
+  overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: #666666 #111111;
 }
@@ -31,7 +31,7 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #111111;
+  background: #212529;
 }
 
 ::-webkit-scrollbar-thumb {
