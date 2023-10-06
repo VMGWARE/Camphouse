@@ -183,6 +183,8 @@ textarea.form-input {
   background-color: #121212;
   border-radius: 4px;
   color: #ffffff;
+  overflow-wrap: break-word;
+  overflow-x: auto;
 }
 
 .btn-submit {

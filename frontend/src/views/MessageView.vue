@@ -230,12 +230,13 @@
 }
 .context-menu {
   position: absolute;
-  background-color: #fff;
-  border: 1px solid #ccc;
+  background-color: #202225;
+  border: 1px solid #34373c;
+  color: #ffffff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
   z-index: 1000;
   padding: 5px;
-  color: #333;
+  /* color: #333; */
   font-size: 0.8em;
   /* Curve corners */
   border-radius: 5px;
@@ -259,14 +260,16 @@
   transition: background-color 0.3s;
 }
 .context-menu li:hover {
-  background-color: #f0f0f0;
+  background-color: #7289da;
+  border-radius: 5px;
 }
 #connectionsSidebar {
   background-color: #202225;
   border-radius: 5px;
   overflow-y: auto;
-  max-height: 100vh;
+  max-height: calc(100vh - 200px);
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 20px;
 }
 
 #connectionsSidebar a {
@@ -289,6 +292,28 @@
   color: #333;
   border-color: #ffc34d;
 }
+#connectionsSidebar .user-item {
+  position: relative; /* Makes it the reference for absolutely positioned children */
+  background-color: #202225;
+  border: none;
+  color: #dcddde;
+  margin-bottom: 5px;
+  border-radius: 5px;
+}
+
+#connectionsSidebar .user-item:hover {
+  background-color: #2f3136 !important;
+  color: #ffffff !important;
+  border-radius: 5px;
+  transition: background-color 1s;
+}
+
+#connectionsSidebar .user-item.active {
+  background-color: #2f3136 !important;
+  color: #ffffff !important;
+  border-radius: 5px;
+}
+
 .input-group {
   border-top: 1px solid #34373c;
   background-color: #2f3136;
@@ -400,10 +425,6 @@
   color: #ffffff;
   padding: 2px 5px;
   border-radius: 5px;
-}
-
-.user-item {
-  position: relative; /* Makes it the reference for absolutely positioned children */
 }
 </style>
 

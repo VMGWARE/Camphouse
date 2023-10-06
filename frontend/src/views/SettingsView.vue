@@ -4,9 +4,8 @@
 
     <!-- Profile Picture Card -->
     <div class="card">
+      <h5 class="card-title">Profile Picture</h5>
       <div class="card-body">
-        <h5 class="card-title">Profile Picture</h5>
-
         <!-- Display current profile picture -->
         <div v-if="currentUser && currentUser.profilePicture">
           <img
@@ -20,8 +19,9 @@
 
         <!-- Form to upload new profile picture -->
         <form @submit.prevent="uploadProfilePicture">
-          <div class="form-group">
+          <div class="form-group mt-3">
             <label for="profilePicture">Upload Profile Picture</label>
+            <br />
             <input
               type="file"
               class="form-control-file"
@@ -46,8 +46,8 @@
 
     <!-- General Settings Form -->
     <div class="card">
+      <h5 class="card-title">General</h5>
       <div class="card-body">
-        <h5 class="card-title">General</h5>
         <form @submit.prevent="saveGeneralSettings">
           <div class="form-group">
             <label for="handle">Handle</label>
@@ -142,13 +142,8 @@
 
     <!-- Two-Factor Authentication (2FA) Section -->
     <div class="card">
+      <h5 class="card-title">Two-Factor Authentication</h5>
       <div class="card-body">
-        <h5 class="card-title">Two-Factor Authentication</h5>
-        <p class="card-text">
-          Two-factor authentication (2FA) is an extra layer of security for your
-          account.
-        </p>
-
         <div v-if="!currentUser.twoFactorAuth.enabled">
           <button type="button" class="btn btn-primary mb-3" @click="setup2FA">
             Enable 2FA

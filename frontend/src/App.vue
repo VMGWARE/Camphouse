@@ -3,36 +3,34 @@
     class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 sticky-top"
     style="padding-left: 20px"
   >
+    <!-- Logo and Branding -->
     <router-link class="navbar-brand" to="/">
       <img
         src="@/assets/images/branding/Camphouse-v2.png"
         alt="Camphouse Logo"
         height="30"
         width="30"
-        class="d-inline-block align-text-top me-2"
       />
       <img
         src="@/assets/images/branding/Camphouse-Icon-Light.png"
         alt="Camphouse Logo"
         height="30"
         width="150"
-        class="d-inline-block align-text-top me-2"
       />
-      <!-- Alpha Badge -->
       <span class="alpha-badge">ALPHA</span>
     </router-link>
+
+    <!-- Navigation Toggler for Mobile -->
     <button
       class="navbar-toggler"
       type="button"
       data-bs-toggle="collapse"
       data-bs-target="#navbarSupportedContent"
-      aria-controls="navbarSupportedContent"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-      style="margin-right: 10px"
     >
       <span class="navbar-toggler-icon"></span>
     </button>
+
+    <!-- Navigation Items -->
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav ms-auto" v-if="!this.$store.state.loggedIn">
         <li class="nav-item">
@@ -70,19 +68,32 @@
           >
         </li>
         <li class="nav-item">
-          <router-link class="nav-link" to="/messages"
-            ><i class="fa fa-envelope"></i> Messages</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/settings"
-            ><i class="fa fa-cog"></i> Settings</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <p class="fake-link nav-link" @click="logout" v-if="!isLoading">
-            <i class="fas fa-sign-out-alt"></i> Logout
-          </p>
+          <!-- Dropdown for Additional Options -->
+          <div class="dropdown">
+            <button
+              class="nav-link btn btn-secondary dropdown-toggle"
+              type="button"
+              id="userOptions"
+              data-bs-toggle="dropdown"
+            >
+              Options
+            </button>
+            <div class="dropdown-menu">
+              <router-link class="dropdown-item" to="/messages"
+                ><i class="fa fa-envelope"></i> Messages</router-link
+              >
+              <router-link class="dropdown-item" to="/settings"
+                ><i class="fa fa-cog"></i> Settings</router-link
+              >
+              <p
+                class="fake-link dropdown-item"
+                @click="logout"
+                v-if="!isLoading"
+              >
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </p>
+            </div>
+          </div>
         </li>
         <li class="nav-item">
           <router-link class="nav-link btn btn-secondary" to="/new-post"
@@ -92,7 +103,7 @@
       </ul>
     </div>
   </nav>
-  <div id="main" class="clear-top">
+  <div id="main">
     <router-view />
   </div>
   <ModalsContainer />
@@ -208,7 +219,7 @@ export default {
 }
 #main {
   min-height: 100%;
-  overflow: auto;
+  /* overflow: auto; */
 }
 .alpha-badge {
   background-color: #ff4500; /* orange-red color */
