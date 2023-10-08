@@ -23,6 +23,7 @@ steps:
     image: alpine/git
     commands:
       - git describe --always --tags > version
+      - cp version backend/version
 
   Install Backend Dependencies:
     image: *node_image
