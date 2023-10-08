@@ -71,7 +71,7 @@
           <!-- Dropdown for Additional Options -->
           <div class="dropdown">
             <button
-              class="nav-link btn btn-secondary dropdown-toggle"
+              class="nav-link btn btn-secondary dropdown-toggle px-3"
               type="button"
               id="userOptions"
               data-bs-toggle="dropdown"
