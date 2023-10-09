@@ -186,6 +186,13 @@ export default {
   },
   methods: {
     convertToMarkdown(content) {
+      // Before ensure that the content doesn't contain any script tags
+      content = content.replace(
+        /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi,
+        ""
+      );
+
+      // Convert the content to markdown
       const converter = new showdown.Converter();
       return converter.makeHtml(content);
     },
