@@ -1,110 +1,123 @@
 <template>
-  <nav
-    class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 sticky-top"
-    style="padding-left: 20px"
-  >
-    <!-- Logo and Branding -->
-    <router-link class="navbar-brand" to="/">
-      <img
-        src="@/assets/images/branding/Camphouse-v2.png"
-        alt="Camphouse Logo"
-        height="30"
-        width="30"
-      />
-      <img
-        src="@/assets/images/branding/Camphouse-Icon-Light.png"
-        alt="Camphouse Logo"
-        height="30"
-        width="150"
-      />
-      <span class="alpha-badge">ALPHA</span>
-    </router-link>
-
-    <!-- Navigation Toggler for Mobile -->
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarSupportedContent"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-
-    <!-- Navigation Items -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ms-auto" v-if="!this.$store.state.loggedIn">
-        <li class="nav-item">
-          <router-link class="nav-link" to="/login"
-            ><i class="fa fa-user"></i> Login</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/signup"
-            ><i class="fa fa-user-plus"></i> Sign Up</router-link
-          >
-        </li>
-      </ul>
-      <ul class="navbar-nav ms-auto" v-else>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/"
-            ><i class="fa fa-home"></i> Home</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/search"
-            ><i class="fa fa-search"></i> Search</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link
-            class="nav-link"
-            :to="'/@' + this.$store.state.user.handle"
-            ><i class="fa fa-user"></i> Profile</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link" to="/notifications"
-            ><i class="fa fa-bell"></i> Notifications</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <!-- Dropdown for Additional Options -->
-          <div class="dropdown">
-            <button
-              class="nav-link btn btn-secondary dropdown-toggle px-3"
-              type="button"
-              id="userOptions"
-              data-bs-toggle="dropdown"
-            >
-              Options
-            </button>
-            <div class="dropdown-menu">
-              <router-link class="dropdown-item" to="/messages"
-                ><i class="fa fa-envelope"></i> Messages</router-link
-              >
-              <router-link class="dropdown-item" to="/settings"
-                ><i class="fa fa-cog"></i> Settings</router-link
-              >
-              <p
-                class="fake-link dropdown-item"
-                @click="logout"
-                v-if="!isLoading"
-              >
-                <i class="fas fa-sign-out-alt"></i> Logout
-              </p>
-            </div>
-          </div>
-        </li>
-        <li class="nav-item">
-          <router-link class="nav-link btn btn-secondary" to="/new-post"
-            ><i class="fa fa-plus"></i> New Post</router-link
-          >
-        </li>
-      </ul>
+  <div>
+    <div v-if="this.$route.meta.layout == 'admin'">
+      <router-view />
     </div>
-  </nav>
-  <div id="main">
-    <router-view />
+    <div v-else>
+      <nav
+        class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 sticky-top"
+        style="padding-left: 20px"
+      >
+        <!-- Logo and Branding -->
+        <router-link class="navbar-brand" to="/">
+          <img
+            src="@/assets/images/branding/Camphouse-v2.png"
+            alt="Camphouse Logo"
+            height="30"
+            width="30"
+          />
+          <img
+            src="@/assets/images/branding/Camphouse-Icon-Light.png"
+            alt="Camphouse Logo"
+            height="30"
+            width="150"
+          />
+          <span class="alpha-badge">ALPHA</span>
+        </router-link>
+
+        <!-- Navigation Toggler for Mobile -->
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbarSupportedContent"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navigation Items -->
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav ms-auto" v-if="!this.$store.state.loggedIn">
+            <li class="nav-item">
+              <router-link class="nav-link" to="/login"
+                ><i class="fa fa-user"></i> Login</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/signup"
+                ><i class="fa fa-user-plus"></i> Sign Up</router-link
+              >
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto" v-else>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/"
+                ><i class="fa fa-home"></i> Home</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/search"
+                ><i class="fa fa-search"></i> Search</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link
+                class="nav-link"
+                :to="'/@' + this.$store.state.user.handle"
+                ><i class="fa fa-user"></i> Profile</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/notifications"
+                ><i class="fa fa-bell"></i> Notifications</router-link
+              >
+            </li>
+            <li class="nav-item">
+              <!-- Dropdown for Additional Options -->
+              <div class="dropdown">
+                <button
+                  class="nav-link btn btn-secondary dropdown-toggle px-3"
+                  type="button"
+                  id="userOptions"
+                  data-bs-toggle="dropdown"
+                >
+                  Options
+                </button>
+                <div class="dropdown-menu">
+                  <router-link
+                    class="dropdown-item"
+                    to="/admin"
+                    v-if="this.$store.state.user.admin"
+                    ><i class="fa fa-user-shield"> </i> Admin</router-link
+                  >
+                  <router-link class="dropdown-item" to="/messages"
+                    ><i class="fa fa-envelope"></i> Messages</router-link
+                  >
+                  <router-link class="dropdown-item" to="/settings"
+                    ><i class="fa fa-cog"></i> Settings</router-link
+                  >
+                  <p
+                    class="fake-link dropdown-item"
+                    @click="logout"
+                    v-if="!isLoading"
+                  >
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                  </p>
+                </div>
+              </div>
+            </li>
+            <li class="nav-item">
+              <router-link class="nav-link btn btn-secondary" to="/new-post"
+                ><i class="fa fa-plus"></i> New Post</router-link
+              >
+            </li>
+          </ul>
+        </div>
+      </nav>
+      <div id="main">
+        <router-view />
+      </div>
+    </div>
   </div>
   <ModalsContainer />
 </template>

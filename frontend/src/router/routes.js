@@ -95,6 +95,15 @@ const routes = [
     },
   },
   {
+    path: "/admin/",
+    name: "admin",
+    component: () => import("@/views/Admin/AdminDashboardView.vue"),
+    meta: {
+      title: "Admin",
+      layout: "admin",
+    },
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "not-found",
     component: NotFoundView,
