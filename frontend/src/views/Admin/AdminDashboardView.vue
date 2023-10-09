@@ -1,12 +1,20 @@
 <template>
   <!-- Navigation bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <a class="navbar-brand" href="#">Admin Dashboard</a>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+    <router-link class="navbar-brand" to="/admin">
+      <img
+        src="@/assets/images/branding/Camphouse-v2.png"
+        alt="Camphouse Logo"
+        height="30"
+        width="30"
+      />
+      Admin Panel
+    </router-link>
     <button
       class="navbar-toggler"
       type="button"
-      data-toggle="collapse"
-      data-target="#navbarNav"
+      data-bs-toggle="collapse"
+      data-bs-target="#navbarNav"
       aria-controls="navbarNav"
       aria-expanded="false"
       aria-label="Toggle navigation"
@@ -14,62 +22,43 @@
       <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav ms-auto">
         <li class="nav-item active">
-          <a class="nav-link" href="#">Home</a>
+          <a class="nav-link" href="#">
+            <i class="fas fa-tachometer-alt"></i>
+            Dashboard</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#reportingPanel">Reporting Panel</a>
+          <a class="nav-link" href="#!">
+            <i class="fas fa-user"></i>
+            Users</a
+          >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#adminPanel">Admin Panel</a>
+          <a class="nav-link" href="#!">
+            <i class="fas fa-file-alt"></i>
+            Posts</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#!">
+            <i class="fas fa-comments"></i>
+            Comments</a
+          >
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#!">
+            <i class="fas fa-envelope"></i>
+            Reports</a
+          >
         </li>
       </ul>
     </div>
   </nav>
 
-  <!-- Reporting Panel -->
-  <section id="reportingPanel" class="container mt-5">
-    <h2>Reporting Panel</h2>
-    <!-- Some table or list representation of reports -->
-  </section>
-
-  <!-- Admin Panel -->
-  <section id="adminPanel" class="container mt-5">
-    <h2>Admin Panel</h2>
-
-    <!-- Users CRUD -->
-    <div class="card mb-3">
-      <div class="card-header">Users</div>
-      <div class="card-body">
-        <!-- List or table of users -->
-      </div>
-    </div>
-
-    <!-- Posts RD -->
-    <div class="card mb-3">
-      <div class="card-header">Posts</div>
-      <div class="card-body">
-        <!-- List or table of posts -->
-      </div>
-    </div>
-
-    <!-- Comments RD -->
-    <div class="card mb-3">
-      <div class="card-header">Comments</div>
-      <div class="card-body">
-        <!-- List or table of comments -->
-      </div>
-    </div>
-
-    <!-- Messages RD -->
-    <div class="card">
-      <div class="card-header">Messages</div>
-      <div class="card-body">
-        <!-- List or table of messages -->
-      </div>
-    </div>
-  </section>
+  <!-- Main content -->
+  <div id="main"></div>
 </template>
 
 <style scoped>
