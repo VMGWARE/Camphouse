@@ -33,7 +33,7 @@
     "html-metadata": "^1.7.1",
     "jsonwebtoken": "^9.0.1",
     "markdown-it": "^13.0.1",
-    "marked": "^9.0.3",
+    "marked": "^9.1.0",
     "markio": "^1.0.3",
     "metascraper": "^5.36.0",
     "metascraper-description": "^5.36.0",
