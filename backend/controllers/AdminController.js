@@ -46,7 +46,6 @@
  *         bio: I'm Jane Doe
  *         verified: false
  *         admin: false
- *
  */
 
 // Require the necessary packages
@@ -428,6 +427,243 @@ router.get("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       status: "error",
       message: "Something went wrong",
       code: 500,
+      data: null,
+    });
+  }
+});
+
+// Update (PUT) - Update a specific user by ID
+/**
+ * @swagger
+ * /api/v1/admin/users/{userId}:
+ *   put:
+ *     summary: Update a user by ID
+ *     description: Update a user by ID as an admin
+ *     tags:
+ *       - Admin
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         description: ID of the user to update.
+ *         required: true
+ *         type: string
+ *     requestBody:
+ *       description: User details to update
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/FullRegistrationRequest'
+ *     responses:
+ *       200:
+ *         description: User updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: User updated successfully
+ *                 data:
+ *                   type: null
+ *       400:
+ *         description: Invalid user ID or missing required fields.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to update user due to validation errors.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: object
+ *                       properties:
+ *                         email:
+ *                           type: string
+ *                           example: Email field is required.
+ *                         password:
+ *                           type: string
+ *                           example: Password field is required.
+ *                         username:
+ *                           type: string
+ *                           example: Username field is required.
+ *                         handle:
+ *                           type: string
+ *                           example: Handle field is required.
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: User not found.
+ *                 data:
+ *                   type: null
+ *       409:
+ *         description: User with provided email or handle already exists.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 409
+ *                 message:
+ *                   type: string
+ *                   example: User with the provided email or handle already exists.
+ *                 data:
+ *                   type: null
+ */
+router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    var errors = {};
+    const { email, password, username, handle, bio, verified, admin } =
+      req.body;
+
+    // If bio, verified, or admin are provided but empty, set them to null
+    if (bio === "" || bio === undefined) {
+      req.body.bio = "";
+    }
+    if (verified === "" || verified === undefined) {
+      req.body.verified = false;
+    }
+    if (admin === "" || admin === undefined) {
+      req.body.admin = false;
+    }
+
+    // Validate the request body
+    if (!email) {
+      errors.email = "Email field is required.";
+    } else if (!password) {
+      errors.password = "Password field is required.";
+    } else if (!username) {
+      errors.username = "Username field is required.";
+    } else if (!handle) {
+      errors.handle = "Handle field is required.";
+    }
+
+    // Check if email is valid
+    if (email && !validateEmail(email)) {
+      errors.email = "Email is invalid.";
+    }
+
+    // Check if there are any errors
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Failed to update user due to validation errors.",
+        data: {
+          errors: errors,
+        },
+      });
+    }
+
+    // If the ID is invalid, return an error
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid user ID",
+        code: 400,
+        data: null,
+      });
+    }
+
+    // Fetch the user by ID
+    const user = await User.findById(req.params.id);
+
+    // If the user doesn't exist, return an error
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+        code: 404,
+        data: null,
+      });
+    }
+
+    // Check if the user with the provided email or handle already exists
+    const existingUser = await User.findOne({
+      $or: [{ email }, { handle: req.body.handle }],
+    });
+
+    if (existingUser && existingUser._id.toString() !== req.params.id) {
+      let message = "User with the provided email or handle already exists.";
+
+      if (existingUser.email === email) {
+        message = "User with the provided email already exists.";
+      } else if (existingUser.handle === req.body.handle) {
+        message = "User with the provided handle already exists.";
+      }
+
+      return res.status(409).json({
+        status: "error",
+        code: 409,
+        message,
+        data: null,
+      });
+    }
+
+    // Encrypt password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Update the user
+    user.email = email;
+    user.password = hashedPassword;
+    user.username = username;
+    user.handle = handle;
+    user.bio = bio;
+    user.verified = verified;
+    user.admin = admin;
+
+    await user.save();
+
+    res.status(200).json({
+      status: "success",
+      code: 200,
+      message: "User updated successfully",
+      data: null,
+    });
+  } catch (error) {
+    // Return an error
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Something went wrong: " + error.message,
       data: null,
     });
   }
