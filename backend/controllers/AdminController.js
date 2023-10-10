@@ -5,8 +5,53 @@
  *   description: Operations related to creating, fetching, updating, and deleting data as an admin
  */
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     FullRegistrationRequest:
+ *       type: object
+ *       required:
+ *         - email
+ *         - password
+ *         - username
+ *         - handle
+ *       properties:
+ *         email:
+ *           type: string
+ *           description: User's email address
+ *         password:
+ *           type: string
+ *           description: User's password
+ *         username:
+ *           type: string
+ *           description: User's chosen username
+ *         handle:
+ *           type: string
+ *           description: User's unique handle
+ *         bio:
+ *           type: string
+ *           description: User's bio
+ *         verified:
+ *           type: boolean
+ *           description: Whether or not the user is verified
+ *         admin:
+ *           type: boolean
+ *           description: Whether or not the user is an admin
+ *       example:
+ *         email: jane.doe@example.com
+ *         password: anothersecurepassword
+ *         username: janedoe123
+ *         handle: jane_doe_handle
+ *         bio: I'm Jane Doe
+ *         verified: false
+ *         admin: false
+ *
+ */
+
 // Require the necessary packages
 const express = require("express");
+const bcrypt = require("bcrypt");
 const router = express.Router();
 
 // Require the necessary models
@@ -16,6 +61,9 @@ const Comment = require("../models/Comment");
 const Message = require("../models/Message");
 const Report = require("../models/Report");
 
+// Helpers
+const { validateEmail } = require("../utils/general");
+
 // Middleware
 const { authenticateJWT, isAdmin } = require("../middleware/auth");
 
@@ -23,6 +71,199 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
 const NotificationService = require("../services/NotificationService");
 
 // TODO: User: CRUD
+
+// Create (POST) - Add a new user
+/**
+ * @swagger
+ * /api/v1/admin/users:
+ *   post:
+ *     tags:
+ *       - Admin
+ *     summary: Register a new user
+ *     description: Register a new user as an admin
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       description: User registration details
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/FullRegistrationRequest'
+ *     responses:
+ *       201:
+ *         description: User successfully registered
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   format: int32
+ *                   example: 201
+ *                 message:
+ *                   type: string
+ *                   example: User successfully registered.
+ *                 data:
+ *                   type: null
+ *       400:
+ *         description: Missing required fields
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   format: int32
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to register user due to validation errors.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: object
+ *                       properties:
+ *                         email:
+ *                           type: string
+ *                           example: Email field is required.
+ *                         password:
+ *                           type: string
+ *                           example: Password field is required.
+ *                         username:
+ *                           type: string
+ *                           example: Username field is required.
+ *                         handle:
+ *                           type: string
+ *                           example: Handle field is required.
+ *       409:
+ *         description: User with provided email or handle already exists
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   format: int32
+ *                   example: 409
+ *                 message:
+ *                   type: string
+ *                   example: User with the provided email or handle already exists.
+ *                 data:
+ *                   type: null
+ */
+router.post("/users", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    var errors = {};
+    const { email, password, username, handle, bio, verified, admin } =
+      req.body;
+
+    // If bio, verified, or admin are provided but empty, set them to null
+    if (bio === "" || bio === undefined) {
+      req.body.bio = "";
+    }
+    if (verified === "" || verified === undefined) {
+      req.body.verified = false;
+    }
+    if (admin === "" || admin === undefined) {
+      req.body.admin = false;
+    }
+
+    // Validate the request body
+    if (!email) {
+      errors.email = "Email field is required.";
+    } else if (!password) {
+      errors.password = "Password field is required.";
+    } else if (!username) {
+      errors.username = "Username field is required.";
+    } else if (!handle) {
+      errors.handle = "Handle field is required.";
+    }
+
+    // Check if email is valid
+    if (email && !validateEmail(email)) {
+      errors.email = "Email is invalid.";
+    }
+
+    // Check if there are any errors
+    if (Object.keys(errors).length > 0) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Failed to register user due to validation errors.",
+        data: {
+          errors: errors,
+        },
+      });
+    }
+
+    // Check if the user with the provided email or handle already exists
+    const existingUser = await User.findOne({
+      $or: [{ email }, { handle: req.body.handle }],
+    });
+
+    if (existingUser) {
+      let message = "User with the provided email or handle already exists.";
+
+      if (existingUser.email === email) {
+        message = "User with the provided email already exists.";
+      } else if (existingUser.handle === req.body.handle) {
+        message = "User with the provided handle already exists.";
+      }
+
+      return res.status(409).json({
+        status: "error",
+        code: 409,
+        message,
+        data: null,
+      });
+    }
+
+    // Encrypt password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const user = new User({
+      handle,
+      email,
+      password: hashedPassword,
+      username,
+      // Add other fields if necessary
+    });
+
+    await user.save();
+
+    res.status(201).json({
+      status: "success",
+      code: 201,
+      message: "User successfully registered.",
+      data: null,
+    });
+  } catch (error) {
+    // Return an error
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Something went wrong.",
+      data: null,
+    });
+  }
+});
 
 // Read (GET) - Fetch a specific user by ID
 /**
