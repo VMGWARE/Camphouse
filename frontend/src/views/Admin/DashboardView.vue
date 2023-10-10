@@ -1,6 +1,9 @@
 <template>
   <!-- Navigation bar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-3">
+  <nav
+    class="navbar navbar-expand-lg navbar-dark bg-dark mb-3"
+    style="padding-left: 20px"
+  >
     <router-link class="navbar-brand" to="/admin">
       <img
         src="@/assets/images/branding/Camphouse-v2.png"
@@ -58,7 +61,25 @@
   </nav>
 
   <!-- Main content -->
-  <div id="main"></div>
+  <div id="main">
+    <!-- Show current version -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h4>Camphouse Admin Panel</h4>
+            </div>
+            <div class="card-body">
+              <p class="card-text">
+                <strong>Version: </strong> {{ appVersion }}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -85,3 +106,32 @@ body {
   border-top: 1px solid #495057; /* Gives a slight border to separate from header */
 }
 </style>
+
+<script>
+import axios from "axios";
+
+export default {
+  name: "DashboardView",
+  data() {
+    return {
+      appVersion: "",
+    };
+  },
+  methods: {
+    // Get the current version of the app
+    getAppVersion() {
+      axios
+        .get("/v1/misc/health")
+        .then((res) => {
+          this.appVersion = res.data.data.version;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+  },
+  mounted() {
+    this.getAppVersion();
+  },
+};
+</script>

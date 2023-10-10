@@ -97,7 +97,7 @@ const routes = [
   {
     path: "/admin/",
     name: "admin",
-    component: () => import("@/views/Admin/AdminDashboardView.vue"),
+    component: () => import("@/views/Admin/DashboardView.vue"),
     meta: {
       title: "Admin",
       layout: "admin",
