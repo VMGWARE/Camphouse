@@ -169,6 +169,19 @@
         </div>
 
         <!-- Show the latest 3 unresolved reports -->
+        <div class="col-md-6">
+          <div class="card mb-3">
+            <div class="card-header">
+              <h5>
+                <i class="fas fa-envelope"></i>
+                Recent Reports
+              </h5>
+            </div>
+            <div class="card-body">
+              <p>Coming soon...</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
