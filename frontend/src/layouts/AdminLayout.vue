@@ -56,6 +56,34 @@
             Reports</a
           >
         </li>
+        <li class="nav-item">
+          <!-- Dropdown for Additional Options -->
+          <div class="dropdown">
+            <button
+              class="nav-link btn btn-secondary dropdown-toggle px-3"
+              type="button"
+              id="userOptions"
+              data-bs-toggle="dropdown"
+            >
+              Options
+            </button>
+            <div class="dropdown-menu">
+              <router-link class="dropdown-item" to="/messages"
+                ><i class="fa fa-envelope"></i> Messages</router-link
+              >
+              <router-link class="dropdown-item" to="/settings"
+                ><i class="fa fa-cog"></i> Settings</router-link
+              >
+              <p
+                class="fake-link dropdown-item"
+                @click="logout"
+                v-if="!isLoading"
+              >
+                <i class="fas fa-sign-out-alt"></i> Logout
+              </p>
+            </div>
+          </div>
+        </li>
       </ul>
     </div>
   </nav>
@@ -110,4 +138,26 @@ body {
 .footer a:hover {
   text-decoration: underline;
 }
+.fake-link {
+  cursor: pointer;
+}
 </style>
+
+<script>
+export default {
+  methods: {
+    logout() {
+      this.isLoading = true;
+      this.$store
+        .dispatch("logout")
+        .then(() => {
+          this.isLoading = false;
+        })
+        .catch(() => {
+          this.isLoading = false;
+          //
+        });
+    },
+  },
+};
+</script>
