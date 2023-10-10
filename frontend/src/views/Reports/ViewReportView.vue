@@ -1,5 +1,8 @@
 <template>
-  <div class="view-report-container" v-if="report._id">
+  <div
+    class="view-report-container container container-fluid"
+    v-if="report._id"
+  >
     <h2>Report Details</h2>
 
     <!-- Report Information -->
