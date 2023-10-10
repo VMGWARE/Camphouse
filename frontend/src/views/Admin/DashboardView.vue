@@ -185,6 +185,28 @@
       </div>
     </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="footer py-3 bg-dark">
+    <div class="container-fluid">
+      <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+          <small>
+            Licensed under
+            <a
+              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
+              target="_blank"
+              >CC BY-NC-SA 4.0</a
+            >
+            |
+            <a href="https://github.com/VMGWARE/Camphouse" target="_blank"
+              >GitHub Repo</a
+            >
+          </small>
+        </div>
+      </div>
+    </div>
+  </footer>
 </template>
 
 <style scoped>
@@ -225,6 +247,17 @@ body {
 
 .card-body {
   border-top: 1px solid #495057; /* Gives a slight border to separate from header */
+}
+
+.footer a {
+  color: #ffc107; /* Using Bootstrap's yellow color for contrast */
+  text-decoration: none;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.footer a:hover {
+  text-decoration: underline;
 }
 </style>
 
