@@ -824,5 +824,106 @@ router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
 // TODO: Comment: RD
 // TODO: Message: RD
 
+// Read (GET) - Get analytics/stats for the app
+/**
+ * @swagger
+ * /api/v1/admin/analytics:
+ *   get:
+ *     summary: Get analytics/stats for the app
+ *     description: Get analytics/stats for the app as an admin
+ *     tags:
+ *       - Admin
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Analytics fetched successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: success
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Analytics fetched successfully.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     users:
+ *                       type: integer
+ *                       example: 10
+ *                     posts:
+ *                       type: integer
+ *                       example: 100
+ *                     messages:
+ *                       type: integer
+ *                       example: 1000
+ *                     comments:
+ *                       type: integer
+ *                       example: 10000
+ *       500:
+ *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong
+ *                 data:
+ *                  type: null
+ */
+router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // Number of users
+    const users = await User.countDocuments();
+
+    // Number of posts
+    const posts = await Post.countDocuments();
+
+    // Number of messages
+    const messages = await Message.countDocuments();
+
+    // Number of comments
+    const comments = await Comment.countDocuments();
+
+    // Return the analytics
+    res.json({
+      status: "success",
+      message: "Analytics fetched successfully",
+      code: 200,
+      data: {
+        users,
+        posts,
+        messages,
+        comments,
+      },
+    });
+  } catch (error) {
+    // Return an error
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong.",
+      code: 500,
+      data: null,
+    });
+  }
+});
+
 // Return router
 module.exports = router;
