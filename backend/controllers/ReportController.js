@@ -212,6 +212,13 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
  *         required: false
  *         schema:
  *           type: string
+ *       - name: status
+ *         in: query
+ *         description: Filter reports by status.
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [Pending, Approved, Denied]
  *     responses:
  *       200:
  *         description: Successfully retrieved all reports.
@@ -266,30 +273,55 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
  */
 router.get("/", authenticateJWT, isAdmin, async (req, res) => {
   try {
-    // Page number
     const page = parseInt(req.query.page) || 1;
-
-    // Number of posts per page
     const limit = parseInt(req.query.limit) || 10;
-
-    // Search query
     const search = req.query.search || "";
+    const status = req.query.status || "";
 
-    // Get all reports
-    const reports = await Report.find({
-      $or: [
-        { description: { $regex: search, $options: "i" } },
-        { moderatorNote: { $regex: search, $options: "i" } },
-      ],
-    })
-      .sort({
-        createdAt: -1,
+    if (status && !["Pending", "Approved", "Denied"].includes(status)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Invalid status",
+        data: null,
+      });
+    }
+
+    // Creating the query conditionally based on the input parameters.
+    let queryConditions = [];
+    if (search) {
+      queryConditions.push({ description: { $regex: search, $options: "i" } });
+      queryConditions.push({
+        moderatorNote: { $regex: search, $options: "i" },
+      });
+    }
+
+    if (status) {
+      queryConditions.push({ status: { $regex: status, $options: "i" } });
+    }
+
+    let reports;
+
+    if (queryConditions.length) {
+      reports = await Report.find({
+        $or: queryConditions,
       })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .populate("reportedBy", "-password -__v");
+        .sort({
+          createdAt: -1,
+        })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("reportedBy", "-password -__v");
+    } else {
+      reports = await Report.find()
+        .sort({
+          createdAt: -1,
+        })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("reportedBy", "-password -__v");
+    }
 
-    // Check if reports exist
     if (!reports.length) {
       return res.status(404).json({
         status: "error",
@@ -299,12 +331,11 @@ router.get("/", authenticateJWT, isAdmin, async (req, res) => {
       });
     }
 
-    // For each report, populate the reportedBy and reported fields
     for (let i = 0; i < reports.length; i++) {
       const report = reports[i];
       const reported = await User.findById(report.reported).select(
         "-password -__v"
-      ); // Exclude the password field
+      );
       report.reported = reported;
     }
 
