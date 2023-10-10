@@ -831,7 +831,9 @@ router.get("/user/:userId", authenticateJWT, async (req, res) => {
  */
 router.get("/:reportId", authenticateJWT, async (req, res) => {
   try {
-    const report = await Report.findById(req.params.reportId);
+    const report = await Report.findById(req.params.reportId)
+      .populate("reportedBy", "-password -__v")
+      .populate("reported", "-password -__v");
 
     // If the report does not exist, return an error
     if (!report) {
@@ -844,7 +846,7 @@ router.get("/:reportId", authenticateJWT, async (req, res) => {
     }
 
     // Check if the requester is the creator of the report or an admin
-    if (report.reportedBy.toString() !== req.user.id && !req.user.isAdmin) {
+    if (report.reportedBy.toString() !== req.user._id && !req.user.admin) {
       return res.status(403).json({
         status: "error",
         code: 403,

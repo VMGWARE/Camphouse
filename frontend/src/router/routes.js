@@ -109,7 +109,6 @@ const routes = [
     component: () => import("@/views/Reports/ViewReportView.vue"),
     meta: {
       title: "View Report",
-      layout: "admin",
     },
   },
   {
