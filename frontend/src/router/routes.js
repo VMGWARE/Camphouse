@@ -104,6 +104,15 @@ const routes = [
     },
   },
   {
+    path: "/view-report/:id",
+    name: "view-report",
+    component: () => import("@/views/Reports/ViewReportView.vue"),
+    meta: {
+      title: "View Report",
+      layout: "admin",
+    },
+  },
+  {
     path: "/:pathMatch(.*)*",
     name: "not-found",
     component: NotFoundView,
