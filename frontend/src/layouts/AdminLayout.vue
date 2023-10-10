@@ -89,10 +89,8 @@
   </nav>
 
   <!-- Main content -->
-  <div id="main">
-    <div class="container-fluid">
-      <slot />
-    </div>
+  <div id="main" class="container-fluid">
+    <slot />
   </div>
 
   <!-- Footer -->
