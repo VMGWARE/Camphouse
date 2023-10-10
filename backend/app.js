@@ -216,3 +216,11 @@ app.listen(port, () => {
   console.log(chalk.yellow(`🌍 http://localhost:${port}`));
   console.log(chalk.yellow(`📚 API docs at http://localhost:${port}/api/docs`));
 });
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log(chalk.green("👋 SIGTERM signal received: closing HTTP server"));
+  app.close(() => {
+    console.log(chalk.green("📭 HTTP server closed"));
+  });
+});
