@@ -1,7 +1,7 @@
 <template>
   <!-- Navigation bar -->
   <nav
-    class="navbar navbar-expand-lg navbar-dark bg-dark mb-3"
+    class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 sticky-top"
     style="padding-left: 20px"
   >
     <router-link class="navbar-brand" to="/admin">
