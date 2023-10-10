@@ -69,7 +69,7 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
 // Services
 const NotificationService = require("../services/NotificationService");
 
-// TODO: User: CRUD
+// User: CRUD
 
 // Create (POST) - Add a new user
 /**
@@ -664,6 +664,157 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       status: "error",
       code: 500,
       message: "Something went wrong: " + error.message,
+      data: null,
+    });
+  }
+});
+
+// Delete (DELETE) - Delete a specific user by ID
+/**
+ * @swagger
+ * /api/v1/admin/users/{userId}:
+ *   delete:
+ *     summary: Delete a user by ID
+ *     description: Delete a user by ID as an admin
+ *     tags:
+ *       - Admin
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: userId
+ *         in: path
+ *         description: ID of the user to delete.
+ *         required: true
+ *         type: string
+ *     responses:
+ *       200:
+ *         description: User deleted successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: success
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: User deleted successfully.
+ *                 data:
+ *                   type: null
+ *       400:
+ *         description: Invalid user ID.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Invalid user ID
+ *                 data:
+ *                   type: null
+ *       404:
+ *         description: User not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: User not found
+ *                 data:
+ *                   type: null
+ *       500:
+ *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Something went wrong
+ *                 data:
+ *                  type: null
+ */
+router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // If the ID is invalid, return an error
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid user ID",
+        code: 400,
+        data: null,
+      });
+    }
+
+    // Fetch the user by ID
+    const user = await User.findById(req.params.id);
+
+    // If the user doesn't exist, return an error
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+        code: 404,
+        data: null,
+      });
+    }
+
+    // Delete the user
+    await User.findByIdAndDelete(req.params.id);
+
+    // Delete all posts by the user
+    await Post.deleteMany({ user: req.params.id });
+
+    // Delete all comments by the user
+    await Comment.deleteMany({ user: req.params.id });
+
+    // Delete all messages by the user
+    await Message.deleteMany({ sender: req.params.id });
+
+    // Delete all reports by the user
+    await Report.deleteMany({ reportedBy: req.params.id });
+
+    // Return a success message
+    res.json({
+      status: "success",
+      message: "User deleted successfully",
+      code: 200,
+      data: null,
+    });
+  } catch (error) {
+    // Return an error
+    res.status(500).json({
+      status: "error",
+      message: "Something went wrong.",
+      code: 500,
       data: null,
     });
   }
