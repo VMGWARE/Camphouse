@@ -62,7 +62,56 @@ const NotificationService = require("../services/NotificationService");
  *                   type: string
  *                   example: User fetched successfully
  *                 data:
- *                   $ref: '#/components/schemas/UserProfile'
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 5f1f2d5a1f2d5a1f2d5a1f2d
+ *                     handle:
+ *                       type: string
+ *                       example: john_doe
+ *                     email:
+ *                       type: string
+ *                       example: john@doe.com
+ *                     username:
+ *                       type: string
+ *                       example: John Doe
+ *                     profilePicture:
+ *                       type: string
+ *                       example: https://camphouse.vmgware.dev/images/profiles/ProfilePicture.png
+ *                     bio:
+ *                       type: string
+ *                       example: I'm John Doe
+ *                     verified:
+ *                       type: boolean
+ *                       example: false
+ *                     admin:
+ *                       type: boolean
+ *                       example: false
+ *                     createdAt:
+ *                       type: string
+ *                       example: 2020-07-27T00:00:00.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       example: 2020-07-27T00:00:00.000Z
+ *       400:
+ *         description: Invalid user ID.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Invalid user ID
+ *                 data:
+ *                   type: null
  *       404:
  *         description: User not found.
  *         content:
@@ -102,6 +151,16 @@ const NotificationService = require("../services/NotificationService");
  */
 router.get("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
   try {
+    // If the ID is invalid, return an error
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      res.status(400).json({
+        status: "error",
+        message: "Invalid user ID",
+        code: 400,
+        data: null,
+      });
+    }
+
     // Fetch the user by ID
     const user = await User.findById(req.params.id).select("-password -__v");
 
