@@ -1,8 +1,8 @@
 <template>
   <div>
-    <div v-if="this.$route.meta.layout == 'admin'">
+    <AdminLayout v-if="this.$route.meta.layout == 'admin'">
       <router-view />
-    </div>
+    </AdminLayout>
     <div v-else>
       <nav
         class="navbar navbar-expand-lg navbar-dark bg-dark mb-3 sticky-top"
@@ -126,6 +126,7 @@
 import jwtDecode from "jwt-decode";
 import axios from "axios";
 import { ModalsContainer } from "vue-final-modal";
+import AdminLayout from "./layouts/AdminLayout.vue";
 
 export default {
   data() {
@@ -222,6 +223,7 @@ export default {
   },
   components: {
     ModalsContainer,
+    AdminLayout,
   },
 };
 </script>

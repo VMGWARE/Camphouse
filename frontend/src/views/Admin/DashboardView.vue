@@ -1,212 +1,120 @@
 <template>
-  <!-- Navigation bar -->
-  <nav
-    class="navbar navbar-expand-lg navbar-dark bg-dark mb-3"
-    style="padding-left: 20px"
-  >
-    <router-link class="navbar-brand" to="/admin">
-      <img
-        src="@/assets/images/branding/Camphouse-v2.png"
-        alt="Camphouse Logo"
-        height="30"
-        width="30"
-      />
-      Admin Panel
-    </router-link>
-    <button
-      class="navbar-toggler"
-      type="button"
-      data-bs-toggle="collapse"
-      data-bs-target="#navbarNav"
-      aria-controls="navbarNav"
-      aria-expanded="false"
-      aria-label="Toggle navigation"
-    >
-      <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav ms-auto">
-        <li class="nav-item active">
-          <router-link class="nav-link" to="/admin">
-            <i class="fas fa-tachometer-alt"></i>
-            Dashboard</router-link
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#!">
-            <i class="fas fa-user"></i>
-            Users</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#!">
-            <i class="fas fa-file-alt"></i>
-            Posts</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#!">
-            <i class="fas fa-comments"></i>
-            Comments</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#!">
-            <i class="fas fa-envelope"></i>
-            Reports</a
-          >
-        </li>
-      </ul>
-    </div>
-  </nav>
-
-  <!-- Main content -->
-  <div id="main">
-    <div class="container-fluid">
-      <!-- Welcome message -->
-      <div class="row">
-        <div class="col-md-12">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h4>Camphouse Admin Panel</h4>
-            </div>
-            <div class="card-body">
-              <p>
-                Welcome to the Camphouse Admin Panel. This is where you can
-                manage the Camphouse application.
-              </p>
-              <p>
-                The current version of the application is
-                <strong>{{ appVersion }}</strong
-                >.
-              </p>
-            </div>
-          </div>
+  <!-- Welcome message -->
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h4>Camphouse Admin Panel</h4>
         </div>
-      </div>
-
-      <!-- Number of users, posts, messages, comments, and notifications. -->
-      <div class="row">
-        <div class="col-md-3">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h5>
-                <i class="fas fa-users"></i>
-                Users
-              </h5>
-            </div>
-            <div class="card-body">
-              <h1>
-                {{ analytics.users }}
-              </h1>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h5>
-                <i class="fas fa-file-alt"></i>
-                Posts
-              </h5>
-            </div>
-            <div class="card-body">
-              <h1>{{ analytics.posts }}</h1>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h5>
-                <i class="fas fa-comments"></i>
-                Messages
-              </h5>
-            </div>
-            <div class="card-body">
-              <h1>{{ analytics.messages }}</h1>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h5>
-                <i class="fas fa-envelope"></i>
-                Comments
-              </h5>
-            </div>
-            <div class="card-body">
-              <h1>{{ analytics.comments }}</h1>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Recent posts and reports -->
-      <div class="row">
-        <!-- Show the latest 3 posts -->
-        <div class="col-md-6">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h5>
-                <i class="fas fa-file-alt"></i>
-                Recent Posts
-              </h5>
-            </div>
-            <div class="card-body">
-              <div
-                v-for="post in recentPosts"
-                :key="post._id"
-                class="post-item"
-              >
-                <h6>{{ post.title }}</h6>
-                <p>{{ limitedContent(post.content) }}</p>
-                <small>By {{ post.user.handle }}</small>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Show the latest 3 unresolved reports -->
-        <div class="col-md-6">
-          <div class="card mb-3">
-            <div class="card-header">
-              <h5>
-                <i class="fas fa-envelope"></i>
-                Recent Reports
-              </h5>
-            </div>
-            <div class="card-body">
-              <p>Coming soon...</p>
-            </div>
-          </div>
+        <div class="card-body">
+          <p>
+            Welcome to the Camphouse Admin Panel. This is where you can manage
+            the Camphouse application.
+          </p>
+          <p>
+            The current version of the application is
+            <strong>{{ appVersion }}</strong
+            >.
+          </p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Footer -->
-  <footer class="footer py-3 bg-dark">
-    <div class="container-fluid">
-      <div class="row justify-content-center">
-        <div class="col-md-8 text-center">
-          <small>
-            Licensed under
-            <a
-              href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
-              target="_blank"
-              >CC BY-NC-SA 4.0</a
-            >
-            |
-            <a href="https://github.com/VMGWARE/Camphouse" target="_blank"
-              >GitHub Repo</a
-            >
-          </small>
+  <!-- Number of users, posts, messages, comments, and notifications. -->
+  <div class="row">
+    <div class="col-md-3">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>
+            <i class="fas fa-users"></i>
+            Users
+          </h5>
+        </div>
+        <div class="card-body">
+          <h1>
+            {{ analytics.users }}
+          </h1>
         </div>
       </div>
     </div>
-  </footer>
+    <div class="col-md-3">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>
+            <i class="fas fa-file-alt"></i>
+            Posts
+          </h5>
+        </div>
+        <div class="card-body">
+          <h1>{{ analytics.posts }}</h1>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>
+            <i class="fas fa-comments"></i>
+            Messages
+          </h5>
+        </div>
+        <div class="card-body">
+          <h1>{{ analytics.messages }}</h1>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>
+            <i class="fas fa-envelope"></i>
+            Comments
+          </h5>
+        </div>
+        <div class="card-body">
+          <h1>{{ analytics.comments }}</h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recent posts and reports -->
+  <div class="row">
+    <!-- Show the latest 3 posts -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>
+            <i class="fas fa-file-alt"></i>
+            Recent Posts
+          </h5>
+        </div>
+        <div class="card-body">
+          <div v-for="post in recentPosts" :key="post._id" class="post-item">
+            <h6>{{ post.title }}</h6>
+            <p>{{ limitedContent(post.content) }}</p>
+            <small>By {{ post.user.handle }}</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Show the latest 3 unresolved reports -->
+    <div class="col-md-6">
+      <div class="card mb-3">
+        <div class="card-header">
+          <h5>
+            <i class="fas fa-envelope"></i>
+            Recent Reports
+          </h5>
+        </div>
+        <div class="card-body">
+          <p>Coming soon...</p>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
@@ -226,15 +134,6 @@
   margin-bottom: 5px;
 }
 
-body {
-  background-color: #343a40; /* Bootstrap dark background color */
-  color: #fff;
-}
-
-.navbar-dark .navbar-brand {
-  color: #ffc107; /* Bootstrap yellow color for contrast */
-}
-
 .card-header {
   background-color: #212529; /* Slightly darker than body background */
   border-bottom: 1px solid #495057; /* Gives a slight border to separate */
@@ -247,17 +146,6 @@ body {
 
 .card-body {
   border-top: 1px solid #495057; /* Gives a slight border to separate from header */
-}
-
-.footer a {
-  color: #ffc107; /* Using Bootstrap's yellow color for contrast */
-  text-decoration: none;
-  margin-left: 10px;
-  margin-right: 10px;
-}
-
-.footer a:hover {
-  text-decoration: underline;
 }
 </style>
 
