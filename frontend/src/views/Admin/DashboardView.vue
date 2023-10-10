@@ -110,7 +110,24 @@
           </h5>
         </div>
         <div class="card-body">
-          <p>Coming soon...</p>
+          <div
+            v-for="report in recentReports"
+            :key="report._id"
+            class="report-item"
+          >
+            <h6>{{ report.description }}</h6>
+            <div class="report-details">
+              <img
+                :src="report.reportedBy.profilePicture"
+                alt="reporter's profile picture"
+                class="reporter-pic"
+              />
+              <span>Reported by {{ report.reportedBy.handle }}</span>
+              <a :href="'/view-report/' + report._id" class="view-report-link"
+                >View Full Report</a
+              >
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -147,6 +164,43 @@
 .card-body {
   border-top: 1px solid #495057; /* Gives a slight border to separate from header */
 }
+
+.report-item {
+  background-color: #2a2e33;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.report-item h6 {
+  margin-bottom: 10px;
+}
+
+.report-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reporter-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.view-report-link {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  position: absolute;
+  right: 15px;
+  bottom: 15px;
+  text-decoration: none;
+}
 </style>
 
 <script>
@@ -164,6 +218,7 @@ export default {
         comments: 0,
       },
       recentPosts: [],
+      recentReports: [],
     };
   },
   methods: {
@@ -211,11 +266,25 @@ export default {
       }
       return content;
     },
+    // Get the latest 3 unresolved reports
+    getRecentReports() {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + localStorage.getItem("token");
+      axios
+        .get("/v1/reports?limit=3")
+        .then((res) => {
+          this.recentReports = res.data.data.reports;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
   mounted() {
     this.getAppVersion();
     this.getAnalytics();
     this.getRecentPosts();
+    this.getRecentReports();
   },
 };
 </script>
