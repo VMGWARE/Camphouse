@@ -153,7 +153,7 @@ router.get("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
   try {
     // If the ID is invalid, return an error
     if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-      res.status(400).json({
+      return res.status(400).json({
         status: "error",
         message: "Invalid user ID",
         code: 400,
