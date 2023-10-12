@@ -787,9 +787,6 @@ router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       });
     }
 
-    // Delete the user
-    await User.findByIdAndDelete(req.params.id);
-
     // Delete all posts by the user
     await Post.deleteMany({ user: req.params.id });
 
@@ -802,6 +799,9 @@ router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
     // Delete all reports by the user
     await Report.deleteMany({ reportedBy: req.params.id });
 
+    // Delete the user
+    await User.findByIdAndDelete(req.params.id);
+
     // Return a success message
     res.json({
       status: "success",
@@ -810,6 +810,7 @@ router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       data: null,
     });
   } catch (error) {
+    console.error(error);
     // Return an error
     res.status(500).json({
       status: "error",
