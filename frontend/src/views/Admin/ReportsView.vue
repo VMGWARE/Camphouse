@@ -36,7 +36,7 @@
         </div>
         <p class="card-text">{{ report.description }}</p>
         <router-link
-          :to="`/reports/${report._id}`"
+          :to="`/admin/reports/${report._id}`"
           class="btn btn-view-report btn-sm"
           >View Full Report</router-link
         >
