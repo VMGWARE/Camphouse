@@ -51,9 +51,9 @@
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#!">
+          <router-link class="nav-link" to="/admin/reports">
             <i class="fas fa-envelope"></i>
-            Reports</a
+            Reports</router-link
           >
         </li>
         <li class="nav-item">
