@@ -2,9 +2,9 @@
   <div class="card mb-2 comment">
     <div class="card-body">
       <div class="d-flex align-items-center">
-        <router-link :to="'/@' + comment.user.handle">
+        <router-link :to="'/@' + comment.user?.handle">
           <img
-            :src="comment.user.profilePicture"
+            :src="comment.user?.profilePicture"
             alt=""
             class="comment-profile-picture"
           />
@@ -12,8 +12,7 @@
         <div>
           <p class="card-text mb-0">{{ comment.comment }}</p>
           <small class="text-muted">
-            Posted by {{ comment.user.username }}
-            on
+            Posted by {{ comment.user?.username }}
             {{
               new Date(comment.createdAt).toLocaleDateString(undefined, {
                 year: "numeric",
