@@ -666,7 +666,7 @@ router.post("/", authenticateJWT, async (req, res) => {
       req.user._id, // receiver
       report._id, // referenceId
       "Report", // onModel
-      `Your report of ${type.toLowerCase()} has been received and is being reviewed by our moderators.` // message
+      `Your reporting of a ${type.toLowerCase()} has been received. A moderator will process your report soon.` // message
     );
   } catch (error) {
     res.status(500).json({
@@ -890,7 +890,10 @@ router.get("/:reportId", authenticateJWT, async (req, res) => {
     }
 
     // Check if the requester is the creator of the report or an admin
-    if (report.reportedBy.toString() !== req.user._id && !req.user.admin) {
+    if (
+      report.reportedBy._id.toString() !== req.user._id.toString() &&
+      !req.user.admin
+    ) {
       return res.status(403).json({
         status: "error",
         code: 403,
