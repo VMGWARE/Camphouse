@@ -1,54 +1,53 @@
 <template>
-  <div class="reports-page">
-    <div class="header">
-      <h1>Reports</h1>
-    </div>
-    <div class="reports-list">
+  <div class="container my-4">
+    <h1 class="mb-4">Reports</h1>
+    <div
+      v-for="report in reports"
+      :key="report.reportedContentId"
+      class="card mb-3"
+    >
       <div
-        v-for="report in reports"
-        :key="report.reportedContentId"
-        class="report-card"
+        class="card-header d-flex justify-content-between align-items-center"
       >
-        <div class="report-header">
-          <div class="reporter-info">
-            <img
-              :src="report.reportedBy.profilePicture"
-              alt=""
-              class="profile-picture"
-            />
-            <span>{{ report.reportedBy.username }}</span>
-          </div>
-          <div class="report-status">
-            <span :class="report.status">{{ report.status }}</span>
-          </div>
+        <div class="reporter-info d-flex align-items-center">
+          <img
+            :src="report.reportedBy.profilePicture"
+            alt=""
+            class="rounded-circle profile-picture"
+            width="40"
+            height="40"
+          />
+          <span class="ml-2">{{ report.reportedBy.username }}</span>
         </div>
-        <div class="report-content">
-          <div class="reported-info">
-            <img
-              :src="report.reported.profilePicture"
-              alt=""
-              class="profile-picture"
-            />
-            <span>{{ report.reported.username }}</span>
-          </div>
-          <div class="report-description">
-            <p>{{ report.description }}</p>
-          </div>
-          <div class="report-actions">
-            <button
-              @click="resolveReport(report.reportedContentId)"
-              class="btn-resolve"
-            >
-              Resolve
-            </button>
-            <button
-              @click="dismissReport(report.reportedContentId)"
-              class="btn-dismiss"
-            >
-              Dismiss
-            </button>
-          </div>
+        <span class="badge" :class="statusClass(report.status)">{{
+          report.status
+        }}</span>
+      </div>
+      <div class="card-body">
+        <div class="reported-info mb-3 d-flex align-items-center">
+          <img
+            :src="report.reported.profilePicture"
+            alt=""
+            class="rounded-circle profile-picture"
+            width="40"
+            height="40"
+          />
+          <span class="ml-2">{{ report.reported.username }}</span>
         </div>
+        <p class="card-text">{{ report.description }}</p>
+        <button
+          @click="resolveReport(report.reportedContentId)"
+          class="btn btn-success rounded-pill"
+          style="margin-right: 10px"
+        >
+          Resolve
+        </button>
+        <button
+          @click="dismissReport(report.reportedContentId)"
+          class="btn btn-danger ml-2"
+        >
+          Dismiss
+        </button>
       </div>
     </div>
   </div>
@@ -64,6 +63,13 @@ export default {
     };
   },
   methods: {
+    statusClass(status) {
+      return {
+        "badge-warning": status === "Pending",
+        "badge-success": status === "Resolved",
+        "badge-danger": status === "Dismissed",
+      };
+    },
     async resolveReport() {
       // Resolve report logic here
     },
@@ -156,6 +162,18 @@ export default {
 .btn-dismiss {
   background-color: #dc3545;
   color: white;
+}
+
+.badge.badge-warning {
+  background-color: #ffc34d;
+}
+
+.badge.badge-success {
+  background-color: #28a745;
+}
+
+.badge.badge-danger {
+  background-color: #dc3545;
 }
 </style>
 
