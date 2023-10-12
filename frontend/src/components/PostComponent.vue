@@ -116,6 +116,7 @@
           v-for="comment in thisPost.comments"
           :key="comment._id"
           :id="'comment_' + comment._id"
+          @comment-deleted="handleCommentDeleted"
         />
       </div>
       <div v-else>
@@ -322,6 +323,14 @@ export default {
     formatDate(dateString) {
       const options = { year: "numeric", month: "long", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
+    },
+    handleCommentDeleted(deletedCommentId) {
+      console.log("Comment Deleted: ", deletedCommentId);
+
+      // Remove the comment with the specified _id from the comments array
+      this.thisPost.comments = this.thisPost.comments.filter(
+        (comment) => comment._id !== deletedCommentId
+      );
     },
   },
   mounted() {
