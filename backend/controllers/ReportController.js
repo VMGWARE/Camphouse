@@ -181,6 +181,9 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT, isAdmin } = require("../middleware/auth");
 
+// Services
+const NotificationService = require("../services/NotificationService");
+
 /**
  * @swagger
  * /api/v1/reports:
@@ -649,12 +652,22 @@ router.post("/", authenticateJWT, async (req, res) => {
     await report.save();
 
     // Return the report
-    return res.status(201).json({
+    res.status(201).json({
       status: "success",
       code: 201,
       message: "Successfully created the report",
       data: report,
     });
+
+    // Create a notification for the user who created the content
+    await NotificationService.create(
+      "REPORT", // type
+      req.user._id, // sender
+      req.user._id, // receiver
+      report._id, // referenceId
+      "Report", // onModel
+      `Your report of ${type.toLowerCase()} has been received and is being reviewed by our moderators.` // message
+    );
   } catch (error) {
     res.status(500).json({
       status: "error",

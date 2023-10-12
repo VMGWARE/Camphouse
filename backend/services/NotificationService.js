@@ -26,12 +26,13 @@ class NotificationService {
           "UNLIKE",
           "FOLLOW",
           "UNFOLLOW",
+          "REPORT",
         ].includes(type)
       )
         throw new Error("Invalid type");
 
       // Validate onModel
-      if (!["Post", "Message", "User"].includes(onModel))
+      if (!["Post", "Message", "User", "Report"].includes(onModel))
         throw new Error("Invalid onModel");
 
       // Validate sender, receiver, and referenceId
