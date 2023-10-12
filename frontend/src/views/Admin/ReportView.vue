@@ -6,19 +6,30 @@
         Report Status:
         <select v-model="report.status" class="ml-2 form-control">
           <option value="Pending">Pending</option>
-          <option value="Resolved">Resolved</option>
-          <option value="Dismissed">Dismissed</option>
+          <option value="Approved">Approved</option>
+          <option value="Denied">Denied</option>
         </select>
       </div>
       <div class="card-body">
+        <!-- Reported Content -->
         <h5 class="card-title">Reported by {{ report.reportedBy.username }}</h5>
-        <p class="card-text">{{ report.description }}</p>
+        <p class="card-text"><b>Reason:</b> {{ report.description }}</p>
+
+        <!-- Snapshot -->
         <h5 class="mt-4">Content Snapshot</h5>
         <pre class="bg-dark p-3">{{
           JSON.stringify(report.snapshot, null, 2)
         }}</pre>
-        <!-- TODO: Add moderator note. -->
-        <!-- TODO: Actions to be taken place once report is approved, such as deletion, or a warning sent via notification to the owner -->
+
+        <!-- Moderator Note -->
+        <h5 class="mt-4">Moderator Note</h5>
+        <textarea
+          v-model="moderatorNote"
+          class="form-control"
+          rows="3"
+          placeholder="Enter your note here"
+        ></textarea>
+
         <button @click="updateStatus" class="btn btn-primary mt-3">
           Update Status
         </button>
@@ -37,6 +48,7 @@ export default {
   data() {
     return {
       report: null,
+      moderatorNote: "",
     };
   },
   methods: {
