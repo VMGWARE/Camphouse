@@ -1,5 +1,5 @@
 <template>
-  <div class="container my-4 full-height">
+  <div class="container my-4">
     <h1 class="mb-4">Reports</h1>
     <div
       v-for="report in reports"
