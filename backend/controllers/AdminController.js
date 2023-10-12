@@ -59,6 +59,7 @@ const Post = require("../models/Post");
 const Comment = require("../models/Comment");
 const Message = require("../models/Message");
 const Report = require("../models/Report");
+const Notification = require("../models/Notification");
 
 // Helpers
 const { validateEmail } = require("../utils/general");
@@ -798,6 +799,11 @@ router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
 
     // Delete all reports by the user
     await Report.deleteMany({ reportedBy: req.params.id });
+
+    // Delete all notifications for the user
+    await Notification.deleteMany({
+      $or: [{ sender: req.params.id }, { receiver: req.params.id }],
+    });
 
     // Delete the user
     await User.findByIdAndDelete(req.params.id);
