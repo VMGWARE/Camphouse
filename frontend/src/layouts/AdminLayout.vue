@@ -157,5 +157,11 @@ export default {
         });
     },
   },
+  mounted() {
+    // If user is not admin, redirect to home page
+    if (this.$store.getters["isAdmin"] === false) {
+      this.$router.push("/");
+    }
+  },
 };
 </script>

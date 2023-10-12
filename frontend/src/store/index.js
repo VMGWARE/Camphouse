@@ -26,6 +26,13 @@ export default createStore({
     getToken(state) {
       return state.token;
     },
+    isAdmin(state) {
+      if (state.user) {
+        return state.user.admin;
+      } else {
+        return false;
+      }
+    },
   },
   mutations: {
     setToken(state, token) {
