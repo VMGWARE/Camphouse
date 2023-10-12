@@ -10,7 +10,35 @@
           />
         </router-link>
         <div>
-          <p class="card-text mb-0">{{ comment.comment }}</p>
+          <p class="card-text mb-0" v-if="!isEditing">{{ comment.comment }}</p>
+          <textarea
+            v-else
+            v-model="editedComment"
+            class="form-control"
+            rows="3"
+            placeholder="Write a comment..."
+          ></textarea>
+
+          <button
+            v-if="isEditing"
+            class="btn btn-secondary btn-sm"
+            type="button"
+            @click="editComment(comment._id)"
+            style="color: #fff; cursor: pointer"
+          >
+            <i class="fas fa-save"></i> Save
+          </button>
+
+          <!-- Cancel -->
+          <button
+            v-if="isEditing"
+            class="btn btn-secondary btn-sm"
+            type="button"
+            @click="toggleEditing"
+            style="color: #fff; cursor: pointer"
+          >
+            <i class="fas fa-times"></i> Cancel
+          </button>
           <div class="d-flex justify-content-between align-items-center">
             <small class="text-muted mr-2">
               Posted by {{ comment.user?.username }}
@@ -52,8 +80,10 @@
                     class="btn btn-edit btn-sm mr-2 dropdown-item"
                     type="button"
                     style="color: #fff; cursor: pointer"
+                    @click="toggleEditing"
                   >
-                    <i class="fas fa-edit"></i> Edit
+                    <i class="fas fa-edit"></i>
+                    {{ isEditing ? "Cancel" : "Edit" }}
                   </button>
                   <button
                     class="btn btn-delete btn-sm dropdown-item"
@@ -111,6 +141,12 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      isEditing: false,
+      editedComment: "",
+    };
+  },
   methods: {
     async deleteComment(commentId) {
       try {
@@ -126,6 +162,27 @@ export default {
         console.log(error);
         useToast().error("Error deleting comment. Please try again later.");
       }
+    },
+    async editComment(commentId) {
+      try {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${this.$store.state.token}`;
+        const response = await axios.patch(`/v1/comments/${commentId}`, {
+          comment: this.editedComment,
+        });
+        if (response.status === 200) {
+          this.isEditing = false;
+          this.$emit("commentEdited", response.data.data);
+        }
+      } catch (error) {
+        console.log(error);
+        useToast().error("Error editing comment. Please try again later.");
+      }
+    },
+    toggleEditing() {
+      this.isEditing = !this.isEditing;
+      this.editedComment = this.comment.comment; // Copy the current comment text to the editedComment
     },
   },
 };

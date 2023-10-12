@@ -117,6 +117,7 @@
           :key="comment._id"
           :id="'comment_' + comment._id"
           @comment-deleted="handleCommentDeleted"
+          @comment-edited="handleCommentEdited"
         />
       </div>
       <div v-else>
@@ -331,6 +332,20 @@ export default {
       this.thisPost.comments = this.thisPost.comments.filter(
         (comment) => comment._id !== deletedCommentId
       );
+    },
+    handleCommentEdited(editedComment) {
+      console.log("Comment Edited: ", editedComment._id);
+
+      // Find the comment with the specified _id
+      const commentIndex = this.thisPost.comments.findIndex(
+        (comment) => comment._id === editedComment._id
+      );
+
+      // Update the comment
+      this.thisPost.comments[commentIndex].comment = editedComment.comment;
+
+      // Update the updatedAt field
+      this.thisPost.comments[commentIndex].updatedAt = editedComment.updatedAt;
     },
   },
   mounted() {
