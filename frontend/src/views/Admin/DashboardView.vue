@@ -116,7 +116,9 @@
             class="report-item"
           >
             <h6>{{ report.description }}</h6>
-            <div class="report-details">
+            <div
+              class="report-details d-flex justify-content-between align-items-center"
+            >
               <img
                 :src="report.reportedBy.profilePicture"
                 alt="reporter's profile picture"
