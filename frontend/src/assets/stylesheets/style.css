@@ -586,5 +586,8 @@ img-tag {
 }
 
 .full-height {
-  height: 100vh;
+  /* Should ensure even on a large screen with no content, the footer stays at the bottom */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
