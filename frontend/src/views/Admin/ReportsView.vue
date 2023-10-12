@@ -1,5 +1,5 @@
 <template>
-  <div class="container my-4">
+  <div class="container my-4 full-height">
     <h1 class="mb-4">Reports</h1>
     <div
       v-for="report in reports"
@@ -35,19 +35,11 @@
           <span class="ml-2">{{ report.reported.username }}</span>
         </div>
         <p class="card-text">{{ report.description }}</p>
-        <button
-          @click="resolveReport(report.reportedContentId)"
-          class="btn btn-success rounded-pill"
-          style="margin-right: 10px"
+        <router-link
+          :to="`/reports/${report._id}`"
+          class="btn btn-view-report btn-sm"
+          >View Full Report</router-link
         >
-          Resolve
-        </button>
-        <button
-          @click="dismissReport(report.reportedContentId)"
-          class="btn btn-danger ml-2"
-        >
-          Dismiss
-        </button>
       </div>
     </div>
   </div>
@@ -174,6 +166,11 @@ export default {
 
 .badge.badge-danger {
   background-color: #dc3545;
+}
+
+.btn-view-report {
+  background-color: #ffc34d;
+  color: black;
 }
 </style>
 

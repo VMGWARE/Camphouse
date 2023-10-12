@@ -584,3 +584,7 @@ img-tag {
 .navbar-toggler[aria-expanded='true'] {
   color: #ffc34d;
 }
+
+.full-height {
+  height: 100vh;
+}

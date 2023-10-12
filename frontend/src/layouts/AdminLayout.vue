@@ -89,7 +89,7 @@
   </nav>
 
   <!-- Main content -->
-  <div id="main" class="container-fluid">
+  <div id="main" class="container-fluid full-height">
     <slot />
   </div>
 
