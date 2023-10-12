@@ -45,7 +45,7 @@
                   <i class="fas fa-ellipsis-h"></i>
                 </button>
                 <div
-                  class="dropdown-menu dropdown-menu-right"
+                  class="dropdown-menu dropdown-menu-center dropdown-menu-end p-0"
                   aria-labelledby="dropdownMenuButton"
                 >
                   <button
