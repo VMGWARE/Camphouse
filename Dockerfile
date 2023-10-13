@@ -7,17 +7,13 @@ WORKDIR /app
 # Copy the git project to the working directory
 COPY .git/ .git/
 
-# Get the git project version and set it as an environment variable
-RUN VERSION=$(git describe --tags --always HEAD)
-# Save git version to an environment variable
-ARG GIT_VERSION=$(VERSION)
-
 # Set working directory
 WORKDIR /app/frontend
 
 # Build the frontend
 # Set the environment variable for the frontend
-ENV VUE_APP_GIT_VERSION=$GIT_VERSION
+RUN touch .env && echo "VUE_APP_GIT_VERSION=" > .env
+RUN cd ../ && git describe --tags --always HEAD > frontend/.env
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ ./
