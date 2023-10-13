@@ -21,7 +21,12 @@
           height="30"
           width="150"
         />
-        <span class="alpha-badge">ALPHA</span>
+        <span class="badge alpha-badge" v-if="gitTag.type == 'commit'">
+          {{ gitTag.version }}
+        </span>
+        <span class="badge bg-success" v-else>
+          {{ gitTag.version }}
+        </span>
       </router-link>
 
       <!-- Navigation Toggler for Mobile -->
@@ -223,6 +228,22 @@ export default {
     ModalsContainer,
     AdminLayout,
   },
+  computed: {
+    gitTag() {
+      // If tag is a version number, return it
+      if (process.env.VUE_APP_GIT_TAG.match(/^v\d+\.\d+\.\d+$/)) {
+        return {
+          version: process.env.VUE_APP_GIT_TAG,
+          type: "version",
+        };
+      } else {
+        return {
+          version: process.env.VUE_APP_GIT_COMMIT_HASH,
+          type: "commit",
+        };
+      }
+    },
+  },
 };
 </script>
 
@@ -243,5 +264,20 @@ export default {
   font-weight: bold; /* bold text */
   vertical-align: middle; /* align it with the logo and site name */
   margin-left: 5px; /* spacing from the logo or site name */
+}
+
+.production-badge {
+  background-color: #00ff00; /* green color */
+  color: #ffffff; /* white text color */
+  padding: 2px 8px; /* some padding for spacing */
+  border-radius: 4px; /* rounded corners */
+  font-size: 0.8em; /* smaller font size than regular text */
+  font-weight: bold; /* bold text */
+  vertical-align: middle; /* align it with the logo and site name */
+  margin-left: 5px; /* spacing from the logo or site name */
+}
+
+.badge {
+  margin-left: 5px;
 }
 </style>
