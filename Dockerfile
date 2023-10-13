@@ -29,8 +29,7 @@ WORKDIR /app/backend
 COPY backend/package*.json ./
 RUN npm install
 COPY backend/ .
-# Save the git version to a file for the backend
-RUN echo $GIT_VERSION > ./version
+RUN cd ../ && git describe --tags --always --dirty > backend/version
 
 # Use Apache to serve the frontend and proxy to the backend
 FROM httpd:2.4
