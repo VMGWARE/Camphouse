@@ -9,7 +9,7 @@ WORKDIR /app
 COPY .git/ .git/
 
 # Get the git project version and set it as an environment variable
-RUN VERSION=$(git describe --tags --always --dirty)
+RUN VERSION=$(git describe --tags --always HEAD)
 # Save git version to an environment variable
 ARG GIT_VERSION=$(VERSION)
 
@@ -29,7 +29,7 @@ WORKDIR /app/backend
 COPY backend/package*.json ./
 RUN npm install
 COPY backend/ .
-RUN cd ../ && git describe --tags --always --dirty > backend/version
+RUN cd ../ && git describe --tags --always HEAD > backend/version
 
 # Use Apache to serve the frontend and proxy to the backend
 FROM httpd:2.4
