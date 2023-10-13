@@ -2,11 +2,23 @@
 FROM node:18.17 AS builder
 
 # TODO: Get git project version and save to environment variable and file
+# Set working directory
+WORKDIR /app
+
+# Copy the git project to the working directory
+COPY .git/ .git/
+
+# Get the git project version and set it as an environment variable
+RUN VERSION=$(git describe --tags --always --dirty)
+# Save git version to an environment variable
+ARG GIT_VERSION=$(VERSION)
 
 # Set working directory
 WORKDIR /app/frontend
 
 # Build the frontend
+# Set the environment variable for the frontend
+ENV VUE_APP_GIT_VERSION=$GIT_VERSION
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ ./
@@ -17,6 +29,8 @@ WORKDIR /app/backend
 COPY backend/package*.json ./
 RUN npm install
 COPY backend/ .
+# Save the git version to a file for the backend
+RUN echo $GIT_VERSION > ./version
 
 # Use Apache to serve the frontend and proxy to the backend
 FROM httpd:2.4

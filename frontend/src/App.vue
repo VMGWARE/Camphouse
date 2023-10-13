@@ -231,14 +231,14 @@ export default {
   computed: {
     gitTag() {
       // If tag is a version number, return it
-      if (process.env.VUE_APP_GIT_TAG.match(/^v\d+\.\d+\.\d+$/)) {
+      if (process.env.VUE_APP_GIT_VERSION.match(/^v\d+\.\d+\.\d+$/)) {
         return {
-          version: process.env.VUE_APP_GIT_TAG,
+          version: process.env.VUE_APP_GIT_VERSION,
           type: "version",
         };
       } else {
         return {
-          version: process.env.VUE_APP_GIT_COMMIT_HASH,
+          version: process.env.VUE_APP_GIT_VERSION,
           type: "commit",
         };
       }
