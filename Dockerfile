@@ -1,7 +1,6 @@
 # Use node as the base image for building both frontend and backend
 FROM node:18.17 AS builder
 
-# TODO: Get git project version and save to environment variable and file
 # Set working directory
 WORKDIR /app
 
