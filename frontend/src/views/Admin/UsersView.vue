@@ -9,12 +9,35 @@
             <tr>
               <th>Name</th>
               <th>Email</th>
+              <th>Actions</th>
             </tr>
           </thead>
           <tbody>
             <tr v-for="user in users" :key="user._id">
               <td>{{ user.username }}</td>
               <td>{{ user.email }}</td>
+              <!-- Actions Dropdown -->
+              <td>
+                <div class="dropdown">
+                  <button
+                    class="btn btn-secondary dropdown-toggle"
+                    type="button"
+                    id="actionsDropdown"
+                    data-bs-toggle="dropdown"
+                    aria-haspopup="true"
+                    aria-expanded="false"
+                  >
+                    Actions
+                  </button>
+                  <div
+                    class="dropdown-menu dropdown-menu-right"
+                    aria-labelledby="actionsDropdown"
+                  >
+                    <a class="dropdown-item" href="#">Edit</a>
+                    <a class="dropdown-item" href="#">Delete</a>
+                  </div>
+                </div>
+              </td>
             </tr>
           </tbody>
         </table>
