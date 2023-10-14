@@ -8,6 +8,7 @@
         <table class="table table-dark">
           <thead>
             <tr>
+              <th>Id</th>
               <th>Name</th>
               <th>Email</th>
               <th>Actions</th>
@@ -15,6 +16,18 @@
           </thead>
           <tbody>
             <tr v-for="user in users" :key="user._id">
+              <td>
+                <!-- Button to copy user id -->
+                <button
+                  class="btn btn-sm btn-outline-secondary"
+                  data-bs-toggle="tooltip"
+                  data-bs-placement="top"
+                  title="Copy User Id"
+                  @click="copyUserId(user._id)"
+                >
+                  <i class="fas fa-copy"></i>
+                </button>
+              </td>
               <td>{{ user.username }}</td>
               <td>{{ user.email }}</td>
               <!-- Actions Dropdown -->
@@ -176,6 +189,9 @@ export default {
         .catch((err) => {
           console.log(err);
         });
+    },
+    copyUserId(id) {
+      navigator.clipboard.writeText(id);
     },
   },
   computed: {
