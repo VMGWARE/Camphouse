@@ -59,6 +59,13 @@
           </select>
         </div>
 
+        <!-- Display number of users being show out of total -->
+        <div class="text-muted">
+          Showing {{ (currentPage - 1) * limit + 1 }} -
+          {{ (currentPage - 1) * limit + users.length }} of
+          {{ totalPages * limit }} users
+        </div>
+
         <!-- Bootstrap Pagination -->
         <nav aria-label="User pagination">
           <ul class="pagination justify-content-end">
