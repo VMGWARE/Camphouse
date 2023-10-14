@@ -824,6 +824,9 @@ router.delete("/:postId", authenticateJWT, async (req, res) => {
     // Delete the post's comments
     await Comment.deleteMany({ post: req.params.postId });
 
+    // Delete the post's likes
+    await Like.deleteMany({ post: req.params.postId });
+
     // Delete the post
     await Post.deleteOne({ _id: req.params.postId });
 

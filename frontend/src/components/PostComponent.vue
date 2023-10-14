@@ -40,7 +40,6 @@
             <i class="fas fa-ellipsis-h"></i>
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownPostOptions">
-            <!-- TODO: This dropdown can also hold the report button -->
             <a
               class="dropdown-item fake-link custom-dropdown-item"
               href="#"
