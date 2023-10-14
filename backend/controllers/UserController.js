@@ -14,7 +14,7 @@ const router = express.Router();
 require("dotenv").config();
 
 // Middleware
-const { authenticateJWT, isAdmin } = require("../middleware/auth");
+const { authenticateJWT, isAdmin, loadUser } = require("../middleware/auth");
 
 /**
  * @swagger
@@ -305,7 +305,7 @@ router.get("/:userRef", async (req, res) => {
  *                 data:
  *                   type: null
  */
-router.get("/", async (req, res) => {
+router.get("/", loadUser, async (req, res) => {
   // Page number
   const page = parseInt(req.query.page) || 1;
 
@@ -315,6 +315,12 @@ router.get("/", async (req, res) => {
   // Search query
   const search = req.query.search || "";
 
+  // HideEmail
+  var hideEmail = "-email";
+  if (req.user && req.user.admin) {
+    hideEmail = "";
+  }
+
   // Sort by
   const users = await User.find({ handle: { $regex: search, $options: "i" } })
     .sort({
@@ -322,7 +328,7 @@ router.get("/", async (req, res) => {
     })
     .skip((page - 1) * limit)
     .limit(limit)
-    .select("-password -__v -email");
+    .select(`-password -__v ${hideEmail}`);
 
   // Return the users
   res.json({

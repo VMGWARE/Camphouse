@@ -1,33 +1,24 @@
 <template>
   <div class="container my-4">
-    <h1 class="mb-4">Users</h1>
+    <h1 class="mb-4">Admin Users</h1>
 
-    <!-- Users Table wrapped inside card for consistency -->
     <div class="card mb-3">
-      <table class="table table-striped mb-0 table-dark">
-        <thead>
-          <tr>
-            <th>Email</th>
-            <th>Username</th>
-            <th>Profile Picture</th>
-            <th>Bio</th>
-            <th>Admin</th>
-            <th>Verified</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="user in users" :key="user._id">
-            <td>{{ user.email }}</td>
-            <td>{{ user.username }}</td>
-            <td>
-              <img :src="user.profilePicture" alt="" class="profile-picture" />
-            </td>
-            <td>{{ user.bio }}</td>
-            <td>{{ user.admin ? "Yes" : "No" }}</td>
-            <td>{{ user.verified ? "Yes" : "No" }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div class="table-responsive">
+        <table class="table table-dark">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="user in users" :key="user._id">
+              <td>{{ user.username }}</td>
+              <td>{{ user.email }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 </template>
@@ -47,7 +38,7 @@ export default {
         axios.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${localStorage.getItem("token")}`;
-        const response = await axios.get("/v1/users");
+        const response = await axios.get("/v1/users"); // Updated API endpoint
         this.users = response.data.data.users;
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -80,7 +71,36 @@ export default {
 .table.table-dark {
   background-color: #212529;
   color: #ffffff;
+  border-radius: 5px;
+}
+
+/* Additional styles for the admin page */
+.card {
+  background-color: #343a40;
+  border: 1px solid #343a40;
+  color: #ffffff;
+}
+
+/* Style the table header */
+.table-dark th {
+  background-color: #212529;
+  color: #ffffff;
+  border-color: #343a40;
+}
+
+/* Style table rows */
+.table-dark tbody tr {
+  background-color: #343a40;
+  color: #ffffff;
+}
+
+/* Style alternating rows for better readability */
+.table-dark tbody tr:nth-child(even) {
+  background-color: #292e33;
+}
+
+/* Style table cells */
+.table-dark td {
+  border-color: #343a40;
 }
 </style>
-
-<!-- Additional styles from the provided design can be added if necessary -->
