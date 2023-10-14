@@ -63,7 +63,7 @@
         <div class="text-muted">
           Showing {{ (currentPage - 1) * limit + 1 }} -
           {{ (currentPage - 1) * limit + users.length }} of
-          {{ totalPages * limit }} users
+          {{ totalUsers }} users
         </div>
 
         <!-- Bootstrap Pagination -->
@@ -120,6 +120,7 @@ export default {
       currentPage: 1, // Current page
       totalPages: 1, // Total number of pages
       limit: 10, // Number of users per page
+      totalUsers: 0, // Total number of users
     };
   },
   methods: {
@@ -151,6 +152,18 @@ export default {
       this.currentPage = 1; // Reset to the first page when changing items per page
       this.fetchUsers();
     },
+    async fetchTotalUsers() {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + localStorage.getItem("token");
+      axios
+        .get("/v1/admin/analytics")
+        .then((res) => {
+          this.totalUsers = res.data.data.users;
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
   computed: {
     displayedPages() {
@@ -171,6 +184,7 @@ export default {
   },
   mounted() {
     this.fetchUsers();
+    this.fetchTotalUsers();
   },
 };
 </script>
