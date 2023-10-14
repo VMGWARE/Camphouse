@@ -27,6 +27,7 @@ const port = process.env.APP_PORT || 3000;
 require("./db");
 const { DB_URI, DB_NAME } = require("./db");
 
+app.disable("X-Powered-By");
 app.set("trust proxy", true);
 app.use(express.static("public"));
 
