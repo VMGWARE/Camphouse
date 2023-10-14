@@ -49,7 +49,6 @@ const routes = [
     name: "profile",
     component: ProfileView,
     meta: {
-      // TODO: Find way to get the username and set it as the title
       title: "Profile",
       public: true,
     },
