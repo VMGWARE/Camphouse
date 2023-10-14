@@ -1551,7 +1551,7 @@ router.post("/update-password", authenticateJWT, async (req, res) => {
     const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update the user's password
-    const updatedUser = User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { password: hashedPassword },
       { new: true }
