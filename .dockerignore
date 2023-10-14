@@ -6,3 +6,6 @@
 # Ignore .env file containing credentials, API keys, tokens, passwords, etc.
 *.env
 .env
+
+# Ignore build output for vue
+frontend/dist
