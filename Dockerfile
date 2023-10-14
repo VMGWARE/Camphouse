@@ -14,11 +14,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ ./
-# Set the environment variable for the frontend
-# TODO: Fix the VUE_APP_GIT_VERSION variable not being set
-RUN touch .env && echo "VUE_APP_GIT_VERSION=" > .env
-RUN cd ../ && git describe --tags --always HEAD > frontend/.env
-RUN npm run build
+RUN touch .env && cd ../ && echo "VUE_APP_GIT_VERSION=$(git describe --tags --always HEAD)" >> frontend/.env && cd frontend && npm run build
 
 # Build the backend
 WORKDIR /app/backend
