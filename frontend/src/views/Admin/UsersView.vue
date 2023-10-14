@@ -35,7 +35,12 @@
                     aria-labelledby="actionsDropdown"
                   >
                     <a class="dropdown-item" href="#">Edit</a>
-                    <a class="dropdown-item" href="#">Delete</a>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="openDeleteUserModal(user)"
+                      >Delete</a
+                    >
                   </div>
                 </div>
               </td>
@@ -112,6 +117,8 @@
 
 <script>
 import axios from "axios";
+import { useModal } from "vue-final-modal";
+import DeleteUserModal from "@/components/Modal/DeleteUserModal.vue";
 
 export default {
   data() {
@@ -185,6 +192,39 @@ export default {
   mounted() {
     this.fetchUsers();
     this.fetchTotalUsers();
+  },
+  setup() {
+    const openDeleteUserModal = (user) => {
+      // Assign the modal instance to a variable
+      const { open, close } = useModal({
+        component: DeleteUserModal,
+        attrs: {
+          user: user,
+          onCancel() {
+            close();
+          },
+          async onDelete() {
+            // Set Auth Header
+            axios.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${localStorage.getItem("token")}`;
+
+            const response = await axios.delete(`/v1/admin/users/${user._id}`);
+            if (response.status === 200) {
+              // Refresh the users
+              this.fetchUsers();
+              this.fetchTotalUsers();
+            }
+            close();
+          },
+        },
+      });
+
+      // Open the modal
+      open();
+    };
+
+    return { openDeleteUserModal };
   },
 };
 </script>
