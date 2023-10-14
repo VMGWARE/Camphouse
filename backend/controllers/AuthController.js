@@ -1489,10 +1489,16 @@ router.post("/logout", authenticateJWT, async (req, res) => {
 router.post("/update-password", authenticateJWT, async (req, res) => {
   try {
     // Get the user object from the request
-    const user = User.findById(req.user._id);
+    const user = await User.findById(req.user._id);
+
+    const body = JSON.parse(JSON.stringify(req.body));
+
+    const newPassword = body.newPassword;
+    const currentPassword = body.currentPassword;
+    const confirmNewPassword = body.confirmNewPassword;
 
     // Check if the current password is provided
-    if (!req.body.currentPassword) {
+    if (!currentPassword) {
       return res.status(400).json({
         status: "error",
         code: 400,
@@ -1502,7 +1508,7 @@ router.post("/update-password", authenticateJWT, async (req, res) => {
     }
 
     // Check if the new password is provided
-    if (!req.body.newPassword) {
+    if (!newPassword) {
       return res.status(400).json({
         status: "error",
         code: 400,
@@ -1512,7 +1518,7 @@ router.post("/update-password", authenticateJWT, async (req, res) => {
     }
 
     // Check if the confirm new password is provided
-    if (!req.body.confirmNewPassword) {
+    if (!confirmNewPassword) {
       return res.status(400).json({
         status: "error",
         code: 400,
@@ -1522,7 +1528,7 @@ router.post("/update-password", authenticateJWT, async (req, res) => {
     }
 
     // Check if the current password is correct
-    if (!bcrypt.compare(req.body.currentPassword, user.password)) {
+    if (!(await bcrypt.compare(currentPassword, user.password))) {
       return res.status(400).json({
         status: "error",
         code: 400,
@@ -1532,7 +1538,7 @@ router.post("/update-password", authenticateJWT, async (req, res) => {
     }
 
     // Check if the new password and confirm new password match
-    if (req.body.newPassword !== req.body.confirmNewPassword) {
+    if (newPassword !== confirmNewPassword) {
       return res.status(400).json({
         status: "error",
         code: 400,
@@ -1542,7 +1548,7 @@ router.post("/update-password", authenticateJWT, async (req, res) => {
     }
 
     // Hash the new password
-    const hashedPassword = await bcrypt.hash(req.body.newPassword, 10);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
 
     // Update the user's password
     const updatedUser = User.findByIdAndUpdate(
