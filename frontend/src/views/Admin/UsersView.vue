@@ -44,45 +44,61 @@
         </table>
       </div>
 
-      <!-- Bootstrap Pagination -->
-      <nav aria-label="User pagination">
-        <ul class="pagination justify-content-end">
-          <li class="page-item" :class="{ disabled: currentPage === 1 }">
-            <button
-              class="page-link"
-              @click="changePage(currentPage - 1)"
-              :disabled="currentPage === 1"
-            >
-              <span aria-hidden="true">&laquo;</span>
-            </button>
-          </li>
-          <li
-            class="page-item"
-            v-for="pageNumber in displayedPages"
-            :key="pageNumber"
+      <div class="d-flex justify-content-between align-items-center">
+        <!-- Max Items per Page Dropdown -->
+        <div class="form-inline mb-3 mb-md-0">
+          <select
+            v-model="limit"
+            class="form-control"
+            @change="changeMaxItemsPerPage(limit)"
           >
-            <button
-              class="page-link"
-              @click="changePage(pageNumber)"
-              :class="{ active: currentPage === pageNumber }"
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50">50</option>
+          </select>
+        </div>
+
+        <!-- Bootstrap Pagination -->
+        <nav aria-label="User pagination">
+          <ul class="pagination justify-content-end">
+            <li class="page-item" :class="{ disabled: currentPage === 1 }">
+              <button
+                class="page-link"
+                @click="changePage(currentPage - 1)"
+                :disabled="currentPage === 1"
+              >
+                <span aria-hidden="true">&laquo;</span>
+              </button>
+            </li>
+            <li
+              class="page-item"
+              v-for="pageNumber in displayedPages"
+              :key="pageNumber"
             >
-              {{ pageNumber }}
-            </button>
-          </li>
-          <li
-            class="page-item"
-            :class="{ disabled: currentPage === totalPages }"
-          >
-            <button
-              class="page-link"
-              @click="changePage(currentPage + 1)"
-              :disabled="currentPage === totalPages"
+              <button
+                class="page-link"
+                @click="changePage(pageNumber)"
+                :class="{ active: currentPage === pageNumber }"
+              >
+                {{ pageNumber }}
+              </button>
+            </li>
+            <li
+              class="page-item"
+              :class="{ disabled: currentPage === totalPages }"
             >
-              <span aria-hidden="true">&raquo;</span>
-            </button>
-          </li>
-        </ul>
-      </nav>
+              <button
+                class="page-link"
+                @click="changePage(currentPage + 1)"
+                :disabled="currentPage === totalPages"
+              >
+                <span aria-hidden="true">&raquo;</span>
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </div>
   </div>
 </template>
@@ -122,6 +138,11 @@ export default {
         this.currentPage = page;
         this.fetchUsers();
       }
+    },
+    changeMaxItemsPerPage(value) {
+      this.limit = value;
+      this.currentPage = 1; // Reset to the first page when changing items per page
+      this.fetchUsers();
     },
   },
   computed: {
