@@ -232,5 +232,12 @@ export default {
 .pagination .page-item .page-link.active {
   background-color: #ffc34d;
   border-color: #ffc34d;
+  border-radius: 5px;
+}
+
+.page-link,
+.page-link:active {
+  outline: none !important;
+  box-shadow: none;
 }
 </style>
