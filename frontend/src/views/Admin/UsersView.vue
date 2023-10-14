@@ -34,7 +34,12 @@
                     class="dropdown-menu dropdown-menu-right"
                     aria-labelledby="actionsDropdown"
                   >
-                    <a class="dropdown-item" href="#">Edit</a>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="openUpdateUserModal(user)"
+                      >Edit</a
+                    >
                     <a
                       class="dropdown-item"
                       href="#"
@@ -119,6 +124,7 @@
 import axios from "axios";
 import { useModal } from "vue-final-modal";
 import DeleteUserModal from "@/components/Modal/DeleteUserModal.vue";
+import UpdateUserModal from "@/components/Modal/UpdateUserModal.vue";
 
 export default {
   data() {
@@ -224,7 +230,23 @@ export default {
       open();
     };
 
-    return { openDeleteUserModal };
+    const openUpdateUserModal = (user) => {
+      // Assign the modal instance to a variable
+      const { open, close } = useModal({
+        component: UpdateUserModal,
+        attrs: {
+          user: user,
+          onCancel() {
+            close();
+          },
+        },
+      });
+
+      // Open the modal
+      open();
+    };
+
+    return { openDeleteUserModal, openUpdateUserModal };
   },
 };
 </script>
