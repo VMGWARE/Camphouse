@@ -3,6 +3,7 @@
     <h1 class="mb-4">Admin Users</h1>
 
     <div class="card mb-3">
+      <!-- Users -->
       <div class="table-responsive">
         <table class="table table-dark">
           <thead>
@@ -42,6 +43,46 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Bootstrap Pagination -->
+      <nav aria-label="User pagination">
+        <ul class="pagination justify-content-end">
+          <li class="page-item" :class="{ disabled: currentPage === 1 }">
+            <button
+              class="page-link"
+              @click="changePage(currentPage - 1)"
+              :disabled="currentPage === 1"
+            >
+              <span aria-hidden="true">&laquo;</span>
+            </button>
+          </li>
+          <li
+            class="page-item"
+            v-for="pageNumber in displayedPages"
+            :key="pageNumber"
+          >
+            <button
+              class="page-link"
+              @click="changePage(pageNumber)"
+              :class="{ active: currentPage === pageNumber }"
+            >
+              {{ pageNumber }}
+            </button>
+          </li>
+          <li
+            class="page-item"
+            :class="{ disabled: currentPage === totalPages }"
+          >
+            <button
+              class="page-link"
+              @click="changePage(currentPage + 1)"
+              :disabled="currentPage === totalPages"
+            >
+              <span aria-hidden="true">&raquo;</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
     </div>
   </div>
 </template>
@@ -53,6 +94,9 @@ export default {
   data() {
     return {
       users: [],
+      currentPage: 1, // Current page
+      totalPages: 1, // Total number of pages
+      limit: 10, // Number of users per page
     };
   },
   methods: {
@@ -61,11 +105,40 @@ export default {
         axios.defaults.headers.common[
           "Authorization"
         ] = `Bearer ${localStorage.getItem("token")}`;
-        const response = await axios.get("/v1/users"); // Updated API endpoint
+        const response = await axios.get("/v1/users", {
+          params: {
+            page: this.currentPage,
+            limit: this.limit,
+          },
+        });
         this.users = response.data.data.users;
+        this.totalPages = response.data.data.maxPages;
       } catch (error) {
         console.error("Error fetching users:", error);
       }
+    },
+    changePage(page) {
+      if (page >= 1 && page <= this.totalPages) {
+        this.currentPage = page;
+        this.fetchUsers();
+      }
+    },
+  },
+  computed: {
+    displayedPages() {
+      const totalDisplayed = 3;
+      const startPage = Math.max(
+        this.currentPage - Math.floor(totalDisplayed / 2),
+        1
+      );
+      const endPage = Math.min(startPage + totalDisplayed - 1, this.totalPages);
+      const pages = [];
+
+      for (let i = startPage; i <= endPage; i++) {
+        pages.push(i);
+      }
+
+      return pages;
     },
   },
   mounted() {
@@ -125,5 +198,18 @@ export default {
 /* Style table cells */
 .table-dark td {
   border-color: #343a40;
+}
+
+/* Style the pagination buttons */
+.pagination .page-item .page-link {
+  background-color: #343a40;
+  border-color: #343a40;
+  color: #ffffff;
+}
+
+/* Style the active/current link */
+.pagination .page-item .page-link.active {
+  background-color: #ffc34d;
+  border-color: #ffc34d;
 }
 </style>
