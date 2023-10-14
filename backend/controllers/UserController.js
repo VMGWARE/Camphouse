@@ -212,7 +212,6 @@ router.get("/:userRef", async (req, res) => {
   // Get the number of followers
   const followers = await Follow.find({ following: enrichedUser._id });
   enrichedUser.followers = followers.length;
-  // TODO: Move into a function we can call on the user object to get the number of followers
   // Remove the "password" field from the enrichedUser object
   enrichedUser = {
     ...enrichedUser,

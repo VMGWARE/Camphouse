@@ -85,8 +85,6 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT, loadUser } = require("../middleware/auth");
 
-// TODO: Add loadComments, loadPosts, and loadLikes functions so that we don't have to repeat code
-
 /**
  * @swagger
  * /api/v1/posts:
