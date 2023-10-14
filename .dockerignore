@@ -2,3 +2,7 @@
 *compose.yml*
 *Dockerfile*
 */node_modules
+
+# Ignore .env file containing credentials, API keys, tokens, passwords, etc.
+*.env
+.env
