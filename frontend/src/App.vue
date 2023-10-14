@@ -21,11 +21,11 @@
           height="30"
           width="150"
         />
-        <span class="badge alpha-badge" v-if="gitTag.type == 'commit'">
-          {{ gitTag.version }}
+        <span class="badge alpha-badge" v-if="git.type == 'commit'">
+          {{ git.version }}
         </span>
         <span class="badge bg-success" v-else>
-          {{ gitTag.version }}
+          {{ git.version }}
         </span>
       </router-link>
 
@@ -136,6 +136,10 @@ export default {
     return {
       isLoading: false,
       tokenRefreshTimer: null,
+      git: {
+        version: null,
+        type: null,
+      },
     };
   },
   methods: {
@@ -206,8 +210,33 @@ export default {
           //
         });
     },
+    async getGitTag() {
+      // If it is empty, we will instead call the API to get the latest commit
+      if (!process.env.VUE_APP_GIT_VERSION) {
+        const response = await axios.get("/v1/misc/health");
+        this.git = {
+          version: response.data.data.version,
+          type: "commit",
+        };
+      }
+      // If tag is a version number, return it
+      else if (process.env.VUE_APP_GIT_VERSION.match(/^v\d+\.\d+\.\d+$/)) {
+        this.git = {
+          version: process.env.VUE_APP_GIT_VERSION,
+          type: "version",
+        };
+      } else {
+        this.git = {
+          version: process.env.VUE_APP_GIT_VERSION,
+          type: "commit",
+        };
+      }
+
+      console.log("Git version:", this.git.version);
+    },
   },
   created() {
+    this.getGitTag();
     this.check_token();
   },
   unmounted() {
@@ -227,22 +256,6 @@ export default {
   components: {
     ModalsContainer,
     AdminLayout,
-  },
-  computed: {
-    gitTag() {
-      // If tag is a version number, return it
-      if (process.env.VUE_APP_GIT_VERSION.match(/^v\d+\.\d+\.\d+$/)) {
-        return {
-          version: process.env.VUE_APP_GIT_VERSION,
-          type: "version",
-        };
-      } else {
-        return {
-          version: process.env.VUE_APP_GIT_VERSION,
-          type: "commit",
-        };
-      }
-    },
   },
 };
 </script>
