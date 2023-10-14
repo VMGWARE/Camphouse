@@ -1,6 +1,19 @@
 <template>
   <div class="container my-4">
-    <h1 class="mb-4">Admin Users</h1>
+    <h1 class="mb-4">Users</h1>
+
+    <!-- Search input and button -->
+    <div class="d-flex justify-content-end mb-3">
+      <div class="form-inline">
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search by name or handle"
+          v-model="searchQuery"
+          @input="fetchUsers"
+        />
+      </div>
+    </div>
 
     <div class="card mb-3">
       <!-- Users -->
@@ -10,6 +23,7 @@
             <tr>
               <th>Id</th>
               <th>Name</th>
+              <th>Handle</th>
               <th>Email</th>
               <th>Actions</th>
             </tr>
@@ -29,6 +43,7 @@
                 </button>
               </td>
               <td>{{ user.username }}</td>
+              <td>{{ user.handle }}</td>
               <td>{{ user.email }}</td>
               <!-- Actions Dropdown -->
               <td>
@@ -147,6 +162,7 @@ export default {
       totalPages: 1, // Total number of pages
       limit: 10, // Number of users per page
       totalUsers: 0, // Total number of users
+      searchQuery: "", // Add this property for search
     };
   },
   methods: {
@@ -159,6 +175,7 @@ export default {
           params: {
             page: this.currentPage,
             limit: this.limit,
+            search: this.searchQuery, // Include search query in API request
           },
         });
         this.users = response.data.data.users;
@@ -167,6 +184,7 @@ export default {
         console.error("Error fetching users:", error);
       }
     },
+
     changePage(page) {
       if (page >= 1 && page <= this.totalPages) {
         this.currentPage = page;
