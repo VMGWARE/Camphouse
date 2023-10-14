@@ -33,9 +33,9 @@
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#!">
+          <router-link class="nav-link" to="/admin/users">
             <i class="fas fa-user"></i>
-            Users</a
+            Users</router-link
           >
         </li>
         <li class="nav-item">

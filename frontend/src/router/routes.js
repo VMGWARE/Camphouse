@@ -112,6 +112,15 @@ const routes = [
     },
   },
   {
+    path: "/admin/users",
+    name: "admin-users",
+    component: () => import("@/views/Admin/UsersView.vue"),
+    meta: {
+      title: "Users - Admin",
+      layout: "admin",
+    },
+  },
+  {
     path: "/admin/reports/:id",
     name: "admin-report",
     component: () => import("@/views/Admin/ReportView.vue"),
