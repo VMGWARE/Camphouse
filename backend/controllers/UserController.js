@@ -321,8 +321,10 @@ router.get("/", loadUser, async (req, res) => {
     hideEmail = "";
   }
 
+  const criteria = { handle: { $regex: search, $options: "i" } };
+
   // Sort by
-  const users = await User.find({ handle: { $regex: search, $options: "i" } })
+  const users = await User.find(criteria)
     .sort({
       createdAt: -1,
     })
@@ -338,7 +340,7 @@ router.get("/", loadUser, async (req, res) => {
     data: {
       users: users,
       page: page,
-      maxPages: Math.ceil((await User.countDocuments()) / limit),
+      maxPages: Math.ceil((await User.countDocuments(criteria)) / limit),
       limit: limit,
     },
   });
