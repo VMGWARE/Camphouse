@@ -120,4 +120,6 @@ const props = defineProps(["user"]);
 const emit = defineEmits(["update", "cancel"]);
 
 var user = Object.assign({}, props.user);
+
+// TODO: Move submit logic to this component and emit the event
 </script>
