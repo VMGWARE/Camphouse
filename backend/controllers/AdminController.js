@@ -70,8 +70,6 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
 // Services
 // const NotificationService = require("../services/NotificationService");
 
-// User: CRUD
-
 // Read (GET) - Fetch a specific user by ID
 /**
  * @swagger
