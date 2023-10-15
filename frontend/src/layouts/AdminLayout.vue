@@ -39,9 +39,9 @@
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#!">
+          <router-link class="nav-link" to="/admin/posts">
             <i class="fas fa-file-alt"></i>
-            Posts</a
+            Posts</router-link
           >
         </li>
         <li class="nav-item">
