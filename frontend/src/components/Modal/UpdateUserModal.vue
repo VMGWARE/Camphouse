@@ -24,7 +24,11 @@
             v-model="user.username"
             :class="{ 'is-invalid': errors.username }"
           />
-          <div class="invalid-feedback" v-if="errors.username">
+          <div
+            class="invalid-feedback"
+            style="display: block"
+            v-if="errors.username"
+          >
             {{ errors.username }}
           </div>
         </div>
@@ -39,7 +43,11 @@
             v-model="user.handle"
             :class="{ 'is-invalid': errors.handle }"
           />
-          <div class="invalid-feedback" v-if="errors.handle">
+          <div
+            class="invalid-feedback"
+            style="display: block"
+            v-if="errors.handle"
+          >
             {{ errors.handle }}
           </div>
         </div>
@@ -54,7 +62,11 @@
             v-model="user.email"
             :class="{ 'is-invalid': errors.email }"
           />
-          <div class="invalid-feedback" v-if="errors.email">
+          <div
+            class="invalid-feedback"
+            style="display: block"
+            v-if="errors.email"
+          >
             {{ errors.email }}
           </div>
         </div>
@@ -68,7 +80,11 @@
             v-model="user.bio"
             :class="{ 'is-invalid': errors.bio }"
           ></textarea>
-          <div class="invalid-feedback" v-if="errors.bio">
+          <div
+            class="invalid-feedback"
+            style="display: block"
+            v-if="errors.bio"
+          >
             {{ errors.bio }}
           </div>
         </div>
@@ -85,7 +101,11 @@
           <label for="verified" class="form-check-label text-white">
             Is Verified
           </label>
-          <div class="invalid-feedback" v-if="errors.verified">
+          <div
+            class="invalid-feedback"
+            style="display: block"
+            v-if="errors.verified"
+          >
             {{ errors.verified }}
           </div>
         </div>
@@ -102,7 +122,11 @@
           <label for="verified" class="form-check-label text-white">
             Is Admin
           </label>
-          <div class="invalid-feedback" v-if="errors.admin">
+          <div
+            class="invalid-feedback"
+            style="display: block"
+            v-if="errors.admin"
+          >
             {{ errors.admin }}
           </div>
         </div>

@@ -17,7 +17,11 @@
         <p>
           <strong>{{ props.user.username }}</strong>
         </p>
-        <div class="invalid-feedback" v-if="errorMessage">
+        <div
+          class="invalid-feedback"
+          style="display: block"
+          v-if="errorMessage"
+        >
           {{ errorMessage }}
         </div>
       </div>
