@@ -76,7 +76,13 @@
                     aria-labelledby="actionsDropdown"
                   >
                     <a class="dropdown-item" href="#"> Edit </a>
-                    <a class="dropdown-item" href="#"> Delete </a>
+                    <a
+                      class="dropdown-item"
+                      href="#"
+                      @click="openDeletePostModal(post)"
+                    >
+                      Delete
+                    </a>
                   </div>
                 </div>
               </td>
@@ -227,6 +233,8 @@
 
 <script>
 import axios from "axios";
+import { useModal } from "vue-final-modal";
+import DeletePostModal from "@/components/Modal/DeletePostModal.vue";
 
 export default {
   data() {
@@ -297,6 +305,22 @@ export default {
       return new Intl.DateTimeFormat("default", { dateStyle: "long" }).format(
         date
       );
+    },
+    async openDeletePostModal(post) {
+      const { open, close } = useModal({
+        component: DeletePostModal,
+        attrs: {
+          post: post,
+          onCancel() {
+            close();
+          },
+          async onDelete(id) {
+            close();
+            this.posts = this.posts.filter((post) => post._id !== id);
+          },
+        },
+      });
+      open();
     },
   },
   computed: {
