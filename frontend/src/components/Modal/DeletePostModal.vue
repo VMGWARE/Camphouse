@@ -15,7 +15,9 @@
       <div class="modal-body">
         <p>Are you sure you want to delete this post?</p>
         <p>
-          <strong>{{ props.post.title }}</strong>
+          <strong>Title:</strong> {{ props.post.title }}
+          <br />
+          <strong>Author:</strong> {{ props.post.user.handle }}
         </p>
         <div class="invalid-feedback" v-if="errorMessage">
           {{ errorMessage }}
