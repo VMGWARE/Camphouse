@@ -163,6 +163,144 @@ router.get("/", authenticateJWT, isAdmin, async (req, res) => {
 
 /**
  * @swagger
+ * /api/v1/blocked-email-domains:
+ *   post:
+ *     summary: Add a New Blocked Email Domain
+ *     description: |
+ *       This endpoint is used to add a new blocked email domain.
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Blocked Email Domains
+ *     requestBody:
+ *       description: The domain to be blocked.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               domain:
+ *                 type: string
+ *                 example: yahoo.com
+ *     responses:
+ *       200:
+ *         description: Blocked email domain successfully added.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Blocked email domain created.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 5f9c3f7d9e5d5b0d4e4b9a4d
+ *                     domain:
+ *                       type: string
+ *                       example: yahoo.com
+ *                     isBlocked:
+ *                       type: boolean
+ *                       example: true
+ *                     createdAt:
+ *                       type: string
+ *                       example: 2020-10-30T18:39:33.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       example: 2020-10-30T18:39:33.000Z
+ *       400:
+ *         description: Invalid domain or domain already blocked.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Invalid domain or Domain already blocked.
+ *       500:
+ *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Server error.
+ */
+router.post("/", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // Get the domain from the request body
+    const domain = req.body.domain;
+
+    // Check if the domain is already blocked
+    const blockedEmailDomain = await BlockedEmailDomain.findOne({
+      domain: domain,
+    }).exec();
+
+    if (blockedEmailDomain) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Domain already blocked",
+        data: null,
+      });
+    }
+
+    // Create a new blocked email domain
+    const newBlockedEmailDomain = new BlockedEmailDomain({
+      domain: domain,
+      isBlocked: true,
+    });
+
+    // Save the blocked email domain
+    await newBlockedEmailDomain.save();
+
+    // Return the blocked email domain
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Blocked email domain created",
+      data: newBlockedEmailDomain,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Server error",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
  * /api/v1/blocked-email-domains/{id}:
  *   get:
  *     summary: Get a Specific Blocked Email Domain
