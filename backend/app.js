@@ -59,10 +59,17 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Forwarded-For"
   );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
+
+// Attach the user to the request object
+const { loadUser } = require("./middleware/auth");
+app.use(loadUser);
 
 // Rate limiting middleware
 const limiter = rateLimit({
@@ -77,7 +84,14 @@ const limiter = rateLimit({
     errorHandler: console.error.bind(null, "rate-limit-mongo"),
   }),
   windowMs: 60 * 1000, // 1 minute
-  max: 120, // Limit each IP to 120 requests per windowMs
+  max: function (req) {
+    // If the user is an admin, set a higher rate limit
+    if (req.user && req.user.admin) {
+      return 500;
+    }
+    // Limit each IP to 120 requests per windowMs
+    return 120;
+  },
   message: {
     status: "error",
     code: 429,
