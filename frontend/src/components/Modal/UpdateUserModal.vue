@@ -91,7 +91,7 @@
         <button
           class="btn btn-success"
           style="border-radius: 30px"
-          @click="emit('update', user)"
+          @click="updateUser(user)"
         >
           Save Changes
         </button>
@@ -113,13 +113,37 @@
 
 <script setup>
 import { VueFinalModal } from "vue-final-modal";
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
+import axios from "axios";
 
 const props = defineProps(["user"]);
-
 const emit = defineEmits(["update", "cancel"]);
-
 var user = Object.assign({}, props.user);
+var processing = ref(false);
 
 // TODO: Move submit logic to this component and emit the event
+const updateUser = async (user) => {
+  processing.value = true;
+  try {
+    // Set Auth Header
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${localStorage.getItem("token")}`;
+
+    // Update the user
+    await axios.put(`/v1/admin/users/${user._id}`, user).then((res) => {
+      if (res.data.code === 200) {
+        // Emit the event
+        emit("update", res.data.data);
+      } else {
+        console.log("Error updating user");
+        // TODO: Handle and show errors for validation
+      }
+    });
+  } catch (error) {
+    console.error("Error updating user:", error);
+  } finally {
+    processing.value = false;
+  }
+};
 </script>
