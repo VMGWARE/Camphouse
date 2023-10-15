@@ -50,7 +50,6 @@
 
 // Require the necessary packages
 const express = require("express");
-const bcrypt = require("bcrypt");
 const router = express.Router();
 
 // Require the necessary models
