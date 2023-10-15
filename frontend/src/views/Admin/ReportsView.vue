@@ -1,5 +1,9 @@
 <template>
   <div class="container my-4">
+    <!-- Alert for functionality other than viewing reports -->
+    <div class="alert alert-warning" role="alert">
+      This feature is not yet fully implemented.
+    </div>
     <h1 class="mb-4">Reports</h1>
     <div
       v-for="report in reports"

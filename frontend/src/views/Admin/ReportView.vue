@@ -1,5 +1,9 @@
 <template>
   <div class="container my-4">
+    <!-- Alert for this feature not being setup yet -->
+    <div class="alert alert-warning" role="alert">
+      This feature is not yet implemented.
+    </div>
     <h1 class="mb-4">Report Detail</h1>
     <div v-if="report" class="card">
       <div class="card-header">
