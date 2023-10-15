@@ -146,7 +146,14 @@ export default {
     check_token() {
       console.log("Checking JWT token");
       const token = this.$store.state.token;
-      if (!token) return this.$router.push("/login");
+      if (!token || token == null) {
+        let redirect = this.$route.path;
+        if (redirect != "/login" && redirect != "/signup") {
+          redirect = "/login?redirect=" + redirect;
+        }
+        this.$router.push(redirect);
+        return;
+      }
       const { exp } = jwtDecode(token);
       console.log("Your JWT is", exp - Date.now() / 1000, "seconds to expiry");
       if (exp - Date.now() / 1000 < 0) {
