@@ -551,35 +551,132 @@ router.get("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
  */
 router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
   try {
-    var errors = {};
-    const { email, password, username, handle, bio, verified, admin } =
-      req.body;
+    const ValidateRequest = [
+      // Things to validate/we can accept
+      {
+        username: {
+          type: "string",
+          unique: true,
+          minLength: 1,
+          maxLength: 32,
+        },
+        handle: {
+          type: "string",
+          unique: true,
+        },
+        email: {
+          type: "string",
+          unique: true,
+        },
+        bio: {
+          type: "string",
+          maxLength: 255,
+        },
+        verified: {
+          type: "boolean",
+        },
+        admin: {
+          type: "boolean",
+        },
+      },
+      // Response messages for each validation
+      {
+        username: {
+          type: "Username must be a string.",
+          unique: "Username must be unique.",
+          minLength: "Username must be at least 1 character long.",
+          maxLength: "Username must be less than 32 characters long.",
+        },
+        handle: {
+          type: "Handle must be a string.",
+          unique: "Handle must be unique.",
+        },
+        email: {
+          type: "Email must be a string.",
+          unique: "Email must be unique.",
+        },
+        bio: {
+          type: "Bio must be a string.",
+          maxLength: "Bio must be less than 255 characters long.",
+        },
+        verified: {
+          type: "Verified must be a boolean.",
+        },
+        admin: {
+          type: "Admin must be a boolean.",
+        },
+      },
+    ];
 
-    // If bio, verified, or admin are provided but empty, set them to null
-    if (bio === "" || bio === undefined) {
-      req.body.bio = "";
+    // If the ID is invalid, return an error
+    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({
+        status: "error",
+        message: "Invalid user ID",
+        code: 400,
+        data: null,
+      });
     }
-    if (verified === "" || verified === undefined) {
-      req.body.verified = false;
+
+    // Fetch the user by ID
+    var user = await User.findById(req.params.id);
+
+    // If the user doesn't exist, return an error
+    if (!user) {
+      return res.status(404).json({
+        status: "error",
+        message: "User not found",
+        code: 404,
+        data: null,
+      });
     }
-    if (admin === "" || admin === undefined) {
-      req.body.admin = false;
+
+    // For each key in the request body, if it has not been updated, remove it from the request body
+    for (const [key, value] of Object.entries(req.body)) {
+      if (user[key] === value) {
+        delete req.body[key];
+      }
     }
 
     // Validate the request body
-    if (!email) {
-      errors.email = "Email field is required.";
-    } else if (!password) {
-      errors.password = "Password field is required.";
-    } else if (!username) {
-      errors.username = "Username field is required.";
-    } else if (!handle) {
-      errors.handle = "Handle field is required.";
-    }
+    const errors = {};
+    for (const [key, value] of Object.entries(req.body)) {
+      // If the key is not in the list of allowed keys, skip it
+      if (!ValidateRequest[0][key]) {
+        continue;
+      }
 
-    // Check if email is valid
-    if (email && !validateEmail(email)) {
-      errors.email = "Email is invalid.";
+      // If the value is empty, skip it
+      if (value === "" || value === undefined) {
+        continue;
+      }
+
+      // If the value is not the correct type, add an error
+      if (typeof value !== ValidateRequest[0][key].type) {
+        errors[key] = ValidateRequest[1][key].type;
+      }
+
+      // If the value is not unique, add an error
+      if (ValidateRequest[0][key].unique) {
+        const existingUser = await User.findOne({ [key]: value });
+        if (existingUser) {
+          errors[key] = ValidateRequest[1][key].unique;
+        }
+      }
+
+      // If the value is not the correct length, add an error
+      if (ValidateRequest[0][key].minLength) {
+        if (value.length < ValidateRequest[0][key].minLength) {
+          errors[key] = ValidateRequest[1][key].minLength;
+        }
+      }
+
+      // If the value is not the correct length, add an error
+      if (ValidateRequest[0][key].maxLength) {
+        if (value.length > ValidateRequest[0][key].maxLength) {
+          errors[key] = ValidateRequest[1][key].maxLength;
+        }
+      }
     }
 
     // Check if there are any errors
@@ -594,77 +691,58 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       });
     }
 
-    // If the ID is invalid, return an error
-    if (!req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
-      return res.status(400).json({
-        status: "error",
-        message: "Invalid user ID",
-        code: 400,
-        data: null,
+    // If email or handle is being updated, check if the user with the provided email or handle already exists
+    if (req.body.email || req.body.handle) {
+      const existingUser = await User.findOne({
+        $or: [{ email: req.body.email }, { handle: req.body.handle }],
       });
-    }
 
-    // Fetch the user by ID
-    const user = await User.findById(req.params.id);
+      if (existingUser) {
+        let message = "User with the provided email or handle already exists.";
 
-    // If the user doesn't exist, return an error
-    if (!user) {
-      return res.status(404).json({
-        status: "error",
-        message: "User not found",
-        code: 404,
-        data: null,
-      });
-    }
+        if (existingUser.email === req.body.email) {
+          message = "User with the provided email already exists.";
+        } else if (existingUser.handle === req.body.handle) {
+          message = "User with the provided handle already exists.";
+        }
 
-    // Check if the user with the provided email or handle already exists
-    const existingUser = await User.findOne({
-      $or: [{ email }, { handle: req.body.handle }],
-    });
-
-    if (existingUser && existingUser._id.toString() !== req.params.id) {
-      let message = "User with the provided email or handle already exists.";
-
-      if (existingUser.email === email) {
-        message = "User with the provided email already exists.";
-      } else if (existingUser.handle === req.body.handle) {
-        message = "User with the provided handle already exists.";
+        return res.status(409).json({
+          status: "error",
+          code: 409,
+          message,
+          data: null,
+        });
       }
-
-      return res.status(409).json({
-        status: "error",
-        code: 409,
-        message,
-        data: null,
-      });
     }
-
-    // Encrypt password
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Update the user
-    user.email = email;
-    user.password = hashedPassword;
-    user.username = username;
-    user.handle = handle;
-    user.bio = bio;
-    user.verified = verified;
-    user.admin = admin;
+    // Loop through the request body and update the user object, only updating the fields that were provided and validated
+    for (const [key, value] of Object.entries(req.body)) {
+      if (ValidateRequest[0][key]) {
+        user[key] = value;
+      }
+    }
 
-    await user.save();
+    // Save the updated user
+    await User.findByIdAndUpdate(req.params.id, user);
 
-    res.status(200).json({
+    // Fetch the updated user
+    user = await User.findById(req.params.id).select("-password -__v");
+
+    // Return the updated user
+    res.json({
       status: "success",
-      code: 200,
       message: "User updated successfully",
-      data: null,
+      code: 200,
+      data: user,
     });
   } catch (error) {
+    console.error(error);
     // Return an error
     res.status(500).json({
       status: "error",
+      message: "Something went wrong.",
       code: 500,
-      message: "Something went wrong: " + error.message,
       data: null,
     });
   }

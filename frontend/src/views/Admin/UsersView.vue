@@ -212,6 +212,7 @@ export default {
       navigator.clipboard.writeText(id);
     },
     async openUpdateUserModal(user) {
+      const users = this.users;
       // Assign the modal instance to a variable
       const { open, close } = useModal({
         component: UpdateUserModal,
@@ -233,15 +234,19 @@ export default {
                 if (res.status === 200) {
                   console.log("User updated successfully");
                   // Locate the index of the user in the users array and update it
-                  const index = this.users.findIndex(
+                  const index = users.findIndex(
                     (user) => user._id === updatedUser._id
                   );
 
-                  this.users[index] = updatedUser;
+                  users[index] = updatedUser;
+                } else {
+                  console.log("Error updating user");
+                  // TODO: Handle and show errors for validation
                 }
               })
               .catch((err) => {
                 console.log(err);
+                // TODO: Handle and show errors for validation
               });
             close();
           },
