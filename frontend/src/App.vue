@@ -162,6 +162,7 @@ export default {
           url: "/v1/auth/refresh-token",
         }).then((response) => {
           this.$store.commit("setToken", response.data.data.token);
+          localStorage.setItem("token", response.data.data.token);
           console.log("token refreshed");
         });
       } else {
