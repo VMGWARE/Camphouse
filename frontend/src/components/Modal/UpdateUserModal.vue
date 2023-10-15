@@ -22,7 +22,11 @@
             class="form-control"
             name="username"
             v-model="user.username"
+            :class="{ 'is-invalid': errors.username }"
           />
+          <div class="invalid-feedback" v-if="errors.username">
+            {{ errors.username }}
+          </div>
         </div>
 
         <!-- handle -->
@@ -33,7 +37,11 @@
             class="form-control"
             name="handle"
             v-model="user.handle"
+            :class="{ 'is-invalid': errors.handle }"
           />
+          <div class="invalid-feedback" v-if="errors.handle">
+            {{ errors.handle }}
+          </div>
         </div>
 
         <!-- email -->
@@ -44,7 +52,11 @@
             class="form-control"
             name="email"
             v-model="user.email"
+            :class="{ 'is-invalid': errors.email }"
           />
+          <div class="invalid-feedback" v-if="errors.email">
+            {{ errors.email }}
+          </div>
         </div>
 
         <!-- bio -->
@@ -54,7 +66,11 @@
             class="form-control"
             name="bio"
             v-model="user.bio"
+            :class="{ 'is-invalid': errors.bio }"
           ></textarea>
+          <div class="invalid-feedback" v-if="errors.bio">
+            {{ errors.bio }}
+          </div>
         </div>
 
         <!-- verified -->
@@ -64,10 +80,14 @@
             class="form-check-input"
             name="verified"
             v-model="user.verified"
+            :class="{ 'is-invalid': errors.verified }"
           />
           <label for="verified" class="form-check-label text-white">
             Is Verified
           </label>
+          <div class="invalid-feedback" v-if="errors.verified">
+            {{ errors.verified }}
+          </div>
         </div>
 
         <!-- admin -->
@@ -77,10 +97,14 @@
             class="form-check-input"
             name="verified"
             v-model="user.admin"
+            :class="{ 'is-invalid': errors.admin }"
           />
           <label for="verified" class="form-check-label text-white">
             Is Admin
           </label>
+          <div class="invalid-feedback" v-if="errors.admin">
+            {{ errors.admin }}
+          </div>
         </div>
         <!-- Add more form fields for editing user data -->
       </div>
@@ -93,7 +117,10 @@
           style="border-radius: 30px"
           @click="updateUser(user)"
         >
-          Save Changes
+          <span v-if="processing">
+            <i class="fas fa-spinner fa-spin"></i>
+          </span>
+          <span v-else>Update</span>
         </button>
       </div>
     </div>
@@ -120,6 +147,7 @@ const props = defineProps(["user"]);
 const emit = defineEmits(["update", "cancel"]);
 var user = Object.assign({}, props.user);
 var processing = ref(false);
+var errors = ref([]);
 
 // TODO: Move submit logic to this component and emit the event
 const updateUser = async (user) => {
@@ -131,15 +159,14 @@ const updateUser = async (user) => {
     ] = `Bearer ${localStorage.getItem("token")}`;
 
     // Update the user
-    await axios.put(`/v1/admin/users/${user._id}`, user).then((res) => {
-      if (res.data.code === 200) {
-        // Emit the event
+    await axios
+      .put(`/v1/admin/users/${user._id}`, user)
+      .then((res) => {
         emit("update", res.data.data);
-      } else {
-        console.log("Error updating user");
-        // TODO: Handle and show errors for validation
-      }
-    });
+      })
+      .catch((err) => {
+        errors.value = err.response.data.data.errors;
+      });
   } catch (error) {
     console.error("Error updating user:", error);
   } finally {
