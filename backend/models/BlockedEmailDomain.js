@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 
 /**
- * DisposableEmailHoster Schema
+ * BlockedEmailDomain Schema
  */
-const DisposableEmailHosterSchema = new mongoose.Schema(
+const BlockedEmailDomainSchema = new mongoose.Schema(
   {
     domain: {
       // The domain of the disposable email hoster.
@@ -22,6 +22,6 @@ const DisposableEmailHosterSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model(
-  "DisposableEmailHoster",
-  DisposableEmailHosterSchema
+  "BlockedEmailDomain",
+  BlockedEmailDomainSchema
 );
