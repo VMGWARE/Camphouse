@@ -289,6 +289,7 @@ export default {
       );
     },
     async openDeletePostModal(post) {
+      let parent = this;
       const { open, close } = useModal({
         component: DeletePostModal,
         attrs: {
@@ -297,8 +298,13 @@ export default {
             close();
           },
           async onDelete(id) {
+            // Remove the post from the posts array
+            parent.posts = parent.posts.filter((post) => post._id !== id);
+
+            // Update the total number of posts
+            parent.totalPosts -= 1;
+
             close();
-            this.posts = this.posts.filter((post) => post._id !== id);
           },
         },
       });
