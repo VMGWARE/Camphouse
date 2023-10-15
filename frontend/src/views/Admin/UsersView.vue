@@ -246,6 +246,29 @@ export default {
       // Open the modal
       open();
     },
+    async openDeleteUserModal(user) {
+      // Assign the modal instance to a variable
+      const { open, close } = useModal({
+        component: DeleteUserModal,
+        attrs: {
+          user: user,
+          onCancel() {
+            close();
+          },
+          async onDelete(userId) {
+            // Remove the user from the users array
+            this.users = this.users.filter((user) => user._id !== userId);
+
+            // Update the total number of users
+            this.totalUsers = this.totalUsers - 1;
+            close();
+          },
+        },
+      });
+
+      // Open the modal
+      open();
+    },
     async refreshUsers() {
       this.refreshingUsers = true;
       this.fetchUsers();
@@ -272,39 +295,6 @@ export default {
   mounted() {
     this.fetchUsers();
     this.fetchTotalUsers();
-  },
-  setup() {
-    const openDeleteUserModal = (user) => {
-      // Assign the modal instance to a variable
-      const { open, close } = useModal({
-        component: DeleteUserModal,
-        attrs: {
-          user: user,
-          onCancel() {
-            close();
-          },
-          async onDelete() {
-            // Set Auth Header
-            axios.defaults.headers.common[
-              "Authorization"
-            ] = `Bearer ${localStorage.getItem("token")}`;
-
-            const response = await axios.delete(`/v1/admin/users/${user._id}`);
-            if (response.status === 200) {
-              // Refresh the users
-              this.fetchUsers();
-              this.fetchTotalUsers();
-            }
-            close();
-          },
-        },
-      });
-
-      // Open the modal
-      open();
-    };
-
-    return { openDeleteUserModal };
   },
 };
 </script>

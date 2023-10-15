@@ -17,13 +17,16 @@
         <p>
           <strong>{{ props.user.username }}</strong>
         </p>
+        <div class="invalid-feedback" v-if="errorMessage">
+          {{ errorMessage }}
+        </div>
       </div>
       <div class="modal-footer">
         <button class="btn btn-primary" @click="emit('cancel')">
           <i class="fas fa-times"></i>
           Cancel
         </button>
-        <button class="btn btn-danger" @click="emit('delete', props.user._id)">
+        <button class="btn btn-danger" @click="deleteUser(props.user.id)">
           <i class="fas fa-trash"></i> Delete
         </button>
       </div>
@@ -33,16 +36,46 @@
 
 <style scoped>
 .larger-modal {
-  width: 800px; /* Or any specific width you want */
-  max-width: 90%; /* To make sure it doesn't overflow on smaller screens */
+  width: 800px;
+  max-width: 90%;
+  max-height: 90vh; /* Maximum height relative to the viewport */
+  overflow-y: auto; /* Makes content scrollable when it overflows the box */
+  z-index: 1060 !important;
+  padding: 20px; /* Adds some padding to the content for better appearance */
 }
 </style>
 
 <script setup>
 import { VueFinalModal } from "vue-final-modal";
-import { defineProps, defineEmits } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
+import axios from "axios";
 
 const props = defineProps(["user"]);
-
 const emit = defineEmits(["delete", "cancel"]);
+var processing = ref(false);
+var errorMessage = ref("");
+
+const deleteUser = async (id) => {
+  processing.value = true;
+  try {
+    // Set Auth Header
+    axios.defaults.headers.common[
+      "Authorization"
+    ] = `Bearer ${localStorage.getItem("token")}`;
+
+    await axios
+      .delete(`/v1/admin/users/${id}`)
+      .then(() => {
+        emit("delete", id);
+      })
+      .catch((err) => {
+        errorMessage.value = err.response.data.message;
+      });
+  } catch (error) {
+    processing.value = false;
+    errorMessage.value = error.message;
+  } finally {
+    processing.value = false;
+  }
+};
 </script>
