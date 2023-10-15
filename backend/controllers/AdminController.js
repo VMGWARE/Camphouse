@@ -458,7 +458,29 @@ router.get("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/FullRegistrationRequest'
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: User's email address
+ *               password:
+ *                 type: string
+ *                 description: User's password
+ *               username:
+ *                 type: string
+ *                 description: User's chosen username
+ *               handle:
+ *                 type: string
+ *                 description: User's unique handle
+ *               bio:
+ *                 type: string
+ *                 description: User's bio
+ *               verified:
+ *                 type: boolean
+ *                 description: Whether or not the user is verified
+ *               admin:
+ *                 type: boolean
+ *                 description: Whether or not the user is an admin
  *     responses:
  *       200:
  *         description: User updated successfully.
