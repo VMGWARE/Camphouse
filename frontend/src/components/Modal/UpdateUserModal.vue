@@ -88,7 +88,11 @@
         <button type="button" class="btn btn-primary" @click="emit('cancel')">
           Cancel
         </button>
-        <button class="btn btn-success" style="border-radius: 30px">
+        <button
+          class="btn btn-success"
+          style="border-radius: 30px"
+          @click="emit('update', user)"
+        >
           Save Changes
         </button>
       </div>

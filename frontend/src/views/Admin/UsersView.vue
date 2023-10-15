@@ -211,6 +211,46 @@ export default {
     copyUserId(id) {
       navigator.clipboard.writeText(id);
     },
+    async openUpdateUserModal(user) {
+      // Assign the modal instance to a variable
+      const { open, close } = useModal({
+        component: UpdateUserModal,
+        attrs: {
+          user: user,
+          onCancel() {
+            close();
+          },
+          async onUpdate(updatedUser) {
+            // Set Auth Header
+            axios.defaults.headers.common[
+              "Authorization"
+            ] = `Bearer ${localStorage.getItem("token")}`;
+
+            // Update the user
+            await axios
+              .put(`/v1/admin/users/${user._id}`, updatedUser)
+              .then((res) => {
+                if (res.status === 200) {
+                  console.log("User updated successfully");
+                  // Locate the index of the user in the users array and update it
+                  const index = this.users.findIndex(
+                    (user) => user._id === updatedUser._id
+                  );
+
+                  this.users[index] = updatedUser;
+                }
+              })
+              .catch((err) => {
+                console.log(err);
+              });
+            close();
+          },
+        },
+      });
+
+      // Open the modal
+      open();
+    },
   },
   computed: {
     displayedPages() {
@@ -264,23 +304,7 @@ export default {
       open();
     };
 
-    const openUpdateUserModal = (user) => {
-      // Assign the modal instance to a variable
-      const { open, close } = useModal({
-        component: UpdateUserModal,
-        attrs: {
-          user: user,
-          onCancel() {
-            close();
-          },
-        },
-      });
-
-      // Open the modal
-      open();
-    };
-
-    return { openDeleteUserModal, openUpdateUserModal };
+    return { openDeleteUserModal };
   },
 };
 </script>
