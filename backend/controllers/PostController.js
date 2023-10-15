@@ -810,7 +810,7 @@ router.delete("/:postId", authenticateJWT, async (req, res) => {
     }
 
     // Check if the user owns the post
-    if (post.user.toString() != req.user._id.toString()) {
+    if (post.user.toString() != req.user._id.toString() && !req.user.admin) {
       return res.status(403).json({
         status: "error",
         code: 403,
