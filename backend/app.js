@@ -15,6 +15,9 @@ const fileUpload = require("express-fileupload");
 
 // Scripts
 const { createAdminUser } = require("./scripts/createAdminUser"); // Create the admin user
+const {
+  seedBlockedEmailDomains,
+} = require("./scripts/seedBlockedEmailDomains"); // Seed the blocked email domains
 
 // Load environment variables
 require("dotenv").config();
@@ -59,7 +62,10 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Forwarded-For"
   );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
+  res.header(
+    "Access-Control-Allow-Methods",
+    "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+  );
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
@@ -193,7 +199,7 @@ app.use((req, res) => {
 });
 
 // Start listening for requests
-app.listen(port, () => {
+app.listen(port, async () => {
   // Display the Camphouse logo
   try {
     const currentPath = path.dirname(__filename);
@@ -205,7 +211,10 @@ app.listen(port, () => {
   }
 
   // Create the admin user
-  createAdminUser();
+  await createAdminUser();
+
+  // Seed the blocked email domains
+  await seedBlockedEmailDomains();
 
   // Show the version number and the port that the app is running on
   console.log(
