@@ -1,6 +1,7 @@
 <template>
   <VueFinalModal
     class="d-flex justify-content-center align-items-center modal-container"
+    style="z-index: 1060"
   >
     <div class="modal-content bg-dark">
       <div class="modal-header">

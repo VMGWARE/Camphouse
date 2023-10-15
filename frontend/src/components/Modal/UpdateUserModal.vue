@@ -1,6 +1,7 @@
 <template>
   <VueFinalModal
-    class="d-flex justify-content-center align-items-center modal-container modal"
+    class="d-flex justify-content-center align-items-center modal-container"
+    style="z-index: 1060"
   >
     <div class="modal-content bg-dark larger-modal">
       <div class="modal-header">
@@ -97,8 +98,12 @@
 
 <style scoped>
 .larger-modal {
-  width: 800px; /* Or any specific width you want */
-  max-width: 90%; /* To make sure it doesn't overflow on smaller screens */
+  width: 800px;
+  max-width: 90%;
+  max-height: 90vh; /* Maximum height relative to the viewport */
+  overflow-y: auto; /* Makes content scrollable when it overflows the box */
+  z-index: 1060 !important;
+  padding: 20px; /* Adds some padding to the content for better appearance */
 }
 </style>
 
