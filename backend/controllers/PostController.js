@@ -85,8 +85,6 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT, loadUser } = require("../middleware/auth");
 
-// TODO: Add loadComments, loadPosts, and loadLikes functions so that we don't have to repeat code
-
 /**
  * @swagger
  * /api/v1/posts:
@@ -812,7 +810,7 @@ router.delete("/:postId", authenticateJWT, async (req, res) => {
     }
 
     // Check if the user owns the post
-    if (post.user.toString() != req.user._id.toString()) {
+    if (post.user.toString() != req.user._id.toString() && !req.user.admin) {
       return res.status(403).json({
         status: "error",
         code: 403,
@@ -820,6 +818,12 @@ router.delete("/:postId", authenticateJWT, async (req, res) => {
         data: null,
       });
     }
+
+    // Delete the post's comments
+    await Comment.deleteMany({ post: req.params.postId });
+
+    // Delete the post's likes
+    await Like.deleteMany({ post: req.params.postId });
 
     // Delete the post
     await Post.deleteOne({ _id: req.params.postId });

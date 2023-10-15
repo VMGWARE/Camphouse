@@ -28,6 +28,4 @@ const PostSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// TODO: Ad pre hook to delete all comments and likes for the post
-
 module.exports = mongoose.model("Post", PostSchema);

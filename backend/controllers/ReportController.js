@@ -181,6 +181,9 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT, isAdmin } = require("../middleware/auth");
 
+// Services
+const NotificationService = require("../services/NotificationService");
+
 /**
  * @swagger
  * /api/v1/reports:
@@ -212,6 +215,13 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
  *         required: false
  *         schema:
  *           type: string
+ *       - name: status
+ *         in: query
+ *         description: Filter reports by status.
+ *         required: false
+ *         schema:
+ *           type: string
+ *           enum: [Pending, Approved, Denied]
  *     responses:
  *       200:
  *         description: Successfully retrieved all reports.
@@ -266,30 +276,55 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
  */
 router.get("/", authenticateJWT, isAdmin, async (req, res) => {
   try {
-    // Page number
     const page = parseInt(req.query.page) || 1;
-
-    // Number of posts per page
     const limit = parseInt(req.query.limit) || 10;
-
-    // Search query
     const search = req.query.search || "";
+    const status = req.query.status || "";
 
-    // Get all reports
-    const reports = await Report.find({
-      $or: [
-        { description: { $regex: search, $options: "i" } },
-        { moderatorNote: { $regex: search, $options: "i" } },
-      ],
-    })
-      .sort({
-        createdAt: -1,
+    if (status && !["Pending", "Approved", "Denied"].includes(status)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Invalid status",
+        data: null,
+      });
+    }
+
+    // Creating the query conditionally based on the input parameters.
+    let queryConditions = [];
+    if (search) {
+      queryConditions.push({ description: { $regex: search, $options: "i" } });
+      queryConditions.push({
+        moderatorNote: { $regex: search, $options: "i" },
+      });
+    }
+
+    if (status) {
+      queryConditions.push({ status: { $regex: status, $options: "i" } });
+    }
+
+    let reports;
+
+    if (queryConditions.length) {
+      reports = await Report.find({
+        $or: queryConditions,
       })
-      .skip((page - 1) * limit)
-      .limit(limit)
-      .populate("reportedBy", "-password -__v");
+        .sort({
+          createdAt: -1,
+        })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("reportedBy", "-password -__v");
+    } else {
+      reports = await Report.find()
+        .sort({
+          createdAt: -1,
+        })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .populate("reportedBy", "-password -__v");
+    }
 
-    // Check if reports exist
     if (!reports.length) {
       return res.status(404).json({
         status: "error",
@@ -299,12 +334,11 @@ router.get("/", authenticateJWT, isAdmin, async (req, res) => {
       });
     }
 
-    // For each report, populate the reportedBy and reported fields
     for (let i = 0; i < reports.length; i++) {
       const report = reports[i];
       const reported = await User.findById(report.reported).select(
         "-password -__v"
-      ); // Exclude the password field
+      );
       report.reported = reported;
     }
 
@@ -618,12 +652,22 @@ router.post("/", authenticateJWT, async (req, res) => {
     await report.save();
 
     // Return the report
-    return res.status(201).json({
+    res.status(201).json({
       status: "success",
       code: 201,
       message: "Successfully created the report",
       data: report,
     });
+
+    // Create a notification for the user who created the content
+    await NotificationService.create(
+      "REPORT", // type
+      req.user._id, // sender
+      req.user._id, // receiver
+      report._id, // referenceId
+      "Report", // onModel
+      `Your reporting of a ${type.toLowerCase()} has been received. A moderator will process your report soon.` // message
+    );
   } catch (error) {
     res.status(500).json({
       status: "error",
@@ -831,7 +875,9 @@ router.get("/user/:userId", authenticateJWT, async (req, res) => {
  */
 router.get("/:reportId", authenticateJWT, async (req, res) => {
   try {
-    const report = await Report.findById(req.params.reportId);
+    const report = await Report.findById(req.params.reportId)
+      .populate("reportedBy", "-password -__v")
+      .populate("reported", "-password -__v");
 
     // If the report does not exist, return an error
     if (!report) {
@@ -844,7 +890,10 @@ router.get("/:reportId", authenticateJWT, async (req, res) => {
     }
 
     // Check if the requester is the creator of the report or an admin
-    if (report.reportedBy.toString() !== req.user.id && !req.user.isAdmin) {
+    if (
+      report.reportedBy._id.toString() !== req.user._id.toString() &&
+      !req.user.admin
+    ) {
       return res.status(403).json({
         status: "error",
         code: 403,

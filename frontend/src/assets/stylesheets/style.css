@@ -575,6 +575,37 @@ img-tag {
   color: #999999;
 }
 
+.form-check-input {
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  margin-right: 5px;
+}
+
+.form-check-input:checked {
+  background-color: #ffc34d;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+}
+
+.form-check-input:focus {
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px #ffc34d;
+}
+
+.form-check-label {
+  color: #ffffff;
+}
+
+.form-check-label:hover {
+  color: #ffc34d;
+}
+
 .navbar-toggler {
   border: none;
   margin-right: 10px;
@@ -583,4 +614,11 @@ img-tag {
 /* toggler aria-expanded=true */
 .navbar-toggler[aria-expanded='true'] {
   color: #ffc34d;
+}
+
+.full-height {
+  /* Should ensure even on a large screen with no content, the footer stays at the bottom */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }

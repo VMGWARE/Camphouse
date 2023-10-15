@@ -27,6 +27,7 @@ const port = process.env.APP_PORT || 3000;
 require("./db");
 const { DB_URI, DB_NAME } = require("./db");
 
+app.disable("X-Powered-By");
 app.set("trust proxy", true);
 app.use(express.static("public"));
 
@@ -58,7 +59,7 @@ app.use(function (req, res, next) {
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Forwarded-For"
   );
-  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Credentials", true);
   next();
 });
@@ -76,7 +77,7 @@ const limiter = rateLimit({
     errorHandler: console.error.bind(null, "rate-limit-mongo"),
   }),
   windowMs: 60 * 1000, // 1 minute
-  max: 120, // Limit each IP to 120 requests per windowMs
+  max: 240, // Limit each IP to 120 requests per windowMs
   message: {
     status: "error",
     code: 429,
@@ -156,6 +157,8 @@ const CommentController = require("./controllers/CommentController");
 const NotificationController = require("./controllers/NotificationController");
 const ReportController = require("./controllers/ReportController");
 const TwoFAController = require("./controllers/TwoFAController");
+const AdminController = require("./controllers/AdminController");
+const MiscController = require("./controllers/MiscController");
 
 // Setup the routes
 app.use("/api/v1/posts", PostController);
@@ -168,6 +171,8 @@ app.use("/api/v1/comments", CommentController);
 app.use("/api/v1/notifications", NotificationController);
 app.use("/api/v1/reports", ReportController);
 app.use("/api/v1/2fa", TwoFAController);
+app.use("/api/v1/admin", AdminController);
+app.use("/api/v1/misc", MiscController);
 
 // Swagger documentation
 const options = require("./configs/swagger");
@@ -211,4 +216,12 @@ app.listen(port, () => {
   );
   console.log(chalk.yellow(`🌍 http://localhost:${port}`));
   console.log(chalk.yellow(`📚 API docs at http://localhost:${port}/api/docs`));
+});
+
+// Graceful shutdown
+process.on("SIGTERM", () => {
+  console.log(chalk.green("👋 SIGTERM signal received: closing HTTP server"));
+  app.close(() => {
+    console.log(chalk.green("📭 HTTP server closed"));
+  });
 });

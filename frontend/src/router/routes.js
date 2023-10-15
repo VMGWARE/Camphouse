@@ -49,7 +49,6 @@ const routes = [
     name: "profile",
     component: ProfileView,
     meta: {
-      // TODO: Find way to get the username and set it as the title
       title: "Profile",
       public: true,
     },
@@ -92,6 +91,68 @@ const routes = [
     component: SettingsView,
     meta: {
       title: "Settings",
+    },
+  },
+  {
+    path: "/admin/",
+    name: "admin",
+    component: () => import("@/views/Admin/DashboardView.vue"),
+    meta: {
+      title: "Admin",
+      layout: "admin",
+    },
+  },
+  {
+    path: "/admin/reports",
+    name: "admin-reports",
+    component: () => import("@/views/Admin/ReportsView.vue"),
+    meta: {
+      title: "Reports - Admin",
+      layout: "admin",
+    },
+  },
+  {
+    path: "/admin/users",
+    name: "admin-users",
+    component: () => import("@/views/Admin/UsersView.vue"),
+    meta: {
+      title: "Users - Admin",
+      layout: "admin",
+    },
+  },
+  {
+    path: "/admin/posts",
+    name: "admin-posts",
+    component: () => import("@/views/Admin/PostsView.vue"),
+    meta: {
+      title: "Posts - Admin",
+      layout: "admin",
+    },
+  },
+  {
+    path: "/admin/comments",
+    name: "admin-comments",
+    component: () => import("@/views/Admin/CommentsView.vue"),
+    meta: {
+      title: "Comments - Admin",
+      layout: "admin",
+    },
+  },
+  {
+    path: "/admin/reports/:id",
+    name: "admin-report",
+    component: () => import("@/views/Admin/ReportView.vue"),
+    meta: {
+      title: "Report - Admin",
+      layout: "admin",
+    },
+  },
+  {
+    path: "/view-report/:id",
+    name: "view-report",
+    component: () => import("@/views/Reports/ViewReportView.vue"),
+    meta: {
+      title: "View Report",
     },
   },
   {

@@ -412,6 +412,4 @@ router.delete("/disable", authenticateJWT, async (req, res) => {
   }
 });
 
-// TODO: Route lets the signed user know if 2FA is enabled or not
-
 module.exports = router;

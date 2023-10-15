@@ -72,6 +72,137 @@ const NotificationService = require("../services/NotificationService");
 
 /**
  * @swagger
+ * /api/v1/comments:
+ *   get:
+ *     tags:
+ *       - Comments
+ *     summary: Get comments
+ *     description: Retrieve comments
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         description: The page number to retrieve
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         description: The number of comments per page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *       - in: query
+ *         name: search
+ *         description: Search query for comments
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully retrieved comments
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     comments:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Comment'
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     maxPages:
+ *                       type: integer
+ *                       example: 1
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *       500:
+ *         description: An error occurred while retrieving comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while retrieving comments
+ *                 data:
+ *                   type: null
+ */
+router.get("/", authenticateJWT, async (req, res) => {
+  try {
+    // Page number
+    const page = parseInt(req.query.page) || 1;
+
+    // Number of posts per page
+    const limit = parseInt(req.query.limit) || 10;
+
+    // Search query
+    const search = req.query.search || "";
+
+    // create an object to hold the search criteria
+    let criteria = {
+      $or: [{ comment: { $regex: search, $options: "i" } }],
+    };
+
+    // Get the comments
+    const comments = await Comment.find(criteria)
+      .populate("user", "username handle createdAt profilePicture")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    // Return the comments
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully retrieved comments.",
+      data: {
+        comments: comments,
+        page: page,
+        maxPages: Math.ceil((await Comment.countDocuments(criteria)) / limit),
+        limit: limit,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      status: "error",
+      code: 500,
+      message: "An error occurred while retrieving comments.",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
  * /api/v1/comments/post/{postId}:
  *   get:
  *     tags:
@@ -318,153 +449,6 @@ router.post("/post/:postId", authenticateJWT, async (req, res) => {
 /**
  * @swagger
  * /api/v1/comments/{commentId}:
- *   put:
- *     tags:
- *       - Comments
- *     summary: Update a comment
- *     description: Update a specific comment
- *     produces:
- *       - application/json
- *     security:
- *       - BearerAuth: []
- *     parameters:
- *       - name: commentId
- *         in: path
- *         required: true
- *         description: ID of the comment to update
- *         schema:
- *           $ref: '#/components/schemas/ObjectId'
- *     requestBody:
- *       description: Comment details
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             type: object
- *             properties:
- *               comment:
- *                 type: string
- *     responses:
- *       200:
- *         description: Successfully updated comment
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: success
- *                 code:
- *                   type: integer
- *                   example: 200
- *                 message:
- *                   type: string
- *                   example: Successfully updated comment
- *                 data:
- *                   $ref: '#/components/schemas/Comment'
- *       400:
- *         description: Comment does not exist or invalid comment provided
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: error
- *                 code:
- *                   type: integer
- *                   example: 400
- *                 message:
- *                   type: string
- *                   example: Comment does not exist or invalid comment provided
- *                 data:
- *                   type: null
- *       500:
- *         description: An error occurred while updating the comment
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- *               properties:
- *                 status:
- *                   type: string
- *                   example: error
- *                 code:
- *                   type: integer
- *                   example: 500
- *                 message:
- *                   type: string
- *                   example: An error occurred while updating the comment
- *                 data:
- *                   type: null
- */
-router.put("/:commentId", authenticateJWT, async (req, res) => {
-  // Params
-  const comment = req.params.commentId;
-  const { newComment } = req.body;
-
-  // Verify comment exists
-  const commentExists = await Comment.exists({
-    _id: comment,
-    user: req.user._id,
-  });
-  if (!commentExists) {
-    return res.json({
-      status: "error",
-      code: 400,
-      message:
-        "Comment does not exist or you do not have permission to update it.",
-      data: null,
-    });
-  }
-
-  // Validate comment
-  if (!newComment) {
-    return res.json({
-      status: "error",
-      code: 400,
-      message: "Comment is required.",
-      data: null,
-    });
-  } else if (newComment.length < 3 || newComment.length > 255) {
-    return res.json({
-      status: "error",
-      code: 400,
-      message: "Comment must be between 3 and 255 characters.",
-      data: null,
-    });
-  }
-
-  // Update the comment
-  try {
-    const updatedComment = await Comment.updateOne(
-      { _id: comment },
-      { comment: newComment }
-    );
-
-    // Return the comment
-    res.json({
-      status: "success",
-      code: 200,
-      message: "Successfully updated comment.",
-      data: updatedComment,
-    });
-  } catch (error) {
-    console.error(error);
-    res.json({
-      status: "error",
-      code: 500,
-      message: "An error occurred while updating the comment.",
-      data: null,
-    });
-  }
-});
-
-/**
- * @swagger
- * /api/v1/comments/{commentId}:
  *   patch:
  *     tags:
  *       - Comments
@@ -693,16 +677,27 @@ router.delete("/:commentId", authenticateJWT, async (req, res) => {
   // Verify comment exists
   const commentExists = await Comment.exists({
     _id: comment,
-    user: req.user._id,
   });
   if (!commentExists) {
     return res.json({
       status: "error",
       code: 400,
-      message:
-        "Comment does not exist or you do not have permission to delete it.",
+      message: "Comment does not exist.",
       data: null,
     });
+  }
+
+  // Verify user has permission to delete comment
+  if (req.user.admin === false) {
+    const commentOwner = await Comment.findById(comment, "user");
+    if (commentOwner.user.toString() !== req.user._id.toString()) {
+      return res.json({
+        status: "error",
+        code: 400,
+        message: "You do not have permission to delete this comment.",
+        data: null,
+      });
+    }
   }
 
   // Delete the comment

@@ -40,7 +40,6 @@
             <i class="fas fa-ellipsis-h"></i>
           </button>
           <div class="dropdown-menu" aria-labelledby="dropdownPostOptions">
-            <!-- TODO: This dropdown can also hold the report button -->
             <a
               class="dropdown-item fake-link custom-dropdown-item"
               href="#"
@@ -116,6 +115,8 @@
           v-for="comment in thisPost.comments"
           :key="comment._id"
           :id="'comment_' + comment._id"
+          @comment-deleted="handleCommentDeleted"
+          @comment-edited="handleCommentEdited"
         />
       </div>
       <div v-else>
@@ -329,6 +330,28 @@ export default {
     formatDate(dateString) {
       const options = { year: "numeric", month: "long", day: "numeric" };
       return new Date(dateString).toLocaleDateString(undefined, options);
+    },
+    handleCommentDeleted(deletedCommentId) {
+      console.log("Comment Deleted: ", deletedCommentId);
+
+      // Remove the comment with the specified _id from the comments array
+      this.thisPost.comments = this.thisPost.comments.filter(
+        (comment) => comment._id !== deletedCommentId
+      );
+    },
+    handleCommentEdited(editedComment) {
+      console.log("Comment Edited: ", editedComment._id);
+
+      // Find the comment with the specified _id
+      const commentIndex = this.thisPost.comments.findIndex(
+        (comment) => comment._id === editedComment._id
+      );
+
+      // Update the comment
+      this.thisPost.comments[commentIndex].comment = editedComment.comment;
+
+      // Update the updatedAt field
+      this.thisPost.comments[commentIndex].updatedAt = editedComment.updatedAt;
     },
   },
   mounted() {

@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const fs = require("fs");
+const path = require("path");
 
 /**
  * Check if the given email is valid or not.
@@ -38,7 +39,8 @@ function generateRandomString(length) {
 function getVersion() {
   var version = "unknown";
   try {
-    version = fs.readFileSync("version", "utf8");
+    const currentPath = path.dirname(__filename);
+    version = fs.readFileSync(path.join(currentPath, "../version")).toString();
     version = version.replace("v", "").trim();
   } catch {
     const { execSync } = require("child_process");

@@ -2,19 +2,26 @@
 FROM node:18.17 AS builder
 
 # Set working directory
+WORKDIR /app
+
+# Copy the git project to the working directory
+COPY .git/ .git/
+
+# Set working directory
 WORKDIR /app/frontend
 
 # Build the frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ ./
-RUN npm run build
+RUN touch .env && cd ../ && echo "VUE_APP_GIT_VERSION=$(git describe --tags --always HEAD)" >> frontend/.env && cd frontend && npm run build
 
 # Build the backend
 WORKDIR /app/backend
 COPY backend/package*.json ./
 RUN npm install
 COPY backend/ .
+RUN cd ../ && git describe --tags --always HEAD > backend/version
 
 # Use Apache to serve the frontend and proxy to the backend
 FROM httpd:2.4

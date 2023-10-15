@@ -138,6 +138,13 @@ export default {
           });
         }
       }
+      // If it is a report, send to the page to view reports
+      else if (notification.type === "REPORT") {
+        this.$router.push({
+          name: "view-report",
+          params: { id: notification.referenceId },
+        });
+      }
     },
     timeAgo(date) {
       const now = new Date();
@@ -172,6 +179,8 @@ export default {
           return "fa-heart";
         case "FOLLOW":
           return "fa-user-plus";
+        case "REPORT":
+          return "fa-flag";
         default:
           return "fa-bell"; // default icon
       }
