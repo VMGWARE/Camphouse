@@ -677,16 +677,27 @@ router.delete("/:commentId", authenticateJWT, async (req, res) => {
   // Verify comment exists
   const commentExists = await Comment.exists({
     _id: comment,
-    user: req.user._id,
   });
   if (!commentExists) {
     return res.json({
       status: "error",
       code: 400,
-      message:
-        "Comment does not exist or you do not have permission to delete it.",
+      message: "Comment does not exist.",
       data: null,
     });
+  }
+
+  // Verify user has permission to delete comment
+  if (req.user.admin === false) {
+    const commentOwner = await Comment.findById(comment, "user");
+    if (commentOwner.user.toString() !== req.user._id.toString()) {
+      return res.json({
+        status: "error",
+        code: 400,
+        message: "You do not have permission to delete this comment.",
+        data: null,
+      });
+    }
   }
 
   // Delete the comment

@@ -61,7 +61,10 @@
               <td>{{ comment.comment }}</td>
               <td>{{ formatDate(comment.createdAt) }}</td>
               <td>
-                <button class="btn btn-sm me-2 btn-outline-danger">
+                <button
+                  class="btn btn-sm me-2 btn-outline-danger"
+                  @click="openDeleteCommentModal(comment)"
+                >
                   <i class="fas fa-trash"></i>
                 </button>
               </td>
@@ -213,6 +216,8 @@
 
 <script>
 import axios from "axios";
+import { useModal } from "vue-final-modal";
+import DeleteCommentModal from "@/components/Modal/DeleteCommentModal.vue";
 
 export default {
   data() {
@@ -291,6 +296,29 @@ export default {
       } else {
         return commentObject.user.handle;
       }
+    },
+    async openDeleteCommentModal(comment) {
+      let parent = this;
+      const { open, close } = useModal({
+        component: DeleteCommentModal,
+        attrs: {
+          comment: comment,
+          onCancel() {
+            close();
+          },
+          async onDelete(id) {
+            // Remove the comment from the comments array
+            parent.comments = parent.comments.filter(
+              (comment) => comment._id !== id
+            );
+
+            // Update the total number of comments
+            parent.totalComments -= 1;
+            close();
+          },
+        },
+      });
+      open();
     },
   },
   computed: {
