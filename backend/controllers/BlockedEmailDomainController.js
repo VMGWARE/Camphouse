@@ -85,7 +85,7 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
  *                           domain:
  *                             type: string
  *                             example: gmail.com
- *                          isBlocked:
+ *                           isBlocked:
  *                             type: boolean
  *                             example: true
  *                           createdAt:
@@ -149,6 +149,129 @@ router.get("/", authenticateJWT, isAdmin, async (req, res) => {
         page: page,
         maxPages: Math.ceil(count / limit),
       },
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Server error",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/blocked-email-domains/{id}:
+ *   get:
+ *     summary: Get a Specific Blocked Email Domain
+ *     description: |
+ *       This endpoint retrieves details of a specific blocked email domain by its ID.
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Blocked Email Domains
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the blocked email domain to retrieve.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Blocked email domain found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Blocked email domain found.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 5f9c3f7d9e5d5b0d4e4b9a4d
+ *                     domain:
+ *                       type: string
+ *                       example: gmail.com
+ *                     isBlocked:
+ *                       type: boolean
+ *                       example: true
+ *                     createdAt:
+ *                       type: string
+ *                       example: 2020-10-30T18:39:33.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       example: 2020-10-30T18:39:33.000Z
+ *       404:
+ *         description: Blocked email domain not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: Blocked email domain not found.
+ *       500:
+ *         description: Error while getting the blocked email domain.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Server error.
+ */
+router.get("/:id", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // Get the blocked email domain
+    const blockedEmailDomain = await BlockedEmailDomain.findById(
+      req.params.id
+    ).exec();
+
+    // Check if the blocked email domain exists
+    if (!blockedEmailDomain) {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "Blocked email domain not found",
+        data: null,
+      });
+    }
+
+    // Return the blocked email domain
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Blocked email domain found",
+      data: blockedEmailDomain,
     });
   } catch (error) {
     console.error(error);
