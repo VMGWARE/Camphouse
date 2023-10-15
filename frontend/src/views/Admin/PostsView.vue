@@ -60,31 +60,13 @@
               <td>{{ post.title }}</td>
               <td>{{ formatDate(post.updatedAt) }}</td>
               <td>
-                <div class="dropdown">
-                  <button
-                    class="btn btn-secondary dropdown-toggle"
-                    type="button"
-                    id="actionsDropdown"
-                    data-bs-toggle="dropdown"
-                    aria-haspopup="true"
-                    aria-expanded="false"
-                  >
-                    Actions
-                  </button>
-                  <div
-                    class="dropdown-menu dropdown-menu-right"
-                    aria-labelledby="actionsDropdown"
-                  >
-                    <a class="dropdown-item" href="#"> Edit </a>
-                    <a
-                      class="dropdown-item"
-                      href="#"
-                      @click="openDeletePostModal(post)"
-                    >
-                      Delete
-                    </a>
-                  </div>
-                </div>
+                <a
+                  class="btn btn-sm me-2 btn-outline-danger"
+                  href="#"
+                  @click="openDeletePostModal(post)"
+                >
+                  <i class="fas fa-trash"></i>
+                </a>
               </td>
             </tr>
           </tbody>
