@@ -1,6 +1,16 @@
 <template>
   <div class="container my-4">
-    <h1 class="mb-4">Users</h1>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h1>Users</h1>
+
+      <!-- Refresh button -->
+      <button class="btn btn-secondary" @click="refreshUsers">
+        <i class="fas fa-sync-alt" v-if="!refreshingUsers"></i>
+        <i class="fas fa-sync-alt fa-spin" v-else></i>
+
+        Refresh
+      </button>
+    </div>
 
     <!-- Search input and button -->
     <div class="d-flex justify-content-end mb-3">
@@ -163,6 +173,7 @@ export default {
       limit: 10, // Number of users per page
       totalUsers: 0, // Total number of users
       searchQuery: "", // Add this property for search
+      refreshingUsers: false,
     };
   },
   methods: {
@@ -234,6 +245,11 @@ export default {
 
       // Open the modal
       open();
+    },
+    async refreshUsers() {
+      this.refreshingUsers = true;
+      this.fetchUsers();
+      this.refreshingUsers = false;
     },
   },
   computed: {
