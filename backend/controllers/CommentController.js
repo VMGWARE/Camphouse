@@ -72,6 +72,137 @@ const NotificationService = require("../services/NotificationService");
 
 /**
  * @swagger
+ * /api/v1/comments:
+ *   get:
+ *     tags:
+ *       - Comments
+ *     summary: Get comments
+ *     description: Retrieve comments
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: page
+ *         description: The page number to retrieve
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           default: 1
+ *       - in: query
+ *         name: limit
+ *         description: The number of comments per page
+ *         schema:
+ *           type: integer
+ *           minimum: 1
+ *           maximum: 100
+ *           default: 10
+ *       - in: query
+ *         name: search
+ *         description: Search query for comments
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully retrieved comments
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     comments:
+ *                       type: array
+ *                       items:
+ *                         $ref: '#/components/schemas/Comment'
+ *                     page:
+ *                       type: integer
+ *                       example: 1
+ *                     maxPages:
+ *                       type: integer
+ *                       example: 1
+ *                     limit:
+ *                       type: integer
+ *                       example: 10
+ *       500:
+ *         description: An error occurred while retrieving comments
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: An error occurred while retrieving comments
+ *                 data:
+ *                   type: null
+ */
+router.get("/", authenticateJWT, async (req, res) => {
+  try {
+    // Page number
+    const page = parseInt(req.query.page) || 1;
+
+    // Number of posts per page
+    const limit = parseInt(req.query.limit) || 10;
+
+    // Search query
+    const search = req.query.search || "";
+
+    // create an object to hold the search criteria
+    let criteria = {
+      $or: [{ comment: { $regex: search, $options: "i" } }],
+    };
+
+    // Get the comments
+    const comments = await Comment.find(criteria)
+      .populate("user", "username handle createdAt profilePicture")
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    // Return the comments
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully retrieved comments.",
+      data: {
+        comments: comments,
+        page: page,
+        maxPages: Math.ceil((await Comment.countDocuments(criteria)) / limit),
+        limit: limit,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+    res.json({
+      status: "error",
+      code: 500,
+      message: "An error occurred while retrieving comments.",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
  * /api/v1/comments/post/{postId}:
  *   get:
  *     tags:
