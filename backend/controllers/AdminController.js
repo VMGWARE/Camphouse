@@ -588,6 +588,7 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
         },
         email: {
           type: "string",
+          validate: "email",
           unique: true,
         },
         bio: {
@@ -616,6 +617,7 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
         email: {
           type: "Email must be a string.",
           unique: "Email must be unique.",
+          validate: "Email is invalid.",
         },
         bio: {
           type: "Bio must be a string.",
@@ -697,6 +699,15 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       if (ValidateRequest[0][key].maxLength) {
         if (value.length > ValidateRequest[0][key].maxLength) {
           errors[key] = ValidateRequest[1][key].maxLength;
+        }
+      }
+
+      // If the value is not a valid email, add an error
+      if (ValidateRequest[0][key].validate) {
+        if (ValidateRequest[0][key].validate === "email") {
+          if (!validateEmail(value)) {
+            errors[key] = ValidateRequest[1][key].validate;
+          }
         }
       }
     }
