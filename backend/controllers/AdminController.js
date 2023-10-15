@@ -606,7 +606,6 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       {
         username: {
           type: "Username must be a string.",
-          unique: "Username must be unique.",
           minLength: "Username must be at least 1 character long.",
           maxLength: "Username must be less than 32 characters long.",
         },
