@@ -130,6 +130,15 @@ const routes = [
     },
   },
   {
+    path: "/admin/comments",
+    name: "admin-comments",
+    component: () => import("@/views/Admin/CommentsView.vue"),
+    meta: {
+      title: "Comments - Admin",
+      layout: "admin",
+    },
+  },
+  {
     path: "/admin/reports/:id",
     name: "admin-report",
     component: () => import("@/views/Admin/ReportView.vue"),

@@ -45,9 +45,9 @@
           >
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#!">
+          <router-link class="nav-link" to="/admin/comments">
             <i class="fas fa-comments"></i>
-            Comments</a
+            Comments</router-link
           >
         </li>
         <li class="nav-item">
