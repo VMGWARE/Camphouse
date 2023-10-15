@@ -57,9 +57,27 @@ function getVersion() {
   return version;
 }
 
+/**
+ * Extract the domain of the given email address.
+ * @param email - The email address.
+ * @returns The domain of the email address.
+ */
+function extractEmailDomain(email) {
+  // Validate email format
+  if (!email || typeof email !== "string" || !email.includes("@")) {
+    throw new Error("Invalid email format.");
+  }
+
+  // Split on the '@' symbol and take the second part
+  const domain = email.split("@")[1];
+
+  return domain;
+}
+
 module.exports = {
   validateEmail,
   isStringEmpty,
   generateRandomString,
   getVersion,
+  extractEmailDomain,
 };

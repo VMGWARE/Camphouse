@@ -165,6 +165,7 @@ const ReportController = require("./controllers/ReportController");
 const TwoFAController = require("./controllers/TwoFAController");
 const AdminController = require("./controllers/AdminController");
 const MiscController = require("./controllers/MiscController");
+const BlockedEmailDomainController = require("./controllers/BlockedEmailDomainController");
 
 // Setup the routes
 app.use("/api/v1/posts", PostController);
@@ -179,6 +180,7 @@ app.use("/api/v1/reports", ReportController);
 app.use("/api/v1/2fa", TwoFAController);
 app.use("/api/v1/admin", AdminController);
 app.use("/api/v1/misc", MiscController);
+app.use("/api/v1/blocked-email-domains", BlockedEmailDomainController);
 
 // Swagger documentation
 const options = require("./configs/swagger");
