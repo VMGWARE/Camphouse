@@ -77,7 +77,7 @@
       <p
         :id="'markdownContent' + thisPost._id"
         class="card-text post-content"
-        v-html="convertToMarkdown(thisPost.content)"
+        v-dompurify-html="convertToMarkdown(thisPost.content)"
       />
 
       <form>
@@ -187,12 +187,6 @@ export default {
   },
   methods: {
     convertToMarkdown(content) {
-      // Before ensure that the content doesn't contain any script tags
-      content = content.replace(
-        /<script\b[^<]*(?:(?!<\/script\s*>)[^<])*<\/script\s*\w*\s*>/gi,
-        ""
-      );
-
       // Convert the content to markdown
       const converter = new showdown.Converter();
       return converter.makeHtml(content);

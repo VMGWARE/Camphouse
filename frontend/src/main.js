@@ -5,6 +5,9 @@ import "./registerServiceWorker";
 import router from "./router";
 import store from "./store";
 
+// DOMPurify
+import VueDOMPurifyHTML from 'vue-dompurify-html';
+
 // Custom CSS
 import "@/assets/stylesheets/style.css";
 
@@ -44,4 +47,5 @@ app.use(store);
 app.use(router);
 app.use(Toast, ToastOptions);
 app.use(vfm);
+app.use(VueDOMPurifyHTML);
 app.mount("#app");
