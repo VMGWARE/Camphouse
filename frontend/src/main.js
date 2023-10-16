@@ -6,7 +6,7 @@ import router from "./router";
 import store from "./store";
 
 // DOMPurify
-import VueDOMPurifyHTML from 'vue-dompurify-html';
+import VueDOMPurifyHTML from "vue-dompurify-html";
 
 // Custom CSS
 import "@/assets/stylesheets/style.css";
