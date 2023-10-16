@@ -51,7 +51,7 @@ Follow the steps below for installation and setup:
    SESSION_SECRET=<your_secret>    # A secret string used to secure user sessions.
 
    # Database configuration
-   DB_NAME=aquirilla               # The name of your MongoDB database.
+   DB_NAME=camphouse               # The name of your MongoDB database.
    DB_HOST=localhost               # The host where your MongoDB server is running.
    DB_PORT=27017                   # The port on which your MongoDB server is accessible.
    DB_USER=<db_username>           # The username for your MongoDB database.
