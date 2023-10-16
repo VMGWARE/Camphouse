@@ -255,6 +255,16 @@ router.post("/", authenticateJWT, isAdmin, async (req, res) => {
     // Get the domain from the request body
     const domain = req.body.domain;
 
+    // If not a domain or provided
+    if (!domain) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Invalid domain",
+        data: null,
+      });
+    }
+
     // Check if the domain is already blocked
     const blockedEmailDomain = await BlockedEmailDomain.findOne({
       domain: domain,

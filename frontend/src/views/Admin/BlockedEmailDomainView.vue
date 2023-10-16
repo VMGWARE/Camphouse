@@ -168,6 +168,7 @@ import axios from "axios";
 import { useModal } from "vue-final-modal";
 import DeleteDomainModal from "@/components/Modal/DeleteDomainModal.vue";
 import UpdateDomainModal from "@/components/Modal/UpdateDomainModal.vue";
+import AddDomainModal from "@/components/Modal/AddDomainModal.vue";
 
 export default {
   data() {
@@ -270,6 +271,31 @@ export default {
               (domain) => domain._id === updatedDomain._id
             );
             parent.blockedDomains[index] = updatedDomain;
+
+            close();
+          },
+        },
+      });
+      open();
+    },
+    async openAddDomainModal() {
+      let parent = this;
+      const { open, close } = useModal({
+        component: AddDomainModal,
+        attrs: {
+          domain: {
+            domain: "",
+            isBlocked: false,
+          },
+          onCancel() {
+            close();
+          },
+          async onCreate(createDomain) {
+            // Add the new domain to the list starting at the beginning
+            parent.blockedDomains.unshift(createDomain);
+
+            // Update the total number of blockedDomains
+            parent.totalBlockedDomains += 1;
 
             close();
           },
