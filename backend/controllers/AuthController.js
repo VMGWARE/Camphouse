@@ -1140,7 +1140,11 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
           const urlParts = userOldProfilePicture.profilePicture.split("/");
           const oldProfilePicturePath =
             profilePicturesPath + "/" + urlParts[urlParts.length - 1];
-          fs.unlinkSync(oldProfilePicturePath);
+
+          // If the file exists, delete it
+          if (fs.existsSync(oldProfilePicturePath)) {
+            fs.unlinkSync(oldProfilePicturePath);
+          }
         }
 
         // Define local storage path
