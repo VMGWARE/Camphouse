@@ -832,6 +832,9 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
     // Number of comments
     const comments = await Comment.countDocuments();
 
+    // Number of blocked email domains
+    const blockedEmailDomains = await BlockedEmailDomain.countDocuments();
+
     // Return the analytics
     res.json({
       status: "success",
@@ -842,6 +845,7 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
         posts,
         messages,
         comments,
+        blockedEmailDomains,
       },
     });
   } catch (error) {

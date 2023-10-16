@@ -68,6 +68,26 @@
               Options
             </button>
             <div class="dropdown-menu">
+              <router-link
+                class="dropdown-item"
+                to="/admin/blocked-email-domains"
+                ><i class="fas fa-ban"></i> Blocked Email Domains</router-link
+              >
+            </div>
+          </div>
+        </li>
+        <li class="nav-item">
+          <!-- Dropdown for Additional Options -->
+          <div class="dropdown">
+            <button
+              class="nav-link btn btn-secondary dropdown-toggle px-3"
+              type="button"
+              id="userOptions"
+              data-bs-toggle="dropdown"
+            >
+              Options
+            </button>
+            <div class="dropdown-menu">
               <router-link class="dropdown-item" to="/messages"
                 ><i class="fa fa-envelope"></i> Messages</router-link
               >
