@@ -243,6 +243,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const UserToken = require("../models/UserToken");
 const Follow = require("../models/Follow");
+const BlockedEmailDomain = require("../models/BlockedEmailDomain");
 const jwt = require("jsonwebtoken");
 const { validateEmail } = require("../utils/general");
 const router = express.Router();
@@ -260,6 +261,7 @@ require("dotenv").config();
 const { authenticateJWT } = require("../middleware/auth");
 
 // Helper Functions
+const { extractEmailDomain } = require("../utils/general");
 async function validateTwoFactorCode(user, twoFactorCode) {
   return speakeasy.totp.verify({
     secret: user.twoFactorAuth.secret, // This should be stored in the user record when 2FA was set up
@@ -570,6 +572,16 @@ router.post("/register", async (req, res) => {
     errors.email = "Email is invalid.";
   }
 
+  // Check if the email domain is blocked
+  const emailDomain = extractEmailDomain(email);
+  const blockedEmailDomain = await BlockedEmailDomain.findOne({
+    domain: emailDomain,
+    isBlocked: true,
+  });
+  if (blockedEmailDomain) {
+    errors.email = "Email domain is not allowed.";
+  }
+
   // Check if there are any errors
   if (Object.keys(errors).length > 0) {
     return res.status(400).json({
@@ -824,6 +836,18 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
   }
   if (req.body.username && req.body.username.length === 0) {
     errors.username = "Username field cannot be empty";
+  }
+
+  // Check if the email domain is blocked
+  if (req.body.email) {
+    const emailDomain = extractEmailDomain(req.body.email);
+    const blockedEmailDomain = await BlockedEmailDomain.findOne({
+      domain: emailDomain,
+      isBlocked: true,
+    });
+    if (blockedEmailDomain) {
+      errors.email = "Email domain is not allowed.";
+    }
   }
 
   // Handle the ones that are not empty

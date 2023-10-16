@@ -139,6 +139,15 @@ const routes = [
     },
   },
   {
+    path: "/admin/blocked-email-domains",
+    name: "admin-blocked-email-domains",
+    component: () => import("@/views/Admin/BlockedEmailDomainView.vue"),
+    meta: {
+      title: "Blocked Email Domains - Admin",
+      layout: "admin",
+    },
+  },
+  {
     path: "/admin/reports/:id",
     name: "admin-report",
     component: () => import("@/views/Admin/ReportView.vue"),

@@ -59,9 +59,10 @@ const Comment = require("../models/Comment");
 const Message = require("../models/Message");
 const Report = require("../models/Report");
 const Notification = require("../models/Notification");
+const BlockedEmailDomain = require("../models/BlockedEmailDomain");
 
 // Helpers
-const { validateEmail } = require("../utils/general");
+const { validateEmail, extractEmailDomain } = require("../utils/general");
 
 // Middleware
 const { authenticateJWT, isAdmin } = require("../middleware/auth");
@@ -511,6 +512,14 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
           if (!validateEmail(value)) {
             errors[key] = ValidateRequest[1][key].validate;
           }
+          const emailDomain = extractEmailDomain(value);
+          const blockedEmailDomain = await BlockedEmailDomain.findOne({
+            domain: emailDomain,
+            isBlocked: true,
+          });
+          if (blockedEmailDomain) {
+            errors[key] = "Email domain is blocked.";
+          }
         }
       }
     }
@@ -823,6 +832,9 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
     // Number of comments
     const comments = await Comment.countDocuments();
 
+    // Number of blocked email domains
+    const blockedEmailDomains = await BlockedEmailDomain.countDocuments();
+
     // Return the analytics
     res.json({
       status: "success",
@@ -833,6 +845,7 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
         posts,
         messages,
         comments,
+        blockedEmailDomains,
       },
     });
   } catch (error) {
