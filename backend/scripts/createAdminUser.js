@@ -1,5 +1,6 @@
 // Packages
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 const chalk = require("chalk");
 
 // Load environment variables
@@ -31,11 +32,14 @@ const createAdminUser = async () => {
     return;
   }
 
+  // Encrypt password
+  const hashedPassword = await bcrypt.hash(process.env.ADMIN_PASSWORD, 10);
+
   // Create the admin user
   const adminUser = new User({
     handle: process.env.ADMIN_HANDLE,
     email: process.env.ADMIN_EMAIL,
-    password: process.env.ADMIN_PASSWORD,
+    password: hashedPassword,
     username: process.env.ADMIN_USERNAME,
     verified: true,
     admin: true,
