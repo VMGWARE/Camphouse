@@ -679,7 +679,7 @@ router.delete("/:id", authenticateJWT, isAdmin, async (req, res) => {
     }
 
     // Delete the blocked email domain
-    await blockedEmailDomain.remove();
+    await BlockedEmailDomain.findByIdAndDelete(req.params.id).exec();
 
     // Return the blocked email domain
     res.json({
