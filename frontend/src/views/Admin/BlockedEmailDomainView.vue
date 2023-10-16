@@ -12,8 +12,15 @@
       </button>
     </div>
 
-    <!-- Search input and button -->
-    <div class="d-flex justify-content-end mb-3">
+    <!-- blockedDomains -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <!-- Create Domain -->
+      <button class="btn btn-primary" @click="openAddDomainModal">
+        <i class="fas fa-plus"></i>
+        Create Domain
+      </button>
+
+      <!-- Search input -->
       <div class="form-inline">
         <input
           type="text"
