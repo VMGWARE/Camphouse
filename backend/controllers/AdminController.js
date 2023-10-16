@@ -59,9 +59,10 @@ const Comment = require("../models/Comment");
 const Message = require("../models/Message");
 const Report = require("../models/Report");
 const Notification = require("../models/Notification");
+const BlockedEmailDomain = require("../models/BlockedEmailDomain");
 
 // Helpers
-const { validateEmail } = require("../utils/general");
+const { validateEmail, extractEmailDomain } = require("../utils/general");
 
 // Middleware
 const { authenticateJWT, isAdmin } = require("../middleware/auth");
@@ -510,6 +511,14 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
         if (ValidateRequest[0][key].validate === "email") {
           if (!validateEmail(value)) {
             errors[key] = ValidateRequest[1][key].validate;
+          }
+          const emailDomain = extractEmailDomain(value);
+          const blockedEmailDomain = await BlockedEmailDomain.findOne({
+            domain: emailDomain,
+            isBlocked: true,
+          });
+          if (blockedEmailDomain) {
+            errors[key] = "Email domain is blocked.";
           }
         }
       }
