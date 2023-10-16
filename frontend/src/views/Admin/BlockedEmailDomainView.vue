@@ -167,6 +167,7 @@
 import axios from "axios";
 import { useModal } from "vue-final-modal";
 import DeleteDomainModal from "@/components/Modal/DeleteDomainModal.vue";
+import UpdateDomainModal from "@/components/Modal/UpdateDomainModal.vue";
 
 export default {
   data() {
@@ -247,6 +248,28 @@ export default {
 
             // Update the total number of blockedDomains
             parent.totalBlockedDomains -= 1;
+
+            close();
+          },
+        },
+      });
+      open();
+    },
+    async openUpdateDomainModal(domain) {
+      let parent = this;
+      const { open, close } = useModal({
+        component: UpdateDomainModal,
+        attrs: {
+          domain: domain,
+          onCancel() {
+            close();
+          },
+          async onUpdate(updatedDomain) {
+            // Update the domain in the list
+            const index = parent.blockedDomains.findIndex(
+              (domain) => domain._id === updatedDomain._id
+            );
+            parent.blockedDomains[index] = updatedDomain;
 
             close();
           },
