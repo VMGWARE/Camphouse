@@ -12,9 +12,6 @@ const router = express.Router();
 // Require the necessary models
 const BlockedEmailDomain = require("../models/BlockedEmailDomain");
 
-// Helpers
-const { validateEmail, extractEmailDomain } = require("../utils/general");
-
 // Load environment variables
 require("dotenv").config();
 
@@ -409,6 +406,286 @@ router.get("/:id", authenticateJWT, isAdmin, async (req, res) => {
       status: "success",
       code: 200,
       message: "Blocked email domain found",
+      data: blockedEmailDomain,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Server error",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/blocked-email-domains/{id}:
+ *   put:
+ *     summary: Update a Specific Blocked Email Domain
+ *     description: |
+ *       This endpoint is used to update a specific blocked email domain by its ID.
+ *       Only the `isBlocked` field can be updated.
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Blocked Email Domains
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the blocked email domain to update.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       description: The `isBlocked` field to be updated.
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               isBlocked:
+ *                 type: boolean
+ *                 example: false
+ *     responses:
+ *       200:
+ *         description: Blocked email domain successfully updated.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Blocked email domain updated.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 5f9c3f7d9e5d5b0d4e4b9a4d
+ *                     domain:
+ *                       type: string
+ *                       example: gmail.com
+ *                     isBlocked:
+ *                       type: boolean
+ *                       example: false
+ *                     createdAt:
+ *                       type: string
+ *                       example: 2020-10-30T18:39:33.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       example: 2020-10-30T18:39:33.000Z
+ *       400:
+ *         description: Invalid `isBlocked` field value or blocked email domain not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Invalid `isBlocked` field value or Blocked email domain not found.
+ *       500:
+ *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Server error.
+ */
+router.put("/:id", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // Get the blocked email domain
+    const blockedEmailDomain = await BlockedEmailDomain.findById(
+      req.params.id
+    ).exec();
+
+    // Check if the blocked email domain exists
+    if (!blockedEmailDomain) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Blocked email domain not found",
+        data: null,
+      });
+    }
+
+    // Get the isBlocked field from the request body
+    const isBlocked = req.body.isBlocked;
+
+    // Check if the isBlocked field is valid
+    if (typeof isBlocked !== "boolean") {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Invalid `isBlocked` field value",
+        data: null,
+      });
+    }
+
+    // Update the isBlocked field
+    blockedEmailDomain.isBlocked = isBlocked;
+
+    // Save the blocked email domain
+    await blockedEmailDomain.save();
+
+    // Return the blocked email domain
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Blocked email domain updated",
+      data: blockedEmailDomain,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      status: "error",
+      code: 500,
+      message: "Server error",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/blocked-email-domains/{id}:
+ *   delete:
+ *     summary: Delete a Specific Blocked Email Domain
+ *     description: |
+ *       This endpoint is used to delete a specific blocked email domain by its ID.
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Blocked Email Domains
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         description: ID of the blocked email domain to delete.
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Blocked email domain successfully deleted.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Blocked email domain deleted.
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: 5f9c3f7d9e5d5b0d4e4b9a4d
+ *                     domain:
+ *                       type: string
+ *                       example: gmail.com
+ *                     isBlocked:
+ *                       type: boolean
+ *                       example: true
+ *                     createdAt:
+ *                       type: string
+ *                       example: 2020-10-30T18:39:33.000Z
+ *                     updatedAt:
+ *                       type: string
+ *                       example: 2020-10-30T18:39:33.000Z
+ *       404:
+ *         description: Blocked email domain not found.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: 404
+ *                 code:
+ *                   type: integer
+ *                   example: 404
+ *                 message:
+ *                   type: string
+ *                   example: Blocked email domain not found.
+ *       500:
+ *         description: Error while deleting the blocked email domain.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: error
+ *                   example: 500
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Server error.
+ */
+router.delete("/:id", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // Get the blocked email domain
+    const blockedEmailDomain = await BlockedEmailDomain.findById(
+      req.params.id
+    ).exec();
+
+    // Check if the blocked email domain exists
+    if (!blockedEmailDomain) {
+      return res.status(404).json({
+        status: "error",
+        code: 404,
+        message: "Blocked email domain not found",
+        data: null,
+      });
+    }
+
+    // Delete the blocked email domain
+    await blockedEmailDomain.remove();
+
+    // Return the blocked email domain
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Blocked email domain deleted",
       data: blockedEmailDomain,
     });
   } catch (error) {
