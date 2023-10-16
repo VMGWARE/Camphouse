@@ -189,7 +189,7 @@ export default {
     convertToMarkdown(content) {
       // Before ensure that the content doesn't contain any script tags
       content = content.replace(
-        /<script\b[^<]*(?:(?!<\/script\s*>)[^<])*<\/script\s*>/gi,
+        /<script\b[^<]*(?:(?!<\/script\s*>)[^<])*<\/script\s*\w*\s*>/gi,
         ""
       );
 
