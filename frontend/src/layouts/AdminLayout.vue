@@ -57,7 +57,7 @@
           >
         </li>
         <li class="nav-item">
-          <!-- Dropdown for Additional Options -->
+          <!-- Dropdown for other pages -->
           <div class="dropdown">
             <button
               class="nav-link btn btn-secondary dropdown-toggle px-3"
@@ -65,7 +65,7 @@
               id="userOptions"
               data-bs-toggle="dropdown"
             >
-              Options
+              More
             </button>
             <div class="dropdown-menu">
               <router-link
