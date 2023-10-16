@@ -79,6 +79,21 @@
     </div>
   </div>
 
+  <!-- Number of Blocked Email Domains -->
+  <div class="col-md-3">
+    <div class="card mb-3">
+      <div class="card-header">
+        <h5>
+          <i class="fas fa-envelope"></i>
+          Blocked Email Domains
+        </h5>
+      </div>
+      <div class="card-body">
+        <h1>{{ analytics.blockedEmailDomains }}</h1>
+      </div>
+    </div>
+  </div>
+
   <!-- Recent posts and reports -->
   <div class="row">
     <!-- Show the latest 3 posts -->
