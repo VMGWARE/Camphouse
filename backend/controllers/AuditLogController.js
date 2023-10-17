@@ -462,5 +462,85 @@ router.get("/export", authenticateJWT, isAdmin, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/v1/audit-logs/stats:
+ *   get:
+ *     summary: Get Audit Logs Statistics
+ *     description: This endpoint provides statistics for various actions in the audit logs.
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Audit Logs
+ *     responses:
+ *       200:
+ *         description: Audit log statistics successfully retrieved.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     totalSignIns:
+ *                       type: integer
+ *                     totalLogouts:
+ *                       type: integer
+ *       500:
+ *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error.
+ */
+router.get("/stats", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    const totalSignIns = await AuditLog.countDocuments({
+      action: "ACCOUNT_LOGIN",
+    });
+    const totalLogouts = await AuditLog.countDocuments({
+      action: "ACCOUNT_LOGOUT",
+    });
+    const totalAccountCreated = await AuditLog.countDocuments({
+      action: "ACCOUNT_CREATED",
+    });
+
+    // You can add more action statistics here by copying the above pattern
+    // Example: const totalAccountCreated = await AuditLog.countDocuments({ action: "ACCOUNT_CREATED" });
+
+    res.json({
+      status: "success",
+      code: 200,
+      data: {
+        totalSignIns: totalSignIns,
+        totalLogouts: totalLogouts,
+        totalAccountCreated: totalAccountCreated,
+        //... other action statistics
+      },
+    });
+  } catch (err) {
+    res.status(500).json({ status: "error", code: 500, message: err.message });
+  }
+});
+
 // Return router
 module.exports = router;
