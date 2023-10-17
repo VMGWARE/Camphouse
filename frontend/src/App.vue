@@ -147,10 +147,15 @@ export default {
       console.log("Checking JWT token");
       const token = this.$store.state.token;
       if (!token || token == null) {
-        let redirect = this.$route.path;
+        console.log("No token found");
+        let redirect = window.location.pathname;
+
+        // If redirect does not contain login or signup, redirect to login
         if (redirect != "/login" && redirect != "/signup") {
           redirect = "/login?redirect=" + redirect;
         }
+
+        // Redirect to login page
         this.$router.push(redirect);
         return;
       }
