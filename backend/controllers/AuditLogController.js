@@ -174,5 +174,221 @@ router.get("/", authenticateJWT, isAdmin, async (req, res) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/v1/audit-logs/chart:
+ *   get:
+ *     summary: Get Audit Logs for Chart
+ *     description: |
+ *       This endpoint aggregates the number of audit logs per day over the last 30 days.
+ *       Suitable for plotting a bar chart or line graph.
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Audit Logs
+ *     responses:
+ *       200:
+ *         description: Data successfully retrieved for charting.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                         example: "2023-10-15"
+ *                       count:
+ *                         type: integer
+ *                         example: 40
+ *       500:
+ *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error.
+ */
+router.get("/chart", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // Calculate 30 days ago
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Aggregate logs
+    const logsAggregation = await AuditLog.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: thirtyDaysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const chartData = logsAggregation.map((log) => {
+      return {
+        date: log._id,
+        count: log.count,
+      };
+    });
+
+    res.json({
+      status: "success",
+      code: 200,
+      data: chartData,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/audit-logs/chart-by-action:
+ *   get:
+ *     summary: Get Audit Logs aggregated by Action for Chart
+ *     description: |
+ *       This endpoint aggregates the number of audit logs by action type per day over the last 30 days.
+ *       Suitable for plotting a stacked bar chart or similar visualization.
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Audit Logs
+ *     responses:
+ *       200:
+ *         description: Data successfully retrieved for charting by action.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 data:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       date:
+ *                         type: string
+ *                         format: date
+ *                         example: "2023-10-15"
+ *                       actions:
+ *                         type: object
+ *                         additionalProperties:
+ *                           type: integer
+ *       500:
+ *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error.
+ */
+router.get("/chart-by-action", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    // Calculate 30 days ago
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+    // Aggregate logs by action type
+    const logsAggregation = await AuditLog.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: thirtyDaysAgo },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            date: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            action: "$action",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $group: {
+          _id: "$_id.date",
+          actions: {
+            $push: {
+              action: "$_id.action",
+              count: "$count",
+            },
+          },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
+
+    const chartData = logsAggregation.map((log) => {
+      let actionsCount = {};
+      log.actions.forEach((action) => {
+        actionsCount[action.action] = action.count;
+      });
+
+      return {
+        date: log._id,
+        actions: actionsCount,
+      };
+    });
+
+    res.json({
+      status: "success",
+      code: 200,
+      data: chartData,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
 // Return router
 module.exports = router;
