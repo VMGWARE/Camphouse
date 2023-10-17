@@ -5,6 +5,9 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT } = require("../middleware/auth");
 
+// Services
+const AuditLogService = require("../services/AuditLogService");
+
 /**
  * @swagger
  * tags:
@@ -420,6 +423,13 @@ router.patch("/:id", authenticateJWT, async (req, res) => {
       message: "Successfully marked notification as read",
       data: { notification },
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "NOTIFICATION_UPDATED",
+      req.ipAddress
+    );
   } catch (err) {
     res.status(500).json({
       status: "error",
@@ -516,6 +526,13 @@ router.patch("/", authenticateJWT, async (req, res) => {
       message: "Successfully marked all notifications as read",
       data: { notifications },
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "NOTIFICATION_UPDATED",
+      req.ipAddress
+    );
   } catch (err) {
     res.status(500).json({
       status: "error",

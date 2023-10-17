@@ -183,6 +183,7 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
 
 // Services
 const NotificationService = require("../services/NotificationService");
+const AuditLogService = require("../services/AuditLogService");
 
 /**
  * @swagger
@@ -456,6 +457,9 @@ router.put("/:reportId", authenticateJWT, isAdmin, async (req, res) => {
       message: "Successfully updated the report",
       data: report,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "REPORT_REVIEWED", req.ipAddress);
   } catch (error) {
     // If the report ID is invalid, return an error
     res.status(500).json({
@@ -668,6 +672,9 @@ router.post("/", authenticateJWT, async (req, res) => {
       "Report", // onModel
       `Your reporting of a ${type.toLowerCase()} has been received. A moderator will process your report soon.` // message
     );
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "REPORT_CREATED", req.ipAddress);
   } catch (error) {
     res.status(500).json({
       status: "error",

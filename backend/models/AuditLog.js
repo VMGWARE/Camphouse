@@ -51,6 +51,8 @@ const AuditLogSchema = new mongoose.Schema(
         "REPORT_UPDATED",
         "REPORT_DELETED",
         "REPORT_REVIEWED",
+        // Notification
+        "NOTIFICATION_UPDATED",
         // Misc
         "PASSWORD_RESET_REQUESTED",
         "PASSWORD_RESET",
@@ -59,6 +61,9 @@ const AuditLogSchema = new mongoose.Schema(
         // Admin
         "ADMIN_UPDATED_USER",
         "ADMIN_DELETED_USER",
+        // TFA
+        "TFA_ENABLED",
+        "TFA_DISABLED",
       ],
       index: true,
     },

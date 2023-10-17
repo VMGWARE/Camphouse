@@ -85,6 +85,9 @@ const router = express.Router();
 // Middleware
 const { authenticateJWT, loadUser } = require("../middleware/auth");
 
+// Services
+const AuditLogService = require("../services/AuditLogService");
+
 /**
  * @swagger
  * /api/v1/posts:
@@ -503,6 +506,9 @@ router.post("/", authenticateJWT, async (req, res) => {
       message: "Successfully created post",
       data: post,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "POST_CREATED", req.ipAddress);
   } catch (err) {
     console.log(err);
     // Something went wrong
@@ -690,6 +696,9 @@ router.put("/:postId", authenticateJWT, async (req, res) => {
       message: "Successfully updated post",
       data: post,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "POST_UPDATED", req.ipAddress);
   } catch (err) {
     console.log(err);
     // Something went wrong
@@ -835,6 +844,9 @@ router.delete("/:postId", authenticateJWT, async (req, res) => {
       message: "Successfully deleted post",
       data: post,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "POST_DELETED", req.ipAddress);
   } catch (err) {
     console.log(err);
     // Something went wrong
