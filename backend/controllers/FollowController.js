@@ -48,6 +48,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 // Services
 const NotificationService = require("../services/NotificationService");
+const AuditLogService = require("../services/AuditLogService");
 
 /**
  * @swagger
@@ -252,6 +253,9 @@ router.post("/:userId", authenticateJWT, async (req, res) => {
       "User",
       `${req.user.handle} is now following you.`
     );
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "FOLLOW_CREATED", req.ipAddress);
   } catch (err) {
     res.status(500).json({
       status: "error",
@@ -367,6 +371,9 @@ router.delete("/:userId", authenticateJWT, async (req, res) => {
       message: "Successfully unfollowed the user.",
       data: null,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "FOLLOW_DELETED", req.ipAddress);
   } catch (err) {
     console.error(err);
     res.status(500).json({
