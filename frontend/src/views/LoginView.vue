@@ -101,7 +101,7 @@
                 <div
                   v-if="redirectMessage"
                   class="mt-2 text-muted"
-                  v-html="redirectMessage"
+                  v-dompurify-html="redirectMessage"
                 />
               </div>
             </form>
