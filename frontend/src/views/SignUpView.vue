@@ -6,7 +6,7 @@
           <div class="card-body">
             <h2 class="card-title">Sign Up</h2>
             <form @submit.prevent="handleSignup" method="POST">
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="handle">Handle</label>
                 <input
                   type="text"
@@ -22,7 +22,7 @@
                 />
                 <div class="invalid-feedback">{{ errors.handle }}</div>
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="username">Username</label>
                 <input
                   type="text"
@@ -36,7 +36,7 @@
                 />
                 <div class="invalid-feedback">{{ errors.username }}</div>
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="email">Email</label>
                 <input
                   type="email"
@@ -52,7 +52,7 @@
                   {{ errors.email || errors.invalidEmail }}
                 </div>
               </div>
-              <div class="form-group">
+              <div class="form-group mb-3">
                 <label for="password">Password</label>
                 <input
                   type="password"
