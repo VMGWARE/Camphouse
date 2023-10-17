@@ -523,6 +523,9 @@ router.get("/stats", authenticateJWT, isAdmin, async (req, res) => {
     const totalAccountCreated = await AuditLog.countDocuments({
       action: "ACCOUNT_CREATED",
     });
+    const totalAccountDeleted = await AuditLog.countDocuments({
+      action: "ACCOUNT_DELETED",
+    });
 
     // You can add more action statistics here by copying the above pattern
     // Example: const totalAccountCreated = await AuditLog.countDocuments({ action: "ACCOUNT_CREATED" });
@@ -534,6 +537,7 @@ router.get("/stats", authenticateJWT, isAdmin, async (req, res) => {
         totalSignIns: totalSignIns,
         totalLogouts: totalLogouts,
         totalAccountCreated: totalAccountCreated,
+        totalAccountDeleted: totalAccountDeleted,
         //... other action statistics
       },
     });
