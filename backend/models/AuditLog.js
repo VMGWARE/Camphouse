@@ -56,6 +56,9 @@ const AuditLogSchema = new mongoose.Schema(
         "PASSWORD_RESET",
         "ACCOUNT_TOKEN_REFRESHED",
         "ACCOUNT_PASSWORD_CHANGED",
+        // Admin
+        "ADMIN_UPDATED_USER",
+        "ADMIN_DELETED_USER",
       ],
       index: true,
     },

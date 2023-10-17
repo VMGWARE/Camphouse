@@ -69,6 +69,7 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
 
 // Services
 // const NotificationService = require("../services/NotificationService");
+const AuditLogService = require("../services/AuditLogService");
 
 // Read (GET) - Fetch a specific user by ID
 /**
@@ -581,6 +582,13 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       code: 200,
       data: user,
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "ADMIN_UPDATED_USER",
+      req.ipAddress
+    );
   } catch (error) {
     console.error(error);
     // Return an error
@@ -738,6 +746,13 @@ router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       code: 200,
       data: null,
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "ADMIN_DELETED_USER",
+      req.ipAddress
+    );
   } catch (error) {
     console.error(error);
     // Return an error
