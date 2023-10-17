@@ -11,6 +11,7 @@ const AuditLogSchema = new mongoose.Schema(
       ref: "User",
       required: false,
       default: null,
+      index: true,
     },
     // Action performed by the user
     action: {
@@ -49,6 +50,7 @@ const AuditLogSchema = new mongoose.Schema(
         "REPORT_DELETED",
         "REPORT_REVIEWED",
       ],
+      index: true,
     },
     // Request log associated with the action
     request: {
@@ -61,6 +63,7 @@ const AuditLogSchema = new mongoose.Schema(
     ip: {
       type: String,
       required: true,
+      index: true,
     },
     // Can be used to store any additional data like previous and new values
     data: {
