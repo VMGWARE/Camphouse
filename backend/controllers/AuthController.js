@@ -270,6 +270,9 @@ async function validateTwoFactorCode(user, twoFactorCode) {
   });
 }
 
+// Services
+const AuditLogService = require("../services/AuditLogService");
+
 /**
  * @swagger
  * /api/v1/auth/login:
@@ -458,6 +461,9 @@ router.post("/login", async (req, res) => {
       },
     },
   });
+
+  // Log the login event
+  await AuditLogService.log(user._id, "ACCOUNT_LOGIN", req.ipAddress);
 });
 
 /**
@@ -636,6 +642,9 @@ router.post("/register", async (req, res) => {
     message: "User successfully registered.",
     data: null,
   });
+
+  // Log the registration event
+  await AuditLogService.log(user._id, "ACCOUNT_CREATED", req.ipAddress);
 });
 
 /**
@@ -946,6 +955,9 @@ router.put("/update-profile", authenticateJWT, async (req, res) => {
       message: "Profile updated successfully",
       data: updatedUser,
     });
+
+    // Log the profile update event
+    await AuditLogService.log(req.user._id, "ACCOUNT_UPDATED", req.ipAddress);
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -1167,6 +1179,14 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
           { profilePicture: newProfilePictureURL },
           { new: true }
         );
+
+        // Log the profile picture update event
+        await AuditLogService.log(
+          req.user._id,
+          "ACCOUNT_UPDATED",
+          req.ipAddress
+        );
+
         return res.json({
           status: "success",
           code: 200,
@@ -1271,6 +1291,9 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
         message: "Profile picture updated successfully",
         data: updatedUser,
       });
+
+      // Log the profile picture update event
+      await AuditLogService.log(req.user._id, "ACCOUNT_UPDATED", req.ipAddress);
     }
   } catch (err) {
     console.error(err);
@@ -1342,6 +1365,13 @@ router.post("/refresh-token", authenticateJWT, async (req, res) => {
       token: newToken,
     },
   });
+
+  // Log the token refresh event
+  await AuditLogService.log(
+    req.user._id,
+    "ACCOUNT_TOKEN_REFRESHED",
+    req.ipAddress
+  );
 });
 
 /**
@@ -1394,6 +1424,9 @@ router.post("/logout", authenticateJWT, async (req, res) => {
       message: "Successfully logged out",
       data: null,
     });
+
+    // Log the logout event
+    await AuditLogService.log(req.user._id, "ACCOUNT_LOGOUT", req.ipAddress);
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -1598,6 +1631,13 @@ router.post("/update-password", authenticateJWT, async (req, res) => {
       message: "Password updated successfully",
       data: null,
     });
+
+    // Log the password update event
+    await AuditLogService.log(
+      req.user._id,
+      "ACCOUNT_PASSWORD_CHANGED",
+      req.ipAddress
+    );
   } catch (err) {
     console.error(err);
     res.status(500).json({

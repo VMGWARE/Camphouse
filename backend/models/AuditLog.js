@@ -51,6 +51,11 @@ const AuditLogSchema = new mongoose.Schema(
         "REPORT_UPDATED",
         "REPORT_DELETED",
         "REPORT_REVIEWED",
+        // Misc
+        "PASSWORD_RESET_REQUESTED",
+        "PASSWORD_RESET",
+        "ACCOUNT_TOKEN_REFRESHED",
+        "ACCOUNT_PASSWORD_CHANGED",
       ],
       index: true,
     },
