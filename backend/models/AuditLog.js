@@ -22,6 +22,8 @@ const AuditLogSchema = new mongoose.Schema(
         "ACCOUNT_CREATED",
         "ACCOUNT_UPDATED",
         "ACCOUNT_DELETED",
+        "ACCOUNT_LOGIN",
+        "ACCOUNT_LOGOUT",
         // Post
         "POST_CREATED",
         "POST_UPDATED",

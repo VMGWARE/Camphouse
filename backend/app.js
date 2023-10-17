@@ -129,6 +129,14 @@ app.use((req, res, next) => {
   next();
 });
 
+// Middleware to give the ip address of the user
+app.use((req, res, next) => {
+  // IP address
+  var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  req.ipAddress = ip;
+  next();
+});
+
 // Express File Upload middleware
 app.use(
   fileUpload({

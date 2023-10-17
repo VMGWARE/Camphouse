@@ -14,7 +14,7 @@ class AuditLogService {
    * @returns {Promise<Object>} A promise that resolves to the created audit log object.
    * @throws {Error} Throws an error if validation fails or unable to save the audit log.
    */
-  static async log(user, action, request = null, ipAddress, data = null) {
+  static async log(user, action, ipAddress, request = null, data = null) {
     try {
       // Validate user, action, and ipAddress
       if (!user || !action || !ipAddress)
@@ -25,7 +25,7 @@ class AuditLogService {
         user,
         action,
         request,
-        ipAddress,
+        ip: ipAddress,
         data,
       });
 
