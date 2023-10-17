@@ -73,6 +73,9 @@
                 to="/admin/blocked-email-domains"
                 ><i class="fas fa-ban"></i> Blocked Email Domains</router-link
               >
+              <router-link class="dropdown-item" to="/admin/audit-logs"
+                ><i class="fas fa-clipboard-list"></i> Audit Logs</router-link
+              >
             </div>
           </div>
         </li>
