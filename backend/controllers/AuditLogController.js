@@ -8,6 +8,7 @@
 // Require the necessary packages
 const express = require("express");
 const router = express.Router();
+const Papa = require("papaparse");
 
 // Require the necessary models
 const AuditLog = require("../models/AuditLog");
@@ -387,6 +388,77 @@ router.get("/chart-by-action", authenticateJWT, isAdmin, async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/audit-logs/export:
+ *   get:
+ *     summary: Export Audit Logs
+ *     description: This endpoint exports the audit logs to the specified format (CSV or JSON).
+ *     produces:
+ *       - application/octet-stream
+ *     security:
+ *       - BearerAuth: []
+ *     tags:
+ *       - Audit Logs
+ *     parameters:
+ *       - name: format
+ *         in: query
+ *         description: The format to export to.
+ *         required: true
+ *         enum: ["csv", "json"]
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Audit logs successfully exported.
+ *       500:
+ *         description: Server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Internal server error.
+ */
+router.get("/export", authenticateJWT, isAdmin, async (req, res) => {
+  try {
+    const format = req.query.format;
+
+    const auditLogs = await AuditLog.find().lean();
+
+    if (format === "csv") {
+      const csv = Papa.unparse(auditLogs);
+      res.setHeader("Content-Type", "text/csv");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=audit_logs.csv"
+      );
+      res.send(csv);
+    } else if (format === "json") {
+      res.setHeader("Content-Type", "application/json");
+      res.setHeader(
+        "Content-Disposition",
+        "attachment; filename=audit_logs.json"
+      );
+      res.send(JSON.stringify(auditLogs, null, 4));
+    } else {
+      res
+        .status(400)
+        .send("Invalid format specified. Supported formats: csv, json");
+    }
+  } catch (err) {
+    res.status(500).json({ status: "error", code: 500, message: err.message });
   }
 });
 
