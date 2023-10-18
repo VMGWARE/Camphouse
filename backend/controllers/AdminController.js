@@ -60,6 +60,7 @@ const Message = require("../models/Message");
 const Report = require("../models/Report");
 const Notification = require("../models/Notification");
 const BlockedEmailDomain = require("../models/BlockedEmailDomain");
+const AuditLog = require("../models/AuditLog");
 
 // Helpers
 const { validateEmail, extractEmailDomain } = require("../utils/general");
@@ -850,6 +851,9 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
     // Number of blocked email domains
     const blockedEmailDomains = await BlockedEmailDomain.countDocuments();
 
+    // Number of audit logs
+    const auditLogs = await AuditLog.countDocuments();
+
     // Return the analytics
     res.json({
       status: "success",
@@ -861,6 +865,7 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
         messages,
         comments,
         blockedEmailDomains,
+        auditLogs,
       },
     });
   } catch (error) {
