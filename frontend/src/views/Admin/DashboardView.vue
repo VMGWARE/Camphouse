@@ -32,9 +32,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>
-            {{ analytics.users }}
+          <h1 v-if="analytics.users === null">
+            <i class="fas fa-spinner fa-spin"></i>
           </h1>
+          <h1 v-else>{{ analytics.users }}</h1>
         </div>
       </div>
     </div>
@@ -47,7 +48,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ analytics.posts }}</h1>
+          <h1 v-if="analytics.posts === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ analytics.posts }}</h1>
         </div>
       </div>
     </div>
@@ -60,7 +64,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ analytics.messages }}</h1>
+          <h1 v-if="analytics.messages === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ analytics.messages }}</h1>
         </div>
       </div>
     </div>
@@ -73,12 +80,16 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ analytics.comments }}</h1>
+          <h1 v-if="analytics.comments === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ analytics.comments }}</h1>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Number of blocked email domains and audit logs -->
   <div class="row">
     <!-- Number of Blocked Email Domains -->
     <div class="col-md-3">
@@ -90,7 +101,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ analytics.blockedEmailDomains }}</h1>
+          <h1 v-if="analytics.blockedEmailDomains === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ analytics.blockedEmailDomains }}</h1>
         </div>
       </div>
     </div>
@@ -104,7 +118,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ analytics.auditLogs }}</h1>
+          <h1 v-if="analytics.auditLogs === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ analytics.auditLogs }}</h1>
         </div>
       </div>
     </div>
@@ -178,10 +195,12 @@ export default {
     return {
       appVersion: "",
       analytics: {
-        users: 0,
-        posts: 0,
-        messages: 0,
-        comments: 0,
+        users: null,
+        posts: null,
+        messages: null,
+        comments: null,
+        blockedEmailDomains: null,
+        auditLogs: null,
       },
       recentPosts: [],
       recentReports: [],
