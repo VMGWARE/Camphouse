@@ -27,7 +27,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ stats.totalSignIns }}</h1>
+          <h1 v-if="stats.totalSignIns === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ stats.totalSignIns }}</h1>
         </div>
       </div>
     </div>
@@ -40,7 +43,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ stats.totalLogouts }}</h1>
+          <h1 v-if="stats.totalLogouts === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ stats.totalLogouts }}</h1>
         </div>
       </div>
     </div>
@@ -53,7 +59,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ stats.totalAccountCreated }}</h1>
+          <h1 v-if="stats.totalAccountCreated === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ stats.totalAccountCreated }}</h1>
         </div>
       </div>
     </div>
@@ -66,7 +75,10 @@
           </h5>
         </div>
         <div class="card-body">
-          <h1>{{ stats.totalAccountDeleted }}</h1>
+          <h1 v-if="stats.totalAccountDeleted === null">
+            <i class="fas fa-spinner fa-spin"></i>
+          </h1>
+          <h1 v-else>{{ stats.totalAccountDeleted }}</h1>
         </div>
       </div>
     </div>
@@ -140,7 +152,12 @@ ChartJS.register(
 export default {
   data() {
     return {
-      stats: {},
+      stats: {
+        totalSignIns: null,
+        totalLogouts: null,
+        totalAccountCreated: null,
+        totalAccountDeleted: null,
+      },
       auditLogLineChartData: {
         labels: [],
         datasets: [],
