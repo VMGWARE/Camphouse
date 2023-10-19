@@ -87,6 +87,7 @@
           <Line
             :data="auditLogLineChartData"
             :options="auditLogLineChartOptions"
+            v-if="auditLogLineChartData.labels.length > 0"
           />
         </div>
       </div>
@@ -164,29 +165,24 @@ export default {
     return {
       stats: {},
       auditLogLineChartData: {
-        labels: ["January", "February", "March", "April", "May", "June"],
-        datasets: [
-          {
-            label: "Sign In",
-            borderColor: "#3e95cd",
-            data: [0, 12, 5, 2, 20, 30],
+        labels: [],
+        datasets: [],
+      },
+      auditLogLineChartOptions: {
+        scales: {
+          y: {
+            beginAtZero: true,
+            ticks: {
+              stepSize: 1,
+              precision: 0,
+              callback: function (value) {
+                if (value % 1 === 0) {
+                  return value;
+                }
+              },
+            },
           },
-          {
-            label: "Logout",
-            borderColor: "#8e5ea2",
-            data: [0, 10, 5, 2, 23, 30],
-          },
-          {
-            label: "Account Created",
-            borderColor: "#3cba9f",
-            data: [0, 10, 5, 2, 10, 30],
-          },
-          {
-            label: "Account Deleted",
-            borderColor: "#e8c3b9",
-            data: [0, 10, 5, 2, 20, 30],
-          },
-        ],
+        },
       },
     };
   },
@@ -206,9 +202,70 @@ export default {
           console.log(err);
         });
     },
+    fetchChartData() {
+      axios.defaults.headers.common["Authorization"] =
+        "Bearer " + localStorage.getItem("token");
+
+      axios
+        .get("/v1/audit-logs/chart-by-action")
+        .then((res) => {
+          this.processChartData(res.data.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
+
+    processChartData(apiData) {
+      const labels = [];
+      const tempData = {};
+
+      // Initialize the data structure
+      apiData.forEach((entry) => {
+        labels.push(entry.date);
+
+        for (const action in entry.actions) {
+          if (!tempData[action]) {
+            tempData[action] = [];
+          }
+        }
+      });
+
+      labels.forEach((label) => {
+        const dataEntry = apiData.find((e) => e.date === label) || {
+          actions: {},
+        };
+
+        for (const action in tempData) {
+          tempData[action].push(dataEntry.actions[action] || 0);
+        }
+      });
+
+      const datasets = Object.keys(tempData).map((action) => {
+        return {
+          label: action.replace("_", " "),
+          data: tempData[action],
+          borderColor: this.getRandomColor(),
+          fill: false,
+        };
+      });
+
+      this.auditLogLineChartData.labels = labels;
+      this.auditLogLineChartData.datasets = datasets;
+    },
+
+    getRandomColor() {
+      const letters = "0123456789ABCDEF";
+      let color = "#";
+      for (let i = 0; i < 6; i++) {
+        color += letters[Math.floor(Math.random() * 16)];
+      }
+      return color;
+    },
   },
   mounted() {
     this.getStats();
+    this.fetchChartData(); // Fetch chart data when the component is mounted
   },
 };
 </script>
