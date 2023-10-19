@@ -12,7 +12,7 @@
   "dependencies": {
     "axios": "^1.5.1",
     "bootstrap": "^5.3.2",
-    "chart.js": "^3.9.1",
+    "chart.js": "^4.4.0",
     "core-js": "^3.33.0",
     "js-cookie": "^3.0.5",
     "jwt-decode": "^3.1.2",
@@ -21,6 +21,7 @@
     "vee-validate": "^4.11.8",
     "vue": "^3.2.13",
     "vue-chart-3": "^3.1.8",
+    "vue-chartjs": "^5.2.0",
     "vue-dompurify-html": "^4.1.4",
     "vue-final-modal": "^4.4.5",
     "vue-router": "^4.2.5",

@@ -84,6 +84,10 @@
         </div>
         <div class="card-body">
           <!-- TODO: Make line chart -->
+          <Line
+            :data="auditLogLineChartData"
+            :options="auditLogLineChartOptions"
+          />
         </div>
       </div>
     </div>
@@ -133,12 +137,61 @@
 
 <script>
 import axios from "axios";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
+import { Line } from "vue-chartjs";
+
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 export default {
   data() {
     return {
       stats: {},
+      auditLogLineChartData: {
+        labels: ["January", "February", "March", "April", "May", "June"],
+        datasets: [
+          {
+            label: "Sign In",
+            borderColor: "#3e95cd",
+            data: [0, 12, 5, 2, 20, 30],
+          },
+          {
+            label: "Logout",
+            borderColor: "#8e5ea2",
+            data: [0, 10, 5, 2, 23, 30],
+          },
+          {
+            label: "Account Created",
+            borderColor: "#3cba9f",
+            data: [0, 10, 5, 2, 10, 30],
+          },
+          {
+            label: "Account Deleted",
+            borderColor: "#e8c3b9",
+            data: [0, 10, 5, 2, 20, 30],
+          },
+        ],
+      },
     };
+  },
+  components: {
+    Line,
   },
   methods: {
     getStats() {
