@@ -83,7 +83,6 @@
           </h5>
         </div>
         <div class="card-body">
-          <!-- TODO: Make line chart -->
           <Line
             :data="auditLogLineChartData"
             :options="auditLogLineChartOptions"
@@ -101,35 +100,11 @@
           </h5>
         </div>
         <div class="card-body">
-          <!-- TODO: Make pie chart -->
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Table of all audit logs -->
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>
-            <i class="fas fa-table"></i>
-            Audit Log Table
-          </h5>
-        </div>
-        <div class="card-body">
-          <div class="table-responsive">
-            <table class="table table-dark">
-              <thead>
-                <tr>
-                  <th scope="col">Action</th>
-                  <th scope="col">User</th>
-                  <th scope="col">Date</th>
-                </tr>
-              </thead>
-              <tbody></tbody>
-            </table>
-          </div>
+          <Pie
+            :data="auditLogPieChartData"
+            :options="pieChartOptions"
+            v-if="auditLogPieChartData.labels.length > 0"
+          />
         </div>
       </div>
     </div>
@@ -147,8 +122,9 @@ import {
   Title,
   Tooltip,
   Legend,
+  ArcElement,
 } from "chart.js";
-import { Line } from "vue-chartjs";
+import { Line, Pie } from "vue-chartjs";
 
 ChartJS.register(
   CategoryScale,
@@ -157,7 +133,8 @@ ChartJS.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  ArcElement
 );
 
 export default {
@@ -184,10 +161,30 @@ export default {
           },
         },
       },
+      auditLogPieChartData: {
+        labels: [],
+        datasets: [
+          {
+            data: [],
+            backgroundColor: [],
+          },
+        ],
+      },
+      pieChartOptions: {
+        responsive: true,
+        legend: {
+          position: "top",
+        },
+        animation: {
+          animateScale: true,
+          animateRotate: true,
+        },
+      },
     };
   },
   components: {
     Line,
+    Pie,
   },
   methods: {
     getStats() {
@@ -252,6 +249,29 @@ export default {
 
       this.auditLogLineChartData.labels = labels;
       this.auditLogLineChartData.datasets = datasets;
+
+      const actionCounts = {};
+      apiData.forEach((entry) => {
+        for (const action in entry.actions) {
+          if (!actionCounts[action]) actionCounts[action] = 0;
+          actionCounts[action] += entry.actions[action];
+        }
+      });
+
+      const pieLabels = [];
+      const pieData = [];
+      const pieBackgroundColors = [];
+
+      for (const action in actionCounts) {
+        pieLabels.push(action.replace("_", " "));
+        pieData.push(actionCounts[action]);
+        pieBackgroundColors.push(this.getRandomColor());
+      }
+
+      this.auditLogPieChartData.labels = pieLabels;
+      this.auditLogPieChartData.datasets[0].data = pieData;
+      this.auditLogPieChartData.datasets[0].backgroundColor =
+        pieBackgroundColors;
     },
 
     getRandomColor() {
