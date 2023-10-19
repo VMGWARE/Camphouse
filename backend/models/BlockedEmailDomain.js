@@ -11,6 +11,7 @@ const BlockedEmailDomainSchema = new mongoose.Schema(
       required: true,
       unique: true, // Ensure that the domain is unique to prevent duplicate entries.
       trim: true, // Remove any unnecessary whitespace.
+      index: true,
     },
     isBlocked: {
       // Boolean to check if the domain is blocked.
@@ -21,7 +22,4 @@ const BlockedEmailDomainSchema = new mongoose.Schema(
   { timestamps: true } // Automatically manage createdAt and updatedAt fields.
 );
 
-module.exports = mongoose.model(
-  "BlockedEmailDomain",
-  BlockedEmailDomainSchema
-);
+module.exports = mongoose.model("BlockedEmailDomain", BlockedEmailDomainSchema);

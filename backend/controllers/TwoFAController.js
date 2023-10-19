@@ -17,6 +17,9 @@ require("dotenv").config();
 // Middleware
 const { authenticateJWT } = require("../middleware/auth");
 
+// Services
+const AuditLogService = require("../services/AuditLogService");
+
 /**
  * @swagger
  * /api/v1/2fa/setup:
@@ -265,6 +268,9 @@ router.post("/enable", authenticateJWT, async (req, res) => {
       message: "2FA enabled successfully",
       data: null,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "TFA_ENABLED", req.ipAddress);
   } catch (err) {
     console.error(err);
     res.status(500).json({
@@ -401,6 +407,9 @@ router.delete("/disable", authenticateJWT, async (req, res) => {
       message: "2FA disabled successfully",
       data: null,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "TFA_DISABLED", req.ipAddress);
   } catch (err) {
     console.error(err);
     res.status(500).json({

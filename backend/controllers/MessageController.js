@@ -57,6 +57,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 // Services
 const NotificationService = require("../services/NotificationService");
+const AuditLogService = require("../services/AuditLogService");
 
 /**
  * @swagger
@@ -333,6 +334,9 @@ router.post("/:userId", authenticateJWT, async (req, res) => {
     "Message",
     "You have a new message from " + req.user.handle + "."
   );
+
+  // Log the action
+  await AuditLogService.log(req.user._id, "MESSAGE_CREATED", req.ipAddress);
 });
 
 /**
@@ -448,6 +452,9 @@ router.put("/:messageId", authenticateJWT, async (req, res) => {
     message: "Message updated successfully.",
     data: message,
   });
+
+  // Log the action
+  await AuditLogService.log(req.user._id, "MESSAGE_UPDATED", req.ipAddress);
 });
 
 /**
@@ -565,6 +572,9 @@ router.delete("/:messageId", authenticateJWT, async (req, res) => {
     message: "Message deleted successfully.",
     data: message,
   });
+
+  // Log the action
+  await AuditLogService.log(req.user._id, "MESSAGE_DELETED", req.ipAddress);
 });
 
 module.exports = router;

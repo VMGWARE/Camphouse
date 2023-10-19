@@ -69,6 +69,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 // Services
 const NotificationService = require("../services/NotificationService");
+const AuditLogService = require("../services/AuditLogService");
 
 /**
  * @swagger
@@ -435,6 +436,9 @@ router.post("/post/:postId", authenticateJWT, async (req, res) => {
         `${req.user.handle} commented on your post.` // message
       );
     }
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "COMMENT_CREATED", req.ipAddress);
   } catch (error) {
     console.error(error);
     res.json({
@@ -584,6 +588,9 @@ router.patch("/:commentId", authenticateJWT, async (req, res) => {
       message: "Successfully updated comment.",
       data: updatedComment,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "COMMENT_UPDATED", req.ipAddress);
   } catch (error) {
     console.error(error);
     res.json({
@@ -711,6 +718,9 @@ router.delete("/:commentId", authenticateJWT, async (req, res) => {
       message: "Successfully deleted comment.",
       data: null,
     });
+
+    // Log the action
+    await AuditLogService.log(req.user._id, "COMMENT_DELETED", req.ipAddress);
   } catch (error) {
     console.error(error);
     res.json({

@@ -12,6 +12,9 @@ const router = express.Router();
 // Require the necessary models
 const BlockedEmailDomain = require("../models/BlockedEmailDomain");
 
+// Require the necessary services
+const AuditLogService = require("../services/AuditLogService");
+
 // Load environment variables
 require("dotenv").config();
 
@@ -295,6 +298,13 @@ router.post("/", authenticateJWT, isAdmin, async (req, res) => {
       message: "Blocked email domain created",
       data: newBlockedEmailDomain,
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "BLOCKED_EMAIL_DOMAIN_CREATED",
+      req.ipAddress
+    );
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -572,6 +582,13 @@ router.put("/:id", authenticateJWT, isAdmin, async (req, res) => {
       message: "Blocked email domain updated",
       data: blockedEmailDomain,
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "BLOCKED_EMAIL_DOMAIN_UPDATED",
+      req.ipAddress
+    );
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -698,6 +715,13 @@ router.delete("/:id", authenticateJWT, isAdmin, async (req, res) => {
       message: "Blocked email domain deleted",
       data: blockedEmailDomain,
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "BLOCKED_EMAIL_DOMAIN_DELETED",
+      req.ipAddress
+    );
   } catch (error) {
     console.error(error);
     res.status(500).json({

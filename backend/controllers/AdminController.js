@@ -60,6 +60,7 @@ const Message = require("../models/Message");
 const Report = require("../models/Report");
 const Notification = require("../models/Notification");
 const BlockedEmailDomain = require("../models/BlockedEmailDomain");
+const AuditLog = require("../models/AuditLog");
 
 // Helpers
 const { validateEmail, extractEmailDomain } = require("../utils/general");
@@ -69,6 +70,7 @@ const { authenticateJWT, isAdmin } = require("../middleware/auth");
 
 // Services
 // const NotificationService = require("../services/NotificationService");
+const AuditLogService = require("../services/AuditLogService");
 
 // Read (GET) - Fetch a specific user by ID
 /**
@@ -581,6 +583,13 @@ router.put("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       code: 200,
       data: user,
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "ADMIN_UPDATED_USER",
+      req.ipAddress
+    );
   } catch (error) {
     console.error(error);
     // Return an error
@@ -738,6 +747,13 @@ router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
       code: 200,
       data: null,
     });
+
+    // Log the action
+    await AuditLogService.log(
+      req.user._id,
+      "ADMIN_DELETED_USER",
+      req.ipAddress
+    );
   } catch (error) {
     console.error(error);
     // Return an error
@@ -835,6 +851,9 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
     // Number of blocked email domains
     const blockedEmailDomains = await BlockedEmailDomain.countDocuments();
 
+    // Number of audit logs
+    const auditLogs = await AuditLog.countDocuments();
+
     // Return the analytics
     res.json({
       status: "success",
@@ -846,6 +865,7 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
         messages,
         comments,
         blockedEmailDomains,
+        auditLogs,
       },
     });
   } catch (error) {

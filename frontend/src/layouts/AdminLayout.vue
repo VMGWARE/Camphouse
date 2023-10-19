@@ -57,7 +57,7 @@
           >
         </li>
         <li class="nav-item">
-          <!-- Dropdown for Additional Options -->
+          <!-- Dropdown for other pages -->
           <div class="dropdown">
             <button
               class="nav-link btn btn-secondary dropdown-toggle px-3"
@@ -65,13 +65,16 @@
               id="userOptions"
               data-bs-toggle="dropdown"
             >
-              Options
+              More
             </button>
             <div class="dropdown-menu">
               <router-link
                 class="dropdown-item"
                 to="/admin/blocked-email-domains"
                 ><i class="fas fa-ban"></i> Blocked Email Domains</router-link
+              >
+              <router-link class="dropdown-item" to="/admin/audit-logs"
+                ><i class="fas fa-clipboard-list"></i> Audit Logs</router-link
               >
             </div>
           </div>

@@ -148,6 +148,15 @@ const routes = [
     },
   },
   {
+    path: "/admin/audit-logs",
+    name: "admin-audit-logs",
+    component: () => import("@/views/Admin/AuditLogsView.vue"),
+    meta: {
+      title: "Audit Logs - Admin",
+      layout: "admin",
+    },
+  },
+  {
     path: "/admin/reports/:id",
     name: "admin-report",
     component: () => import("@/views/Admin/ReportView.vue"),

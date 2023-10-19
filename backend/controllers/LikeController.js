@@ -15,6 +15,7 @@ const { authenticateJWT } = require("../middleware/auth");
 
 // Services
 const NotificationService = require("../services/NotificationService");
+const AuditLogService = require("../services/AuditLogService");
 
 /**
  * @swagger
@@ -182,6 +183,9 @@ router.post("/:postId", authenticateJWT, async (req, res) => {
       `${user.handle} liked your post "${post.title}"`
     );
   }
+
+  // Log the action
+  await AuditLogService.log(req.user._id, "LIKE_CREATED", req.ipAddress);
 });
 
 /**
@@ -277,6 +281,9 @@ router.delete("/:postId", authenticateJWT, async (req, res) => {
       likes: (await Like.find({ post: post._id })).length,
     },
   });
+
+  // Log the action
+  await AuditLogService.log(req.user._id, "LIKE_DELETED", req.ipAddress);
 });
 
 module.exports = router;
