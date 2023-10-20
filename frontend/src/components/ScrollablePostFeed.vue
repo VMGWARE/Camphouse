@@ -1,5 +1,10 @@
 <template>
-  <div class="scrollable-feed" ref="scrollableFeed">
+  <div
+    ref="scrollableFeed"
+    :class="{
+      'scrollable-feed': posts.length > 0,
+    }"
+  >
     <div v-if="loadingPosts" class="text-center">
       <div class="spinner-border text-primary" role="status">
         <span class="sr-only">Loading...</span>
