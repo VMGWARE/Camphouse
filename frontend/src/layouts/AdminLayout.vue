@@ -67,15 +67,19 @@
             >
               More
             </button>
-            <div class="dropdown-menu">
-              <router-link
-                class="dropdown-item"
-                to="/admin/blocked-email-domains"
-                ><i class="fas fa-ban"></i> Blocked Email Domains</router-link
-              >
-              <router-link class="dropdown-item" to="/admin/audit-logs"
-                ><i class="fas fa-clipboard-list"></i> Audit Logs</router-link
-              >
+            <div class="dropdown-menu dropdown-menu-end">
+              <li>
+                <router-link
+                  class="dropdown-item"
+                  to="/admin/blocked-email-domains"
+                  ><i class="fas fa-ban"></i> Blocked Email Domains</router-link
+                >
+              </li>
+              <li>
+                <router-link class="dropdown-item" to="/admin/audit-logs"
+                  ><i class="fas fa-clipboard-list"></i> Audit Logs</router-link
+                >
+              </li>
             </div>
           </div>
         </li>
@@ -90,7 +94,7 @@
             >
               Options
             </button>
-            <div class="dropdown-menu">
+            <div class="dropdown-menu dropdown-menu-end">
               <router-link class="dropdown-item" to="/messages"
                 ><i class="fa fa-envelope"></i> Messages</router-link
               >

@@ -87,7 +87,7 @@
               >
                 Options
               </button>
-              <div class="dropdown-menu">
+              <div class="dropdown-menu dropdown-menu-end">
                 <router-link
                   class="dropdown-item"
                   to="/admin"
