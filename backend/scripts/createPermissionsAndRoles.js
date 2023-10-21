@@ -112,10 +112,39 @@ const permissionsAndRoles = {
     // User Has Roles
   ],
   roles: [
+    // Admin role
     {
       name: "admin",
-      description: "An admin user",
-      permissions: ["create", "read", "update", "delete"],
+      description: "A user with admin permissions",
+      permissions: ["all"],
     },
+    // Moderator role
+    {
+      name: "moderator",
+      description: "A user with moderator permissions",
+      // All users have the user role by default, and permissions/roles are inherited
+      permissions: [],
+    },
+    // Default role
+    {
+      name: "user",
+      description: "A normal user",
+      permissions: [
+        "Create comments",
+        "Update own comments",
+        "Delete own comments",
+        "Can follow",
+        "Can unfollow",
+        "Like posts",
+        "Unlike posts",
+        "Create messages",
+        "Update own messages",
+        "Delete own messages",
+        "Create posts",
+        "Update own posts",
+        "Delete own posts",
+      ],
+    },
+    // Guest role (This role is for users who are not logged in)
   ],
 };
