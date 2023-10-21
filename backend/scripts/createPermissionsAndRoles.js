@@ -146,5 +146,10 @@ const permissionsAndRoles = {
       ],
     },
     // Guest role (This role is for users who are not logged in)
+    {
+      name: "guest",
+      description: "For users who are not logged in.",
+      permissions: [],
+    },
   ],
 };
