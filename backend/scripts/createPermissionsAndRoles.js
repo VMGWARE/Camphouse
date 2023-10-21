@@ -93,9 +93,57 @@ const permissionsAndRoles = {
       description: "Allows the user to delete all posts",
     },
     // Reports
+    {
+      name: "Create reports",
+      description: "Allows the user to create reports",
+    },
+    {
+      name: "Update reports",
+      description: "Allows the user to update reports",
+    },
+    {
+      name: "Delete reports",
+      description: "Allows the user to delete reports",
+    },
+    {
+      name: "View reports",
+      description: "Allows the user to view reports",
+    },
+    {
+      name: "Take action on reports",
+      description: "Allows the user to take action on reports",
+    },
     // Request Logs
+    {
+      name: "View request logs",
+      description: "Allows the user to view request logs",
+    },
     // Role Has Permissions
+    {
+      name: "View role has permissions",
+      description: "Allows the user to view role has permissions",
+    },
+    {
+      name: "Update role has permissions",
+      description: "Allows the user to update role has permissions",
+    },
     // Roles
+    {
+      name: "Create roles",
+      description: "Allows the user to create roles",
+    },
+    {
+      name: "Update roles",
+      description: "Allows the user to update roles",
+    },
+    {
+      name: "Delete roles",
+      description: "Allows the user to delete roles",
+    },
+    {
+      name: "View roles",
+      description: "Allows the user to view roles",
+    },
     // Users
     {
       name: "Update users",
@@ -110,25 +158,35 @@ const permissionsAndRoles = {
       description: "Allows the user to view hidden content such as user emails",
     },
     // User Has Roles
+    {
+      name: "View user roles",
+      description: "Allows the user to view user roles",
+    },
+    {
+      name: "Update user roles",
+      description: "Allows the user to update user roles",
+    },
   ],
   roles: [
     // Admin role
     {
-      name: "admin",
-      description: "A user with admin permissions",
+      name: "Administrator",
+      description:
+        "A high-level user with comprehensive administrative rights, capable of managing all aspects of the platform.",
       permissions: ["all"],
     },
     // Moderator role
     {
-      name: "moderator",
-      description: "A user with moderator permissions",
-      // All users have the user role by default, and permissions/roles are inherited
+      name: "Moderator",
+      description:
+        "A user responsible for overseeing community interactions, ensuring they abide by platform guidelines.",
       permissions: [],
     },
     // Default role
     {
-      name: "user",
-      description: "A normal user",
+      name: "Standard User",
+      description:
+        "The default role assigned to registered users, granting them typical user rights and permissions.",
       permissions: [
         "Create comments",
         "Update own comments",
@@ -145,10 +203,11 @@ const permissionsAndRoles = {
         "Delete own posts",
       ],
     },
-    // Guest role (This role is for users who are not logged in)
+    // Guest role
     {
-      name: "guest",
-      description: "For users who are not logged in.",
+      name: "Visitor",
+      description:
+        "A role for unregistered users browsing the platform with limited interaction capabilities.",
       permissions: [],
     },
   ],
