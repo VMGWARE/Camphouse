@@ -18,6 +18,9 @@ const { createAdminUser } = require("./scripts/createAdminUser"); // Create the 
 const {
   seedBlockedEmailDomains,
 } = require("./scripts/seedBlockedEmailDomains"); // Seed the blocked email domains
+const {
+  createPermissionsAndRoles,
+} = require("./scripts/createPermissionsAndRoles"); // Create the permissions and roles
 
 // Load environment variables
 require("dotenv").config();
@@ -221,6 +224,9 @@ app.listen(port, async () => {
   } catch (err) {
     console.log(chalk.green("🏕️ Camphouse"));
   }
+
+  // Create the permissions and roles
+  await createPermissionsAndRoles();
 
   // Create the admin user
   await createAdminUser();

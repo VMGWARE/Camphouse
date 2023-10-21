@@ -7,6 +7,8 @@ const chalk = require("chalk");
 // Load environment variables
 require("dotenv").config();
 
+// TODO: If the perms or roles have been updated, update the permissions and roles in the database too
+
 // Define the permissions and roles in a JSON object.
 // We can then dynamically create the permissions and roles
 // Allowing for new permissions and roles to be added easily in the future
@@ -212,3 +214,120 @@ const permissionsAndRoles = {
     },
   ],
 };
+
+// Create the permissions
+const createPermissions = async () => {
+  // Loop through each permission
+  for (let i = 0; i < permissionsAndRoles.permissions.length; i++) {
+    // Destructure the name and description from the permission
+    const { name, description } = permissionsAndRoles.permissions[i];
+
+    // Create the permission
+    const permission = new Permission({
+      name,
+      description,
+    });
+
+    // Save the permission
+    try {
+      await permission.save();
+      console.log(chalk.green(`Permission ${name} created successfully`));
+    } catch (error) {
+      // If the permission already exists, skip it
+      if (error.code === 11000) {
+        console.log(
+          chalk.yellow(`Permission ${name} already exists. Skipping...`)
+        );
+        continue;
+      } else {
+        console.log(error);
+      }
+    }
+  }
+};
+
+// Create the roles
+const createRoles = async () => {
+  // Loop through each role
+  for (let i = 0; i < permissionsAndRoles.roles.length; i++) {
+    // Destructure the name, description and permissions from the role
+    const { name, description, permissions } = permissionsAndRoles.roles[i];
+
+    // Create the role
+    const role = new Role({
+      name,
+      description,
+    });
+
+    // Save the role
+    try {
+      await role.save();
+      console.log(chalk.green(`Role ${name} created successfully`));
+    } catch (error) {
+      // If the role already exists, skip it
+      if (error.code === 11000) {
+        console.log(chalk.yellow(`Role ${name} already exists. Skipping...`));
+        continue;
+      } else {
+        console.log(error);
+      }
+    }
+
+    // Loop through each permission
+    for (let j = 0; j < permissions.length; j++) {
+      // Find the permission
+      const permission = await Permission.findOne({
+        name: permissions[j],
+      });
+
+      // Check if the permission exists
+      if (!permission) {
+        console.log(
+          chalk.yellow(
+            `Permission ${permissions[j]} does not exist. Skipping...`
+          )
+        );
+        continue;
+      } else {
+        // Create the role has permission
+        const roleHasPermission = new RoleHasPermission({
+          role: role._id,
+          permission: permission._id,
+        });
+
+        // Save the role has permission
+        try {
+          await roleHasPermission.save();
+          console.log(
+            chalk.green(
+              `Role has been assigned permission ${permissions[j]} successfully`
+            )
+          );
+        } catch (error) {
+          // If the role has permission already exists, skip it
+          if (error.code === 11000) {
+            console.log(
+              chalk.yellow(
+                `Role has already been assigned permission ${permissions[j]}. Skipping...`
+              )
+            );
+            continue;
+          } else {
+            console.log(error);
+          }
+        }
+      }
+    }
+  }
+};
+
+// Create the permissions and roles
+const createPermissionsAndRoles = async () => {
+  // Create the permissions
+  await createPermissions();
+
+  // Create the roles
+  await createRoles();
+};
+
+module.exports = { createPermissionsAndRoles };
