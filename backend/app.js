@@ -31,7 +31,7 @@ require("./db");
 const { DB_URI, DB_NAME } = require("./db");
 
 app.disable("X-Powered-By");
-app.set("trust proxy", true);
+app.set("trust proxy", 1);
 app.use(express.static("public"));
 
 // Sentry
@@ -91,6 +91,9 @@ const limiter = rateLimit({
     data: {
       retryAfter: 60,
     },
+  },
+  keyGenerator: function (req) {
+    return req.headers["x-forwarded-for"] || req.connection.remoteAddress;
   },
 });
 
