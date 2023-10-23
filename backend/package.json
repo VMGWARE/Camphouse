@@ -45,7 +45,7 @@
     "mongoose": "^7.6.0",
     "morgan": "^1.10.0",
     "mysql": "^2.18.1",
-    "mysql2": "^3.5.2",
+    "mysql2": "^3.6.2",
     "node-fetch": "^3.2.6",
     "papaparse": "^5.4.1",
     "qrcode": "^1.5.3",
