@@ -1,7 +1,9 @@
 <template>
   <div class="container">
+    <div class="alert alert-warning" role="alert">
+      The messages feature is not yet fully implemented.
+    </div>
     <h2>Messages</h2>
-
     <div class="row">
       <div class="col-md-3">
         <!-- Sidebar with connections -->
