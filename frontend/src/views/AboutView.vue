@@ -14,36 +14,14 @@
           </p>
         </section>
 
-        <!-- Include other sections like 'Getting Started', 'Installation', 'License', etc. -->
-
-        <section>
-          <h3>Getting Started</h3>
-          <p>
-            These instructions will get you a copy of the project up and running
-            on your local machine for development and testing purposes. See
-            deployment for notes on how to deploy the project on a live system.
-          </p>
-          <!-- Add prerequisites and installation steps -->
-        </section>
-
-        <section>
-          <h3>Roadmap</h3>
-          <p>
-            See the
-            <a
-              href="https://github.com/VMGWARE/Camphouse/issues"
-              target="_blank"
-              >open issues</a
-            >
-            for a list of proposed features (and known issues).
-          </p>
-        </section>
-
         <section>
           <h3>License</h3>
           <p>
-            Distributed under the CC BY-NC-SA 4.0 License. See LICENSE for more
-            information.
+            Distributed under the CC BY-NC-SA 4.0 License. See
+            <a href="https://github.com/VMGWARE/Camphouse/blob/main/LICENSE.md">
+              LICENSE.md
+            </a>
+            for more information.
           </p>
         </section>
 
@@ -60,7 +38,8 @@
           <h3>Contact</h3>
           <p>
             For any questions or suggestions, please feel free to contact the
-            author at developers@vmgware.dev.
+            author at
+            <a href="mailto:developers@vmgware.dev">developers@vmgware.dev</a>.
           </p>
         </section>
 
@@ -88,64 +67,68 @@
 
 <style scoped>
 .container {
-  max-width: 960px; /* Set a max-width for larger screens */
-  margin-top: 2rem; /* Spacing from the top */
+  max-width: 960px;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+  background-color: #1e1e1e; /* Dark background */
+  color: #f0f0f0; /* Light text for readability */
+  border-radius: 8px;
+  padding: 2rem;
+}
+
+h2,
+h3 {
+  border-bottom: 1px solid #2c2c2c; /* Subtle border for headings */
+  padding-bottom: 0.5rem;
 }
 
 h2 {
-  color: #333; /* Dark color for contrast */
-  font-weight: 600; /* Semi-bold for the main heading */
-  margin-bottom: 1rem; /* Spacing after the heading */
-  border-bottom: 2px solid #eee; /* Subtle bottom border */
-  padding-bottom: 0.5rem; /* Space above the border */
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
 h3 {
-  color: #555; /* Slightly lighter color for subheadings */
-  font-weight: 500; /* Medium font weight for subheadings */
-  margin-top: 1.5rem; /* Spacing above subheadings */
-  margin-bottom: 0.75rem; /* Spacing below subheadings */
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 p {
-  color: #666; /* Mild color for paragraph text */
-  line-height: 1.6; /* Line height for readability */
-  margin-bottom: 1rem; /* Spacing after each paragraph */
+  line-height: 1.6;
+  margin-bottom: 1rem;
 }
 
 a {
-  color: #007bff; /* Bootstrap primary link color */
-  text-decoration: none; /* No underline for links */
+  color: #76b900; /* Bright color for links */
+  text-decoration: none;
 }
 
 a:hover {
-  text-decoration: underline; /* Underline on hover for better UX */
+  text-decoration: underline;
+  color: #98ce00; /* Lighter shade for hover state */
 }
 
 .badges img {
-  margin: 0.5rem; /* Spacing around badges */
+  margin: 0.5rem;
 }
 
 .section {
-  padding: 1rem 0; /* Spacing inside each section */
+  padding: 1rem 0;
 }
 
-/* Add a subtle shadow to the container for depth */
-.container {
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-  background-color: #fff; /* White background for the content */
-  padding: 2rem; /* Padding inside the container */
-  border-radius: 8px; /* Rounded corners for the container */
-}
-
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .container {
-    padding: 1rem; /* Less padding on smaller screens */
+    padding: 1rem;
   }
 
   h2 {
-    font-size: 1.5rem; /* Smaller heading font size on small screens */
+    font-size: 1.5rem;
   }
+}
+
+/* Badges as far from each other as possible. On opposite sides */
+.badges {
+  display: flex;
+  justify-content: space-between;
 }
 </style>
