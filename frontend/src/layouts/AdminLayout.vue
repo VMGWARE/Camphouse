@@ -26,7 +26,13 @@
     </button>
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item active">
+        <li class="nav-item">
+          <router-link class="nav-link" to="/">
+            <i class="fas fa-home"></i>
+            Home</router-link
+          >
+        </li>
+        <li class="nav-item">
           <router-link class="nav-link" to="/admin">
             <i class="fas fa-tachometer-alt"></i>
             Dashboard</router-link
