@@ -3,6 +3,8 @@
     <div class="row">
       <div class="col-12">
         <h2>About Camphouse</h2>
+
+        <!-- What is Camphouse? -->
         <section>
           <h3>What is Camphouse?</h3>
           <p>
@@ -14,6 +16,20 @@
           </p>
         </section>
 
+        <!-- Why is Camphouse open-source? -->
+        <section>
+          <h3>Why is Camphouse open-source?</h3>
+          <p>
+            Camphouse was originally created as a proof-of-concept for former
+            friend of one of the developers. It was originally called Aqurilla
+            and was renamed in 2023 to Camphouse. The developers decided to
+            open-source the project to allow others to use it and contribute to
+            it. While keeping it under the CC BY-NC-SA 4.0 license. We can
+            prevent others from using it for commercial purposes.
+          </p>
+        </section>
+
+        <!-- License -->
         <section>
           <h3>License</h3>
           <p>
@@ -25,6 +41,7 @@
           </p>
         </section>
 
+        <!-- Contributions -->
         <section>
           <h3>Contributions</h3>
           <p>
@@ -34,6 +51,7 @@
           </p>
         </section>
 
+        <!-- Contact -->
         <section>
           <h3>Contact</h3>
           <p>
@@ -43,6 +61,7 @@
           </p>
         </section>
 
+        <!-- Badges -->
         <section class="badges my-3">
           <a
             href="https://creativecommons.org/licenses/by-nc-sa/4.0/"
