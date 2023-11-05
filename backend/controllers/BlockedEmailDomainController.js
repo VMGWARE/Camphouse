@@ -258,12 +258,14 @@ router.post("/", authenticateJWT, isAdmin, async (req, res) => {
     // Get the domain from the request body
     const domain = req.body.domain;
 
-    // If not a domain or provided
-    if (!domain) {
+    // Validate the domain format using regex
+    const domainRegex =
+      /^(?!:\/\/)([a-zA-Z0-9]+\.)?[a-zA-Z0-9][a-zA-Z0-9-]+\.[a-zA-Z]{2,6}?$/;
+    if (!domain || !domainRegex.test(domain)) {
       return res.status(400).json({
         status: "error",
         code: 400,
-        message: "Invalid domain",
+        message: "Invalid domain format",
         data: null,
       });
     }
