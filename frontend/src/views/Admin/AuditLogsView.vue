@@ -255,11 +255,25 @@ export default {
         }
       });
 
+      // Define fixed colors for each action type
+      const actionColors = {
+        ACCOUNT_LOGIN: "#007bff",
+        LIKE_CREATED: "#28a745",
+        ACCOUNT_LOGOUT: "#dc3545",
+        ACCOUNT_TOKEN_REFRESHED: "#ffc107",
+        ACCOUNT_UPDATED: "#17a2b8",
+        COMMENT_CREATED: "#6c757d",
+        ACCOUNT_CREATED: "#343a40",
+        POST_CREATED: "#6610f2",
+        POST_DELETED: "#e83e8c",
+      };
+
       const datasets = Object.keys(tempData).map((action) => {
+        console.log(action);
         return {
-          label: action.replace("_", " "),
+          label: action.replaceAll("_", " "),
           data: tempData[action],
-          borderColor: this.getRandomColor(),
+          borderColor: actionColors[action] || this.getRandomColor(),
           fill: false,
         };
       });
@@ -282,7 +296,7 @@ export default {
       for (const action in actionCounts) {
         pieLabels.push(action.replace("_", " "));
         pieData.push(actionCounts[action]);
-        pieBackgroundColors.push(this.getRandomColor());
+        pieBackgroundColors.push(actionColors[action] || this.getRandomColor());
       }
 
       this.auditLogPieChartData.labels = pieLabels;
