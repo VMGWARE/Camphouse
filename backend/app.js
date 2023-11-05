@@ -213,8 +213,8 @@ app.use((req, res) => {
   });
 });
 
-// Start listening for requests
-app.listen(port, async () => {
+// To be ran before the app starts
+const configureApplication = async () => {
   // Display the Camphouse logo
   try {
     const currentPath = path.dirname(__filename);
@@ -231,21 +231,21 @@ app.listen(port, async () => {
   // Seed the blocked email domains
   await seedBlockedEmailDomains();
 
-  // Show the version number and the port that the app is running on
-  console.log(
-    chalk.green(`🎉 Camphouse version ${getVersion()} is now running!`)
-  );
-  console.log(
-    chalk.green(`✨ Camphouse's API is now running and listening at`)
-  );
-  console.log(chalk.yellow(`🌍 http://localhost:${port}`));
-  console.log(chalk.yellow(`📚 API docs at http://localhost:${port}/api/docs`));
-});
-
-// Graceful shutdown
-process.on("SIGTERM", () => {
-  console.log(chalk.green("👋 SIGTERM signal received: closing HTTP server"));
-  app.close(() => {
-    console.log(chalk.green("📭 HTTP server closed"));
+  // Start listening for requests
+  app.listen(port, async () => {
+    // Show the version number and the port that the app is running on
+    console.log(
+      chalk.green(`🎉 Camphouse version ${getVersion()} is now running!`)
+    );
+    console.log(
+      chalk.green(`✨ Camphouse's API is now running and listening at`)
+    );
+    console.log(chalk.yellow(`🌍 http://localhost:${port}`));
+    console.log(
+      chalk.yellow(`📚 API docs at http://localhost:${port}/api/docs`)
+    );
   });
-});
+};
+
+// Configure the application
+configureApplication();
