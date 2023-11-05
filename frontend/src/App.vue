@@ -53,7 +53,13 @@
                 ><i class="fa fa-user-plus"></i> Sign Up</router-link
               >
             </li>
+            <li class="nav-item">
+              <router-link class="nav-link" to="/about">
+                <i class="fa fa-info-circle"></i> About</router-link
+              >
+            </li>
           </ul>
+
           <ul class="navbar-nav ms-auto" v-else>
             <li class="nav-item">
               <router-link class="nav-link" to="/"

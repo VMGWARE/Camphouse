@@ -64,14 +64,9 @@ const updateMetaTags = (to) => {
 const handleAuthRedirection = (to, from, next) => {
   const isLoggedIn = store.getters.loggedIn;
 
-  const authPaths = ["/login", "/signup"];
-  const publicPaths = ["/post/"]; // Define paths that are publicly accessible
+  const publicPaths = ["/login", "/signup", "/about"];
 
-  if (
-    !isLoggedIn &&
-    !authPaths.includes(to.path) &&
-    !publicPaths.some((path) => to.path.startsWith(path))
-  ) {
+  if (!isLoggedIn && !publicPaths.includes(to.path)) {
     console.log("Redirecting to login");
     return next({
       path: "/login",
@@ -79,7 +74,7 @@ const handleAuthRedirection = (to, from, next) => {
     });
   }
 
-  if (isLoggedIn && authPaths.includes(to.path)) {
+  if (isLoggedIn && publicPaths.includes(to.path)) {
     console.log("Redirecting to home");
     return next({ path: "/" });
   }

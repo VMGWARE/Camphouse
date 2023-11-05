@@ -9,6 +9,7 @@ import NotificationsView from "@/views/NotificationsView.vue";
 import SearchView from "@/views/SearchView.vue";
 import PostView from "@/views/PostView.vue";
 import NewPostView from "@/views/NewPostView.vue";
+import AboutView from "@/views/AboutView.vue";
 
 const routes = [
   {
@@ -17,6 +18,14 @@ const routes = [
     component: HomeView,
     meta: {
       title: "Home",
+    },
+  },
+  {
+    path: "/about",
+    name: "about",
+    component: AboutView,
+    meta: {
+      title: "About",
     },
   },
   {
