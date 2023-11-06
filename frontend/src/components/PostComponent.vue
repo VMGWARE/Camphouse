@@ -317,7 +317,8 @@ export default {
             close();
           },
           async onDelete() {
-            // TODO: Emit an event to the parent component
+            // Emit an event to the parent component
+            this.$emit("postDeleted", this.thisPost._id);
 
             close();
           },
