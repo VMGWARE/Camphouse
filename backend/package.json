@@ -63,7 +63,7 @@
     "eslint": "^8.52.0",
     "eslint-plugin-chai-friendly": "^0.7.2",
     "mocha": "^10.2.0",
-    "sinon": "^7.5.0",
+    "sinon": "^17.0.1",
     "sinon-mongoose": "^2.3.0"
   }
 }
