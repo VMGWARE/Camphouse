@@ -335,6 +335,16 @@ router.get("/:postId", loadUser, async (req, res) => {
     }
   }
 
+  // Check if the post exists
+  if (!post) {
+    return res.status(404).json({
+      status: "error",
+      code: 404,
+      message: "The requested post could not be found.",
+      data: null,
+    });
+  }
+
   // Convert the Mongoose document to a plain object
   const enrichedPost = post.toObject();
 
