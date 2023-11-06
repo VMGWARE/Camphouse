@@ -269,7 +269,6 @@ export default {
       };
 
       const datasets = Object.keys(tempData).map((action) => {
-        console.log(action);
         return {
           label: action.replaceAll("_", " "),
           data: tempData[action],

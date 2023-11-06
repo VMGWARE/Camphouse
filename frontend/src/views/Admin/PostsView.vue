@@ -294,6 +294,7 @@ export default {
         component: DeletePostModal,
         attrs: {
           post: post,
+          type: "admin",
           onCancel() {
             close();
           },

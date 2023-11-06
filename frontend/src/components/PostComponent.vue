@@ -65,7 +65,7 @@
             <a
               v-if="canEditOrDelete"
               class="dropdown-item fake-link custom-dropdown-item text-danger"
-              @click="deletePost"
+              @click="openDeletePostModal(thisPost)"
             >
               <i class="fas fa-trash"></i>
               Delete Post</a
@@ -154,6 +154,7 @@ import axios from "axios";
 import { mapState } from "vuex";
 import { useModal } from "vue-final-modal";
 import ModalReport from "@/components/Modal/ModalReport.vue";
+import DeletePostModal from "@/components/Modal/DeletePostModal.vue";
 
 export default {
   name: "PostComponent",
@@ -305,21 +306,25 @@ export default {
         );
       }
     },
-    async deletePost() {
-      try {
-        axios.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${this.$store.state.token}`;
-        // Implement functionality to delete the post
-        const response = await axios.delete(`/v1/posts/${this.thisPost._id}`);
-        if (response.data.code === 200) {
-          // Emit an event to the parent component
-          this.$emit("postDeleted", this.thisPost._id);
-        }
-      } catch (error) {
-        console.error("Error deleting post:", error);
-        useToast().error("Error deleting post. Please try again later.");
-      }
+    async openDeletePostModal(post) {
+      let parent = this;
+      const { open, close } = useModal({
+        component: DeletePostModal,
+        attrs: {
+          post: post,
+          type: "user",
+          onCancel() {
+            close();
+          },
+          async onDelete() {
+            // Emit an event to the parent component
+            parent.$emit("postDeleted", parent.thisPost._id);
+
+            close();
+          },
+        },
+      });
+      open();
     },
     formatDate(dateString) {
       const options = { year: "numeric", month: "long", day: "numeric" };
