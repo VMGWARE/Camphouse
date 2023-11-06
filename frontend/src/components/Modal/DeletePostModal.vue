@@ -56,10 +56,11 @@ import { VueFinalModal } from "vue-final-modal";
 import { defineProps, defineEmits, ref } from "vue";
 import axios from "axios";
 
-const props = defineProps(["post"]);
+const props = defineProps(["post", "type"]);
 const emit = defineEmits(["delete", "cancel"]);
 var processing = ref(false);
 var errorMessage = ref("");
+var endpoint = "admin";
 
 const deletePost = async (id) => {
   processing.value = true;
@@ -69,8 +70,14 @@ const deletePost = async (id) => {
       "Authorization"
     ] = `Bearer ${localStorage.getItem("token")}`;
 
+    if (props.type === "admin") {
+      endpoint = "/v1/admin/posts";
+    } else {
+      endpoint = "/v1/posts";
+    }
+
     await axios
-      .delete(`/v1/admin/posts/${id}`)
+      .delete(`${endpoint}/${id}`)
       .then(() => {
         emit("delete", id);
       })
