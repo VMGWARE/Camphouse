@@ -62,6 +62,11 @@ export default {
 
       // Remove the post with the specified _id from the posts array
       this.posts = this.posts.filter((post) => post._id !== deletedPostId);
+
+      // If no posts are left, redirect to the home page
+      if (this.posts.length === 0) {
+        this.$router.push("/");
+      }
     },
     getPosts() {
       // If we've reached the bottom, don't load more posts
