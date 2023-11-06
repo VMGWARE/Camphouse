@@ -307,7 +307,7 @@ export default {
       }
     },
     async openDeletePostModal(post) {
-      // let parent = this;
+      let parent = this;
       const { open, close } = useModal({
         component: DeletePostModal,
         attrs: {
@@ -318,7 +318,7 @@ export default {
           },
           async onDelete() {
             // Emit an event to the parent component
-            this.$emit("postDeleted", this.thisPost._id);
+            parent.$emit("postDeleted", this.thisPost._id);
 
             close();
           },
