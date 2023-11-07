@@ -64,6 +64,8 @@ const AuditLogSchema = new mongoose.Schema(
         // TFA
         "TFA_ENABLED",
         "TFA_DISABLED",
+        // Message Group
+        "GROUP_CREATED",
       ],
       index: true,
     },
