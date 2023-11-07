@@ -58,6 +58,7 @@ const UserSchema = new mongoose.Schema(
         secret_created: "",
       },
     },
+    blockedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );
