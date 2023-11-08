@@ -1813,5 +1813,308 @@ router.delete(
 );
 
 // Send message to user
+/**
+ * @swagger
+ * /api/v1/messages/direct-messages/{id}/messages:
+ *   post:
+ *     tags:
+ *       - Messages
+ *     summary: Send a message to a user
+ *     description: Send a message to a user
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the user to send a message to
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *     requestBody:
+ *       description: Message content
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: Content of the message
+ *                 example: Hello World!
+ *     responses:
+ *       200:
+ *         description: Successfully sent message to user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully sent message to user
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: object
+ *                       $ref: '#/components/schemas/Message'
+ *       400:
+ *         description: Failed to send message to user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send message to user
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: object
+ *                       properties:
+ *                         content:
+ *                           type: string
+ *                           example: Content is required.
+ *       500:
+ *         description: Failed to send message to user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send message to user
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
+router.post(
+  "/direct-messages/:id/messages",
+  authenticateJWT,
+  async (req, res) => {
+    try {
+      // Check if the req.body is empty
+      if (Object.keys(req.body).length === 0) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "No data provided.",
+          data: null,
+        });
+      }
+
+      // Define the validation rules
+      const rules = {
+        content: {
+          type: "string",
+          required: true,
+        },
+      };
+
+      // Define the validation messages
+      const messages = {
+        content: {
+          type: "Content must be a string.",
+          required: "Content is required.",
+        },
+      };
+
+      // Validate the request body
+      const validator = new Validator(rules, messages);
+      if (!validator.validate(req.body)) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "Failed to send message to user.",
+          data: {
+            errors: validator.errors,
+          },
+        });
+      }
+
+      // Find the DM
+      const dm = await DirectMessage.findOne({
+        participants: {
+          $all: [req.user._id, req.params.id],
+        },
+      });
+
+      // Check if the DM exists
+      if (!dm) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "DM does not exist.",
+          data: null,
+        });
+      }
+
+      // Create the message
+      const message = await Message.create({
+        sender: req.user._id,
+        content: req.body.content,
+      });
+
+      // Add the message to the DM
+      dm.messages.push(message._id);
+
+      // Save the DM
+      await dm.save();
+
+      // Create an audit log
+      await AuditLogService.log(
+        req.user._id,
+        "MESSAGE_SENT_TO_DM",
+        req.ipAddress,
+        null,
+        message
+      );
+
+      // Return the message
+      res.json({
+        status: "success",
+        code: 200,
+        message: "Successfully sent message to user.",
+        data: {
+          message,
+        },
+      });
+    } catch (err) {
+      res.status(400).json({
+        status: "error",
+        code: 500,
+        message: "Failed to send message to user.",
+        data: null,
+      });
+    }
+  }
+);
+
 // View list of DMs user is in (open/close)
+/**
+ * @swagger
+ * /api/v1/messages/direct-messages:
+ *   get:
+ *     tags:
+ *       - Messages
+ *     summary: Get DMs
+ *     description: Get DMs the authenticated user is in
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved DMs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully retrieved DMs
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     dms:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         $ref: '#/components/schemas/DirectMessage'
+ *       400:
+ *         description: Failed to retrieve DMs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to retrieve DMs
+ *                 data:
+ *                   type: null
+ *                   example: null
+ *       500:
+ *         description: Failed to retrieve DMs
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to retrieve DMs
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
+router.get("/direct-messages", authenticateJWT, async (req, res) => {
+  try {
+    // Find the DMs
+    const dms = await DirectMessage.find({
+      participants: req.user._id,
+    });
+
+    // Return the DMs
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully retrieved DMs.",
+      data: {
+        dms,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      code: 500,
+      message: "Failed to retrieve DMs.",
+      data: null,
+    });
+  }
+});
+
 module.exports = router;
