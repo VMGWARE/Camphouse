@@ -41,6 +41,33 @@
  *         messages: [5f0aeeb3b5476448b4f0c2b1]
  *         groupName: My Group
  *         createdAt: 2020-07-12T19:05:07.000Z
+ *     Message:
+ *       type: object
+ *       required:
+ *         - sender
+ *         - content
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The auto-generated id of the message
+ *         sender:
+ *           type: string
+ *           description: The user ID of the message sender
+ *         content:
+ *           type: string
+ *           description: Content of the message
+ *         readBy:
+ *           type: array
+ *           description: List of user IDs of the users who have read the message
+ *         createdAt:
+ *           type: string
+ *           description: The date the message was created
+ *       example:
+ *         _id: 5f0aeeb3b5476448b4f0c2b1
+ *         sender: 5f0aeeb3b5476448b4f0c2b1
+ *         content: Hello World!
+ *         readBy: [5f0aeeb3b5476448b4f0c2b1]
+ *         createdAt: 2020-07-12T19:05:07.000Z
  */
 
 const express = require("express");
@@ -755,7 +782,105 @@ router.delete("/groups/:id/leave", authenticateJWT, async (req, res) => {
   }
 });
 
-// Send message to group
+/**
+ * @swagger
+ * /api/v1/messages/groups/{id}/messages:
+ *   post:
+ *     tags:
+ *       - Messages
+ *     summary: Send a message to a group
+ *     description: Send a message to a group
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the group to send a message to
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *     requestBody:
+ *       description: Message content
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               content:
+ *                 type: string
+ *                 description: Content of the message
+ *                 example: Hello World!
+ *     responses:
+ *       200:
+ *         description: Successfully sent message to group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully sent message to group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     message:
+ *                       type: object
+ *                       $ref: '#/components/schemas/Message'
+ *       400:
+ *         description: Failed to send message to group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send message to group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: object
+ *                       properties:
+ *                         content:
+ *                           type: string
+ *                           example: Content is required.
+ *       500:
+ *         description: Failed to send message to group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to send message to group
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
 router.post("/groups/:id/messages", authenticateJWT, async (req, res) => {
   try {
     // Check if the req.body is empty
@@ -859,8 +984,6 @@ router.post("/groups/:id/messages", authenticateJWT, async (req, res) => {
     });
   }
 });
-
-// Delete message from group
 
 /**
  * @swagger
@@ -966,7 +1089,6 @@ router.get("/groups", authenticateJWT, async (req, res) => {
 
 // Open DM with user
 // Send message to user
-// Delete message from user
 // Close DM with user
 // View list of DMs user is in (open/close)
 module.exports = router;
