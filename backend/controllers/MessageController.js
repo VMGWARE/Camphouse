@@ -57,7 +57,7 @@ const Validator = require("../helpers/Validator");
 
 /**
  * @swagger
- * /api/v1/messages/group:
+ * /api/v1/messages/groups:
  *   post:
  *     tags:
  *       - Messages
@@ -147,7 +147,7 @@ const Validator = require("../helpers/Validator");
  *                   type: null
  *                   example: null
  */
-router.post("/group", authenticateJWT, async (req, res) => {
+router.post("/groups", authenticateJWT, async (req, res) => {
   try {
     // Check if the req.body is empty
     if (Object.keys(req.body).length === 0) {
@@ -225,7 +225,7 @@ router.post("/group", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/messages/group/{id}/invite:
+ * /api/v1/messages/groups/{id}/invite:
  *   post:
  *     tags:
  *       - Messages
@@ -322,7 +322,7 @@ router.post("/group", authenticateJWT, async (req, res) => {
  *                   type: null
  *                   example: null
  */
-router.post("/group/:id/invite", authenticateJWT, async (req, res) => {
+router.post("/groups/:id/invite", authenticateJWT, async (req, res) => {
   try {
     // Check if the req.body is empty
     if (Object.keys(req.body).length === 0) {
@@ -432,7 +432,7 @@ router.post("/group/:id/invite", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/messages/group/{id}/join:
+ * /api/v1/messages/groups/{id}/join:
  *   post:
  *     tags:
  *       - Messages
@@ -517,7 +517,7 @@ router.post("/group/:id/invite", authenticateJWT, async (req, res) => {
  *                   type: null
  *                   example: null
  */
-router.post("/group/:id/join", authenticateJWT, async (req, res) => {
+router.post("/groups/:id/join", authenticateJWT, async (req, res) => {
   try {
     // Find the group
     const group = await GroupMessage.findById(req.params.id);
@@ -596,7 +596,7 @@ router.post("/group/:id/join", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
- * /api/v1/messages/group/{id}/leave:
+ * /api/v1/messages/groups/{id}/leave:
  *   delete:
  *     tags:
  *       - Messages
@@ -681,7 +681,7 @@ router.post("/group/:id/join", authenticateJWT, async (req, res) => {
  *                   type: null
  *                   example: null
  */
-router.delete("/group/:id/leave", authenticateJWT, async (req, res) => {
+router.delete("/groups/:id/leave", authenticateJWT, async (req, res) => {
   try {
     // Find the group
     const group = await GroupMessage.findById(req.params.id);
@@ -753,7 +753,108 @@ router.delete("/group/:id/leave", authenticateJWT, async (req, res) => {
 });
 
 // Send message to group
-// View list of groups user is in
+
+/**
+ * @swagger
+ * /api/v1/messages/groups:
+ *   get:
+ *     tags:
+ *       - Messages
+ *     summary: Get groups
+ *     description: Get groups the authenticated user is in
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved groups
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully retrieved groups
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     groups:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         $ref: '#/components/schemas/GroupMessage'
+ *       400:
+ *         description: Failed to retrieve groups
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to retrieve groups
+ *                 data:
+ *                   type: null
+ *                   example: null
+ *       500:
+ *         description: Failed to retrieve groups
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to retrieve groups
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
+router.get("/groups", authenticateJWT, async (req, res) => {
+  try {
+    // Find the groups
+    const groups = await GroupMessage.find({
+      participants: req.user._id,
+    });
+
+    // Return the groups
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully retrieved groups.",
+      data: {
+        groups,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      code: 500,
+      message: "Failed to retrieve groups.",
+      data: null,
+    });
+  }
+});
 
 // Open DM with user
 // Send message to user
