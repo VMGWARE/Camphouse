@@ -987,6 +987,200 @@ router.post("/groups/:id/messages", authenticateJWT, async (req, res) => {
 
 /**
  * @swagger
+ * /api/v1/messages/groups/{id}/messages/{messageId}:
+ *   delete:
+ *     tags:
+ *       - Messages
+ *     summary: Delete a message from a group
+ *     description: Delete a message from a group
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the group to delete a message from
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *       - name: messageId
+ *         in: path
+ *         required: true
+ *         description: ID of the message to delete from the group
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *     responses:
+ *       200:
+ *         description: Successfully deleted message from group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully deleted message from group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     group:
+ *                       type: object
+ *                       $ref: '#/components/schemas/GroupMessage'
+ *       400:
+ *         description: Failed to delete message from group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to delete message from group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: Invalid ID.
+ *       500:
+ *         description: Failed to delete message from group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to delete message from group
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
+router.delete(
+  "/groups/:id/messages/:messageId",
+  authenticateJWT,
+  async (req, res) => {
+    try {
+      // Find the group
+      const group = await GroupMessage.findById(req.params.id);
+
+      // Check if the group exists
+      if (!group) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "Group does not exist.",
+          data: null,
+        });
+      }
+
+      // Check if the user is in the group
+      if (!group.participants.includes(req.user._id)) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "You are not in this group.",
+          data: null,
+        });
+      }
+
+      // Find the message
+      const message = await Message.findById(req.params.messageId);
+
+      // Check if the message exists
+      if (!message) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "Message does not exist.",
+          data: null,
+        });
+      }
+
+      // Check if the message is in the group
+      if (!group.messages.includes(message._id)) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "Message is not in this group.",
+          data: null,
+        });
+      }
+
+      // Check if the user is the sender of the message
+      if (message.sender.toString() !== req.user._id.toString()) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "You are not the sender of this message.",
+          data: null,
+        });
+      }
+
+      // Remove the message from the group
+      group.messages = group.messages.filter(
+        (message) => message.toString() !== req.params.messageId.toString()
+      );
+
+      // Save the group
+      await group.save();
+
+      // Delete the message
+      await message.delete();
+
+      // Create an audit log
+      await AuditLogService.log(
+        req.user._id,
+        "MESSAGE_DELETED_FROM_GROUP",
+        req.ipAddress,
+        null,
+        message
+      );
+
+      // Return the group
+      res.json({
+        status: "success",
+        code: 200,
+        message: "Successfully deleted message from group.",
+        data: {
+          group,
+        },
+      });
+    } catch (err) {
+      res.status(400).json({
+        status: "error",
+        code: 500,
+        message: "Failed to delete message from group.",
+        data: null,
+      });
+    }
+  }
+);
+
+/**
+ * @swagger
  * /api/v1/messages/groups:
  *   get:
  *     tags:
