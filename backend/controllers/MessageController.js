@@ -45,6 +45,7 @@
 
 const express = require("express");
 const GroupMessage = require("../models/GroupMessage");
+const Message = require("../models/Message");
 const router = express.Router();
 
 // Middleware
@@ -222,6 +223,8 @@ router.post("/groups", authenticateJWT, async (req, res) => {
     });
   }
 });
+
+// TODO: Delete group
 
 /**
  * @swagger
@@ -753,6 +756,111 @@ router.delete("/groups/:id/leave", authenticateJWT, async (req, res) => {
 });
 
 // Send message to group
+router.post("/groups/:id/messages", authenticateJWT, async (req, res) => {
+  try {
+    // Check if the req.body is empty
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "No data provided.",
+        data: null,
+      });
+    }
+
+    // Define the validation rules
+    const rules = {
+      content: {
+        type: "string",
+        required: true,
+      },
+    };
+
+    // Define the validation messages
+    const messages = {
+      content: {
+        type: "Content must be a string.",
+        required: "Content is required.",
+      },
+    };
+
+    // Validate the request body
+    const validator = new Validator(rules, messages);
+    if (!validator.validate(req.body)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Failed to send message to group.",
+        data: {
+          errors: validator.errors,
+        },
+      });
+    }
+
+    // Find the group
+    const group = await GroupMessage.findById(req.params.id);
+
+    // Check if the group exists
+    if (!group) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Group does not exist.",
+        data: null,
+      });
+    }
+
+    // Check if the user is in the group
+    if (!group.participants.includes(req.user._id)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "You are not in this group.",
+        data: null,
+      });
+    }
+
+    // Create the message
+    const message = await Message.create({
+      sender: req.user._id,
+      content: req.body.content,
+    });
+
+    // Add the message to the group
+    group.messages.push(message._id);
+
+    // Save the group
+    await group.save();
+
+    // Create an audit log
+    await AuditLogService.log(
+      req.user._id,
+      "MESSAGE_SENT_TO_GROUP",
+      req.ipAddress,
+      null,
+      message
+    );
+
+    // Return the message
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully sent message to group.",
+      data: {
+        message,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      code: 500,
+      message: "Failed to send message to group.",
+      data: null,
+    });
+  }
+});
+
+// Delete message from group
 
 /**
  * @swagger
