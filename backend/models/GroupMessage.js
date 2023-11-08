@@ -22,6 +22,9 @@ const GroupMessageSchema = new mongoose.Schema({
       },
     },
   ],
+  settings: {
+    isPrivate: { type: Boolean, default: false },
+  },
 });
 
 module.exports = mongoose.model("GroupMessage", GroupMessageSchema);

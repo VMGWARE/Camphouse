@@ -223,8 +223,377 @@ router.post("/group", authenticateJWT, async (req, res) => {
   }
 });
 
-// Invite user to group
-// Join group
+/**
+ * @swagger
+ * /api/v1/messages/group/{id}/invite:
+ *   post:
+ *     tags:
+ *       - Messages
+ *     summary: Invite a user to a group
+ *     description: Invite a user to a group
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the group to invite user to
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *     requestBody:
+ *       description: User ID of the user to invite to the group
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: User ID of the user to invite to the group
+ *                 example: 5f0aeeb3b5476448b4f0c2b1
+ *     responses:
+ *       200:
+ *         description: Successfully invited user to group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully invited user to group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     group:
+ *                       type: object
+ *                       $ref: '#/components/schemas/GroupMessage'
+ *       400:
+ *         description: Failed to invite user to group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to invite user to group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: object
+ *                       properties:
+ *                         userId:
+ *                           type: string
+ *                           example: User ID is required.
+ *       500:
+ *         description: Failed to invite user to group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to invite user to group
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
+router.post("/group/:id/invite", authenticateJWT, async (req, res) => {
+  try {
+    // Check if the req.body is empty
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "No data provided.",
+        data: null,
+      });
+    }
+
+    // Define the validation rules
+    const rules = {
+      userId: {
+        type: "string",
+        required: true,
+      },
+    };
+
+    // Define the validation messages
+    const messages = {
+      userId: {
+        type: "User ID must be a string.",
+        required: "User ID is required.",
+      },
+    };
+
+    // Validate the request body
+    const validator = new Validator(rules, messages);
+    if (!validator.validate(req.body)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Failed to invite user to group.",
+        data: {
+          errors: validator.errors,
+        },
+      });
+    }
+
+    // Find the group
+    const group = await GroupMessage.findById(req.params.id);
+
+    // Check if the group exists
+    if (!group) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Group does not exist.",
+        data: null,
+      });
+    }
+
+    // Check if the authenticated user is the owner of the group
+    if (group.owner.toString() !== req.user._id.toString()) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "You are not the owner of this group.",
+        data: null,
+      });
+    }
+
+    // Check if the user is already in the group
+    if (group.participants.includes(req.body.userId)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "User is already in the group.",
+        data: null,
+      });
+    }
+
+    // Add the user to the group
+    group.participants.push(req.body.userId);
+
+    // Save the group
+    await group.save();
+
+    // Create an audit log
+    await AuditLogService.log(
+      req.user._id,
+      "USER_INVITED_TO_GROUP",
+      req.ipAddress,
+      null,
+      group
+    );
+
+    // Return the group
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully invited user to group.",
+      data: {
+        group,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      code: 500,
+      message: "Failed to invite user to group.",
+      data: null,
+    });
+  }
+});
+
+/**
+ * @swagger
+ * /api/v1/messages/group/{id}/join:
+ *   post:
+ *     tags:
+ *       - Messages
+ *     summary: Join a group
+ *     description: Join a group
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the group to join
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *     responses:
+ *       200:
+ *         description: Successfully joined group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully joined group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     group:
+ *                       type: object
+ *                       $ref: '#/components/schemas/GroupMessage'
+ *       400:
+ *         description: Failed to join group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to join group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: Invalid ID.
+ *       500:
+ *         description: Failed to join group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to join group
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
+router.post("/group/:id/join", authenticateJWT, async (req, res) => {
+  try {
+    // Find the group
+    const group = await GroupMessage.findById(req.params.id);
+
+    // Check if the group exists
+    if (!group) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Group does not exist.",
+        data: null,
+      });
+    }
+
+    // Check if the user is already in the group
+    if (group.participants.includes(req.user._id)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "You are already in the group.",
+        data: null,
+      });
+    }
+
+    // Check if the group is private, if so, check if the user has been invited
+    if (group.settings.isPrivate) {
+      // Check if the user has been invited
+      const invited = group.invites.find(
+        (invite) => invite.user.toString() === req.user._id.toString()
+      );
+
+      // Check if the user has been invited
+      if (!invited) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "You have not been invited to this group.",
+          data: null,
+        });
+      }
+    }
+
+    // Add the user to the group
+    group.participants.push(req.user._id);
+
+    // Save the group
+    await group.save();
+
+    // Create an audit log
+    await AuditLogService.log(
+      req.user._id,
+      "USER_JOINED_GROUP",
+      req.ipAddress,
+      null,
+      group
+    );
+
+    // Return the group
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully joined group.",
+      data: {
+        group,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      code: 500,
+      message: "Failed to join group.",
+      data: null,
+    });
+  }
+});
+
 // Leave group
 // Send message to group
 // View list of groups user is in
