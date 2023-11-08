@@ -199,6 +199,10 @@ app.use("/api/v1/audit-logs", AuditLogController);
 const options = require("./configs/swagger");
 const specs = swaggerJsdoc(options);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(specs));
+app.get("/api/docs.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(specs);
+});
 
 // The error handler must be registered before any other error middleware and after all controllers
 app.use(Sentry.Handlers.errorHandler());
