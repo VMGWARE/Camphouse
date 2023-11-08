@@ -594,7 +594,164 @@ router.post("/group/:id/join", authenticateJWT, async (req, res) => {
   }
 });
 
-// Leave group
+/**
+ * @swagger
+ * /api/v1/messages/group/{id}/leave:
+ *   delete:
+ *     tags:
+ *       - Messages
+ *     summary: Leave a group
+ *     description: Leave a group
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the group to leave
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *     responses:
+ *       200:
+ *         description: Successfully left group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully left group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     group:
+ *                       type: object
+ *                       $ref: '#/components/schemas/GroupMessage'
+ *       400:
+ *         description: Failed to leave group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to leave group
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     errors:
+ *                       type: object
+ *                       properties:
+ *                         id:
+ *                           type: string
+ *                           example: Invalid ID.
+ *       500:
+ *         description: Failed to leave group
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 500
+ *                 message:
+ *                   type: string
+ *                   example: Failed to leave group
+ *                 data:
+ *                   type: null
+ *                   example: null
+ */
+router.delete("/group/:id/leave", authenticateJWT, async (req, res) => {
+  try {
+    // Find the group
+    const group = await GroupMessage.findById(req.params.id);
+
+    // Check if the group exists
+    if (!group) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Group does not exist.",
+        data: null,
+      });
+    }
+
+    // Check if the user is the owner of the group
+    if (group.owner.toString() === req.user._id.toString()) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "You are the owner of this group.",
+        data: null,
+      });
+    }
+
+    // Check if the user is in the group
+    if (!group.participants.includes(req.user._id)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "You are not in this group.",
+        data: null,
+      });
+    }
+
+    // Remove the user from the group
+    group.participants = group.participants.filter(
+      (participant) => participant.toString() !== req.user._id.toString()
+    );
+
+    // Save the group
+    await group.save();
+
+    // Create an audit log
+    await AuditLogService.log(
+      req.user._id,
+      "USER_LEFT_GROUP",
+      req.ipAddress,
+      null,
+      group
+    );
+
+    // Return the group
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully left group.",
+      data: {
+        group,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      code: 500,
+      message: "Failed to leave group.",
+      data: null,
+    });
+  }
+});
+
 // Send message to group
 // View list of groups user is in
 
