@@ -68,9 +68,36 @@
  *         content: Hello World!
  *         readBy: [5f0aeeb3b5476448b4f0c2b1]
  *         createdAt: 2020-07-12T19:05:07.000Z
+ *     DirectMessage:
+ *       type: object
+ *       required:
+ *         - participants
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: The auto-generated id of the direct message
+ *         participants:
+ *           type: array
+ *           description: List of user IDs of the direct message participants
+ *         messages:
+ *           type: array
+ *           description: List of message IDs of the direct messages
+ *         isOpen:
+ *           type: boolean
+ *           description: Whether or not the direct message is open
+ *         createdAt:
+ *           type: string
+ *           description: The date the direct message was created
+ *       example:
+ *         _id: 5f0aeeb3b5476448b4f0c2b1
+ *         participants: [5f0aeeb3b5476448b4f0c2b1]
+ *         messages: [5f0aeeb3b5476448b4f0c2b1]
+ *         isOpen: true
+ *         createdAt: 2020-07-12T19:05:07.000Z
  */
 
 const express = require("express");
+const DirectMessage = require("../models/DirectMessage");
 const GroupMessage = require("../models/GroupMessage");
 const Message = require("../models/Message");
 const router = express.Router();
@@ -1281,8 +1308,510 @@ router.get("/groups", authenticateJWT, async (req, res) => {
   }
 });
 
+// Create DM with user
+// Creating a DM allows the user to send messages to the other user
+/**
+ * @swagger
+ * /api/v1/messages/direct-messages:
+ *   post:
+ *     tags:
+ *       - Messages
+ *     summary: Create a DM with a user
+ *     description: Create a DM with a user
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       description: User ID of the user to create a DM with
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               userId:
+ *                 type: string
+ *                 description: User ID of the user to create a DM with
+ *                 example: 5f0aeeb3b5476448b4f0c2b1
+ *     responses:
+ *       200:
+ *         description: Successfully created DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                    type: string
+ *                    example: success
+ *                 code:
+ *                    type: integer
+ *                    example: 200
+ *                 message:
+ *                    type: string
+ *                    example: Successfully created DM with user
+ *                 data:
+ *                    type: object
+ *                    properties:
+ *                      dm:
+ *                        type: object
+ *                        $ref: '#/components/schemas/DirectMessage'
+ *       400:
+ *         description: Failed to create DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                    type: string
+ *                    example: error
+ *                 code:
+ *                    type: integer
+ *                    example: 400
+ *                 message:
+ *                    type: string
+ *                    example: Failed to create DM with user
+ *                 data:
+ *                    type: object
+ *                    properties:
+ *                      errors:
+ *                        type: object
+ *                        properties:
+ *                          userId:
+ *                            type: string
+ *                            example: User ID is required.
+ *       500:
+ *         description: Failed to create DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                    type: string
+ *                    example: error
+ *                 code:
+ *                    type: integer
+ *                    example: 500
+ *                 message:
+ *                    type: string
+ *                    example: Failed to create DM with user
+ *                 data:
+ *                    type: null
+ *                    example: null
+ */
+router.post("/direct-messages", authenticateJWT, async (req, res) => {
+  try {
+    // Check if the req.body is empty
+    if (Object.keys(req.body).length === 0) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "No data provided.",
+        data: null,
+      });
+    }
+
+    // Define the validation rules
+    const rules = {
+      userId: {
+        type: "string",
+        required: true,
+      },
+    };
+
+    // Define the validation messages
+    const messages = {
+      userId: {
+        type: "User ID must be a string.",
+        required: "User ID is required.",
+      },
+    };
+
+    // Validate the request body
+    const validator = new Validator(rules, messages);
+    if (!validator.validate(req.body)) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "Failed to create DM with user.",
+        data: {
+          errors: validator.errors,
+        },
+      });
+    }
+
+    // Find the user
+    const user = await User.findById(req.body.userId);
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "User does not exist.",
+        data: null,
+      });
+    }
+
+    // Check if the user is trying to DM themselves
+    if (user._id.toString() === req.user._id.toString()) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "You cannot DM yourself.",
+        data: null,
+      });
+    }
+
+    // Find the DM
+    const dm = await DirectMessage.findOne({
+      participants: {
+        $all: [req.user._id, req.body.userId],
+      },
+    });
+
+    // Check if the DM already exists
+    if (dm) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "DM already exists.",
+        data: null,
+      });
+    }
+
+    // Create the DM
+    const createdDm = await DirectMessage.create({
+      participants: [req.user._id, req.body.userId],
+    });
+
+    // Create an audit log
+    await AuditLogService.log(
+      req.user._id,
+      "DM_CREATED",
+      req.ipAddress,
+      null,
+      createdDm
+    );
+
+    // Return the DM
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully created DM with user.",
+      data: {
+        dm: createdDm,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      code: 500,
+      message: "Failed to create DM with user.",
+      data: null,
+    });
+  }
+});
+
 // Open DM with user
-// Send message to user
+// Opening a DM means that the user will receive notifications for the DM
+/**
+ * @swagger
+ * /api/v1/messages/direct-messages/{id}/open:
+ *   post:
+ *     tags:
+ *       - Messages
+ *     summary: Open a DM with a user
+ *     description: Open a DM with a user
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the user to open a DM with
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *     responses:
+ *       200:
+ *         description: Successfully opened DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: success
+ *                 code:
+ *                   type: integer
+ *                   example: 200
+ *                 message:
+ *                   type: string
+ *                   example: Successfully opened DM with user
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     dm:
+ *                       type: object
+ *                       $ref: '#/components/schemas/DirectMessage'
+ *       400:
+ *         description: Failed to open DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                   type: string
+ *                   example: error
+ *                 code:
+ *                   type: integer
+ *                   example: 400
+ *                 message:
+ *                   type: string
+ *                   example: Failed to open DM with user
+ *                 data:
+ *                   type: null
+ *                   example: null
+ *       500:
+ *         description: Failed to open DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                    type: string
+ *                    example: error
+ *                 code:
+ *                    type: integer
+ *                    example: 500
+ *                 message:
+ *                    type: string
+ *                    example: Failed to open DM with user
+ *                 data:
+ *                    type: null
+ *                    example: null
+ */
+router.post("/direct-messages/:id/open", authenticateJWT, async (req, res) => {
+  try {
+    // Find the DM
+    const dm = await DirectMessage.findOne({
+      participants: {
+        $all: [req.user._id, req.params.id],
+      },
+    });
+
+    // Check if the DM exists
+    if (!dm) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "DM does not exist.",
+        data: null,
+      });
+    }
+
+    // Check if the DM is already open
+    if (dm.isOpen) {
+      return res.status(400).json({
+        status: "error",
+        code: 400,
+        message: "DM is already open.",
+        data: null,
+      });
+    }
+
+    // Open the DM
+    dm.isOpen = true;
+
+    // Save the DM
+    await dm.save();
+
+    // Create an audit log
+    await AuditLogService.log(
+      req.user._id,
+      "DM_OPENED",
+      req.ipAddress,
+      null,
+      dm
+    );
+
+    // Return the DM
+    res.json({
+      status: "success",
+      code: 200,
+      message: "Successfully opened DM.",
+      data: {
+        dm,
+      },
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "error",
+      code: 500,
+      message: "Failed to open DM.",
+      data: null,
+    });
+  }
+});
+
 // Close DM with user
+// Closing a DM means that the user will no longer receive notifications for the DM, but the DM will still exist
+/**
+ * @swagger
+ * /api/v1/messages/direct-messages/{id}/close:
+ *   delete:
+ *     tags:
+ *       - Messages
+ *     summary: Close a DM with a user
+ *     description: Close a DM with a user
+ *     produces:
+ *       - application/json
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID of the user to close a DM with
+ *         type: string
+ *         example: 5f0aeeb3b5476448b4f0c2b1
+ *     responses:
+ *       200:
+ *         description: Successfully closed DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                    type: string
+ *                    example: success
+ *                 code:
+ *                    type: integer
+ *                    example: 200
+ *                 message:
+ *                    type: string
+ *                    example: Successfully closed DM with user
+ *                 data:
+ *                    type: object
+ *                    properties:
+ *                      dm:
+ *                        type: object
+ *                        $ref: '#/components/schemas/DirectMessage'
+ *       400:
+ *         description: Failed to close DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                    type: string
+ *                    example: error
+ *                 code:
+ *                    type: integer
+ *                    example: 400
+ *                 message:
+ *                    type: string
+ *                    example: Failed to close DM with user
+ *                 data:
+ *                    type: null
+ *                    example: null
+ *       500:
+ *         description: Failed to close DM with user
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 status:
+ *                    type: string
+ *                    example: error
+ *                 code:
+ *                    type: integer
+ *                    example: 500
+ *                 message:
+ *                    type: string
+ *                    example: Failed to close DM with user
+ *                 data:
+ *                    type: null
+ *                    example: null
+ */
+router.delete(
+  "/direct-messages/:id/close",
+  authenticateJWT,
+  async (req, res) => {
+    try {
+      // Find the DM
+      const dm = await DirectMessage.findOne({
+        participants: {
+          $all: [req.user._id, req.params.id],
+        },
+      });
+
+      // Check if the DM exists
+      if (!dm) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "DM does not exist.",
+          data: null,
+        });
+      }
+
+      // Check if the DM is already closed
+      if (!dm.isOpen) {
+        return res.status(400).json({
+          status: "error",
+          code: 400,
+          message: "DM is already closed.",
+          data: null,
+        });
+      }
+
+      // Close the DM
+      dm.isOpen = false;
+
+      // Save the DM
+      await dm.save();
+
+      // Create an audit log
+      await AuditLogService.log(
+        req.user._id,
+        "DM_CLOSED",
+        req.ipAddress,
+        null,
+        dm
+      );
+
+      // Return the DM
+      res.json({
+        status: "success",
+        code: 200,
+        message: "Successfully closed DM.",
+        data: {
+          dm,
+        },
+      });
+    } catch (err) {
+      res.status(400).json({
+        status: "error",
+        code: 500,
+        message: "Failed to close DM.",
+        data: null,
+      });
+    }
+  }
+);
+
+// Send message to user
 // View list of DMs user is in (open/close)
 module.exports = router;
