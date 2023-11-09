@@ -7,14 +7,14 @@
           <button class="btn btn-primary btn-sm">+</button>
         </h3>
         <ul class="message-group-list dark-list">
-          <li class="group-item dark-item active">
-            <span class="group-name">4 Chads</span>
-            <span class="message-preview">
-              Doc: Have ya'll seen the latest SSniperWolf stuff!!
+          <li
+            class="group-item dark-item"
+            :key="group._id"
+            v-for="group in groups"
+          >
+            <span class="group-name">
+              {{ group.name }}
             </span>
-          </li>
-          <li class="group-item dark-item">
-            <span class="group-name">Work Project</span>
             <span class="message-preview">Bob: Updated the design doc.</span>
           </li>
         </ul>
@@ -212,3 +212,38 @@
   background-color: #555555;
 }
 </style>
+
+<script>
+import axios from "axios";
+
+export default {
+  data() {
+    return {
+      groups: [],
+    };
+  },
+  computed: {
+    sortedMessages() {
+      return [...this.messages].sort(
+        (a, b) => new Date(a.createdAt) - new Date(b.createdAt)
+      );
+    },
+  },
+  methods: {
+    async fetchGroups() {
+      try {
+        axios.defaults.headers.common[
+          "Authorization"
+        ] = `Bearer ${localStorage.getItem("token")}`;
+        const response = await axios.get("/v1/messages/groups");
+        this.groups = response.data.data.groups;
+      } catch (error) {
+        console.error("Error fetching groups:", error);
+      }
+    },
+  },
+  created() {
+    this.fetchGroups();
+  },
+};
+</script>

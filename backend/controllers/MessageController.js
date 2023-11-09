@@ -14,7 +14,7 @@
  *       required:
  *         - owner
  *         - participants
- *         - groupName
+ *         - name
  *       properties:
  *         _id:
  *           type: string
@@ -28,7 +28,7 @@
  *         messages:
  *           type: array
  *           description: List of message IDs of the group messages
- *         groupName:
+ *         name:
  *           type: string
  *           description: Name of the group message
  *         createdAt:
@@ -39,7 +39,7 @@
  *         owner: 5f0aeeb3b5476448b4f0c2b1
  *         participants: [5f0aeeb3b5476448b4f0c2b1]
  *         messages: [5f0aeeb3b5476448b4f0c2b1]
- *         groupName: My Group
+ *         name: My Group
  *         createdAt: 2020-07-12T19:05:07.000Z
  *     Message:
  *       type: object
@@ -247,7 +247,7 @@ router.post("/groups", authenticateJWT, async (req, res) => {
     const group = await GroupMessage.create({
       owner: req.user._id,
       participants: [req.user._id],
-      groupName: req.body.name,
+      name: req.body.name,
     });
 
     // Create an audit log

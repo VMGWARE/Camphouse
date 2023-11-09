@@ -9,7 +9,7 @@ const GroupMessageSchema = new mongoose.Schema({
     { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   ],
   messages: [{ type: mongoose.Schema.Types.ObjectId, ref: "Message" }],
-  groupName: { type: String, required: true },
+  name: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   invites: [
     {
