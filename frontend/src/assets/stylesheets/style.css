@@ -43,6 +43,12 @@ body {
   background-color: #555555;
 }
 
+textarea::-webkit-resizer {
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent orangered orangered transparent;
+}
+
 /* Scroll speed should be a bit slower */
 .scrollable-feed {
   scroll-behavior: smooth;

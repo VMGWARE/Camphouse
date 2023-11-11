@@ -5,8 +5,7 @@
     <div class="row mt-3">
       <div class="col">
         <!-- Profile Picture Card -->
-        <div class="card">
-          <h5 class="card-title">Profile Picture</h5>
+        <div class="card mb-3 profile-picture-card text-center">
           <div class="card-body">
             <!-- Display current profile picture -->
             <div v-if="currentUser && currentUser.profilePicture">
@@ -14,15 +13,15 @@
                 :src="currentUser.profilePicture"
                 alt="Profile Picture"
                 class="img-thumbnail"
-                width="80"
-                height="80"
               />
             </div>
 
             <!-- Form to upload new profile picture -->
             <form @submit.prevent="uploadProfilePicture">
               <div class="form-group mt-3">
-                <label for="profilePicture">Upload Profile Picture</label>
+                <label class="form-control-file-label" for="profilePicture"
+                  >Upload Profile Picture</label
+                >
                 <br />
                 <input
                   type="file"
@@ -241,8 +240,8 @@
   padding: 0;
   border: 0;
   background-color: #222222;
-  width: 80px;
-  height: 80px;
+  max-width: 200px;
+  max-height: 200px;
 }
 </style>
 
