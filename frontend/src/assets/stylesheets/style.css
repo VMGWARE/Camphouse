@@ -602,3 +602,13 @@ img-tag {
   display: flex;
   flex-direction: column;
 }
+
+/* style file upload input */
+.form-control-file {
+  /* Lighter color */
+  color: #ffffff;
+  background-color: #333333;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+}
