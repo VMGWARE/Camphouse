@@ -1,202 +1,222 @@
 <template>
-  <div class="container">
+  <div class="m-3">
     <h2>Settings</h2>
 
-    <!-- Profile Picture Card -->
-    <div class="card">
-      <h5 class="card-title">Profile Picture</h5>
-      <div class="card-body">
-        <!-- Display current profile picture -->
-        <div v-if="currentUser && currentUser.profilePicture">
-          <img
-            :src="currentUser.profilePicture"
-            alt="Profile Picture"
-            class="img-thumbnail"
-            width="80"
-            height="80"
-          />
+    <div class="row mt-3">
+      <div class="col">
+        <!-- Profile Picture Card -->
+        <div class="card mb-3 profile-picture-card text-center">
+          <div class="card-body">
+            <!-- Display current profile picture -->
+            <div v-if="currentUser && currentUser.profilePicture">
+              <img
+                :src="currentUser.profilePicture"
+                alt="Profile Picture"
+                class="img-thumbnail"
+              />
+            </div>
+
+            <!-- Form to upload new profile picture -->
+            <form @submit.prevent="uploadProfilePicture">
+              <div class="form-group mt-3">
+                <label class="form-control-file-label" for="profilePicture"
+                  >Upload Profile Picture</label
+                >
+                <br />
+                <input
+                  type="file"
+                  class="form-control-file"
+                  id="profilePicture"
+                  @change="onFileChange"
+                  accept="image/*"
+                />
+                <div class="invalid-feedback" v-if="errors.profilePicture">
+                  {{ errors.profilePicture }}
+                </div>
+              </div>
+              <br />
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="processing"
+              >
+                <span v-if="processing">
+                  <i class="fas fa-spinner fa-spin"></i> Uploading...
+                </span>
+                <span v-else>Upload</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div class="col">
+        <!-- General Settings Form -->
+        <div class="card">
+          <h5 class="card-title">General</h5>
+          <div class="card-body">
+            <form @submit.prevent="saveGeneralSettings">
+              <div class="form-group">
+                <label for="handle">Handle</label>
+                <input
+                  type="text"
+                  class="form-control dark-card"
+                  id="handle"
+                  v-model="this.currentUser.handle"
+                  placeholder="Enter your handle"
+                  pattern="[A-Za-z0-9]+"
+                  title="Only letters and numbers are allowed"
+                  :class="{ 'is-invalid': errors.handle }"
+                  maxlength="32"
+                />
+                <div class="invalid-feedback" v-if="errors.handle">
+                  {{ errors.handle }}
+                </div>
+              </div>
+              <br />
+              <div class="form-group">
+                <label for="username">Username</label>
+                <input
+                  type="text"
+                  class="form-control dark-card"
+                  id="username"
+                  v-model="this.currentUser.username"
+                  placeholder="Enter your username"
+                  :class="{ 'is-invalid': errors.username }"
+                  maxlength="32"
+                />
+                <div class="invalid-feedback" v-if="errors.username">
+                  {{ errors.username }}
+                </div>
+              </div>
+              <br />
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input
+                  type="email"
+                  class="form-control dark-card"
+                  id="email"
+                  v-model="this.currentUser.email"
+                  placeholder="Enter your email"
+                  :class="{ 'is-invalid': errors.email }"
+                />
+                <div class="invalid-feedback" v-if="errors.email">
+                  {{ errors.email }}
+                </div>
+              </div>
+              <br />
+              <div class="form-group">
+                <label for="bio">Bio</label>
+                <textarea
+                  class="form-control dark-card"
+                  id="bio"
+                  v-model="this.currentUser.bio"
+                  rows="3"
+                  placeholder="Enter your bio"
+                  :class="{ 'is-invalid': errors.bio }"
+                  maxlength="255"
+                ></textarea>
+                <div class="invalid-feedback" v-if="errors.bio">
+                  {{ errors.bio }}
+                </div>
+              </div>
+              <br />
+              <button
+                type="submit"
+                class="btn btn-primary"
+                :disabled="processing"
+              >
+                <span v-if="processing">
+                  <i class="fas fa-spinner fa-spin"></i> Saving...</span
+                >
+                <span v-else>Save Changes</span>
+              </button>
+              <button
+                type="button"
+                class="btn btn-primary mx-2"
+                @click="fetchUserInfo"
+              >
+                Reset
+              </button>
+              <br />
+              <div class="alert alert-success mt-3" v-if="hasSaved">
+                Your changes have been saved.
+              </div>
+            </form>
+          </div>
         </div>
 
-        <!-- Form to upload new profile picture -->
-        <form @submit.prevent="uploadProfilePicture">
-          <div class="form-group mt-3">
-            <label for="profilePicture">Upload Profile Picture</label>
-            <br />
-            <input
-              type="file"
-              class="form-control-file"
-              id="profilePicture"
-              @change="onFileChange"
-              accept="image/*"
-            />
-            <div class="invalid-feedback" v-if="errors.profilePicture">
-              {{ errors.profilePicture }}
-            </div>
-          </div>
-          <br />
-          <button type="submit" class="btn btn-primary" :disabled="processing">
-            <span v-if="processing">
-              <i class="fas fa-spinner fa-spin"></i> Uploading...
-            </span>
-            <span v-else>Upload</span>
-          </button>
-        </form>
-      </div>
-    </div>
+        <!-- Privacy Settings Form -->
 
-    <!-- General Settings Form -->
-    <div class="card">
-      <h5 class="card-title">General</h5>
-      <div class="card-body">
-        <form @submit.prevent="saveGeneralSettings">
-          <div class="form-group">
-            <label for="handle">Handle</label>
-            <input
-              type="text"
-              class="form-control dark-card"
-              id="handle"
-              v-model="this.currentUser.handle"
-              placeholder="Enter your handle"
-              pattern="[A-Za-z0-9]+"
-              title="Only letters and numbers are allowed"
-              :class="{ 'is-invalid': errors.handle }"
-              maxlength="32"
-            />
-            <div class="invalid-feedback" v-if="errors.handle">
-              {{ errors.handle }}
-            </div>
-          </div>
-          <br />
-          <div class="form-group">
-            <label for="username">Username</label>
-            <input
-              type="text"
-              class="form-control dark-card"
-              id="username"
-              v-model="this.currentUser.username"
-              placeholder="Enter your username"
-              :class="{ 'is-invalid': errors.username }"
-              maxlength="32"
-            />
-            <div class="invalid-feedback" v-if="errors.username">
-              {{ errors.username }}
-            </div>
-          </div>
-          <br />
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input
-              type="email"
-              class="form-control dark-card"
-              id="email"
-              v-model="this.currentUser.email"
-              placeholder="Enter your email"
-              :class="{ 'is-invalid': errors.email }"
-            />
-            <div class="invalid-feedback" v-if="errors.email">
-              {{ errors.email }}
-            </div>
-          </div>
-          <br />
-          <div class="form-group">
-            <label for="bio">Bio</label>
-            <textarea
-              class="form-control dark-card"
-              id="bio"
-              v-model="this.currentUser.bio"
-              rows="3"
-              placeholder="Enter your bio"
-              :class="{ 'is-invalid': errors.bio }"
-              maxlength="255"
-            ></textarea>
-            <div class="invalid-feedback" v-if="errors.bio">
-              {{ errors.bio }}
-            </div>
-          </div>
-          <br />
-          <button type="submit" class="btn btn-primary" :disabled="processing">
-            <span v-if="processing">
-              <i class="fas fa-spinner fa-spin"></i> Saving...</span
-            >
-            <span v-else>Save Changes</span>
-          </button>
-          <button
-            type="button"
-            class="btn btn-primary mx-2"
-            @click="fetchUserInfo"
-          >
-            Reset
-          </button>
-          <br />
-          <div class="alert alert-success mt-3" v-if="hasSaved">
-            Your changes have been saved.
-          </div>
-        </form>
-      </div>
-    </div>
+        <!-- Update Password Section -->
+        <UpdatePasswordSection />
 
-    <!-- Privacy Settings Form -->
+        <!-- Two-Factor Authentication (2FA) Section -->
+        <div class="card">
+          <h5 class="card-title">Two-Factor Authentication</h5>
+          <div class="card-body">
+            <div v-if="!currentUser.twoFactorAuth.enabled">
+              <button
+                type="button"
+                class="btn btn-primary mb-3"
+                @click="setup2FA"
+              >
+                Enable 2FA
+              </button>
 
-    <!-- Update Password Section -->
-    <UpdatePasswordSection />
-
-    <!-- Two-Factor Authentication (2FA) Section -->
-    <div class="card">
-      <h5 class="card-title">Two-Factor Authentication</h5>
-      <div class="card-body">
-        <div v-if="!currentUser.twoFactorAuth.enabled">
-          <button type="button" class="btn btn-primary mb-3" @click="setup2FA">
-            Enable 2FA
-          </button>
-
-          <!-- QR Code Display and Input Token -->
-          <div v-if="qrCode">
-            <!-- QR Code Container -->
-            <div v-if="qrCode" class="qr-code-container">
-              <img :src="qrCode" alt="2FA QR Code" />
+              <!-- QR Code Display and Input Token -->
+              <div v-if="qrCode">
+                <!-- QR Code Container -->
+                <div v-if="qrCode" class="qr-code-container">
+                  <img :src="qrCode" alt="2FA QR Code" />
+                </div>
+                <div class="form-group">
+                  <label for="token">Enter Token from App</label>
+                  <input
+                    type="text"
+                    class="form-control"
+                    v-model="twoFactorToken"
+                    id="token"
+                    placeholder="Enter your token"
+                    :class="{ 'is-invalid': errors.twofa }"
+                  />
+                  <div class="invalid-feedback" v-if="errors.twofa">
+                    {{ errors.twofa }}
+                  </div>
+                  <button
+                    type="button"
+                    class="btn btn-primary mt-2"
+                    @click="enable2FA"
+                  >
+                    Confirm
+                  </button>
+                </div>
+              </div>
             </div>
-            <div class="form-group">
-              <label for="token">Enter Token from App</label>
-              <input
-                type="text"
-                class="form-control"
-                v-model="twoFactorToken"
-                id="token"
-                placeholder="Enter your token"
-                :class="{ 'is-invalid': errors.twofa }"
-              />
-              <div class="invalid-feedback" v-if="errors.twofa">
-                {{ errors.twofa }}
+
+            <div v-else-if="currentUser.twoFactorAuth.enabled">
+              <div class="form-group">
+                <label for="disableToken">Enter Token to Disable</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="disableTwoFactorToken"
+                  id="disableToken"
+                  placeholder="Enter your token"
+                  :class="{ 'is-invalid': errors.twofa }"
+                />
+                <div class="invalid-feedback" v-if="errors.twofa">
+                  {{ errors.twofa }}
+                </div>
               </div>
               <button
                 type="button"
-                class="btn btn-primary mt-2"
-                @click="enable2FA"
+                class="btn btn-danger mt-3"
+                @click="disable2FA"
               >
-                Confirm
+                Disable 2FA
               </button>
             </div>
           </div>
-        </div>
-
-        <div v-else-if="currentUser.twoFactorAuth.enabled">
-          <div class="form-group">
-            <label for="disableToken">Enter Token to Disable</label>
-            <input
-              type="text"
-              class="form-control"
-              v-model="disableTwoFactorToken"
-              id="disableToken"
-              placeholder="Enter your token"
-              :class="{ 'is-invalid': errors.twofa }"
-            />
-            <div class="invalid-feedback" v-if="errors.twofa">
-              {{ errors.twofa }}
-            </div>
-          </div>
-          <button type="button" class="btn btn-danger mt-3" @click="disable2FA">
-            Disable 2FA
-          </button>
         </div>
       </div>
     </div>
@@ -213,6 +233,15 @@
   justify-content: center; /* Horizontal centering */
   align-items: center; /* Vertical centering */
   height: 200px; /* Or whatever height you prefer */
+}
+
+.img-thumbnail {
+  border-radius: 50%;
+  padding: 0;
+  border: 0;
+  background-color: #222222;
+  max-width: 200px;
+  max-height: 200px;
 }
 </style>
 

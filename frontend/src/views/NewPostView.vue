@@ -42,33 +42,35 @@
             <div class="invalid-feedback">{{ errors.title }}</div>
           </div>
 
-          <div class="form-group">
-            <label for="content">Content</label>
-            <textarea
-              class="form-input"
-              id="content"
-              name="content"
-              rows="10"
-              placeholder="Enter content"
-              required
-              v-model="content"
-              :class="{ 'is-invalid': errors.content }"
-              maxlength="1000"
-            ></textarea>
-            <div
-              class="char-counter"
-              :class="{ 'char-limit': content.length >= 1000 }"
-            >
-              {{ content.length }} / 1000
+          <div class="content-preview-container">
+            <div class="content-area">
+              <label for="content">Content</label>
+              <textarea
+                class="form-input"
+                id="content"
+                name="content"
+                rows="10"
+                placeholder="Enter content"
+                required
+                v-model="content"
+                :class="{ 'is-invalid': errors.content }"
+                maxlength="1000"
+              ></textarea>
+              <div
+                class="char-counter"
+                :class="{ 'char-limit': content.length >= 1000 }"
+              >
+                {{ content.length }} / 1000
+              </div>
+              <div class="invalid-feedback">{{ errors.content }}</div>
             </div>
-            <div class="invalid-feedback">{{ errors.content }}</div>
-          </div>
 
-          <div
-            id="preview"
-            class="preview-pane"
-            v-html="convertToMarkdown(content)"
-          ></div>
+            <div
+              id="preview"
+              class="preview-pane"
+              v-html="convertToMarkdown(content)"
+            ></div>
+          </div>
 
           <div
             :class="
@@ -217,6 +219,58 @@ textarea.form-input {
 
 .char-limit {
   color: #ff5555;
+}
+
+/* Existing styles */
+
+.content-preview-container {
+  display: flex;
+  gap: 20px;
+  margin-top: 16px;
+}
+
+.content-area,
+.preview-pane {
+  flex: 1;
+}
+
+.preview-pane {
+  background-color: #282828; /* Slightly different background for distinction */
+  padding: 16px;
+  border-radius: 4px;
+  color: #ffffff;
+  overflow-wrap: break-word;
+  overflow-x: auto;
+  height: fit-content; /* Adjust height to match content area */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .content-preview-container {
+    flex-direction: column;
+  }
+}
+
+/* Other UI Enhancements */
+.btn-submit {
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.btn-submit:hover,
+.btn-submit:focus {
+  background-color: #3e8e41; /* Slightly lighter green for hover state */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); /* Subtle shadow for depth */
+}
+
+.form-input:focus,
+textarea.form-input:focus {
+  border-color: #ffc34d; /* Highlight focus state */
+  box-shadow: 0 0 0 2px #ffc34d;
+}
+
+/* Improving Visibility */
+.invalid-feedback {
+  display: block; /* Ensure visibility even if no error message is present */
 }
 </style>
 
