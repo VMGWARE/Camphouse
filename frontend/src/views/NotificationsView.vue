@@ -194,7 +194,7 @@ export default {
 
 <style scoped>
 .container {
-  max-width: 600px;
+  max-width: 800px;
   color: #ddd;
 }
 
