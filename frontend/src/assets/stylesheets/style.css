@@ -462,26 +462,6 @@ img-tag {
   color: #ffffff !important;
 }
 
-/* Success Toast Styles */
-.Vue-Toastification__toast--success {
-  background-color: #28a745 !important;
-}
-
-/* Error Toast Styles */
-.Vue-Toastification__toast--error {
-  background-color: #e22c2c !important;
-}
-
-/* Info Toast Styles - Define color based on your preference */
-.Vue-Toastification__toast--info {
-  background-color: #0d6efd !important;
-}
-
-/* Warning Toast Styles - Define color based on your preference */
-.Vue-Toastification__toast--warning {
-  background-color: #ffc107 !important;
-}
-
 /* Toast Icon Styles */
 .Vue-Toastification__icon {
   color: #ffc34d !important;
