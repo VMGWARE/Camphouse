@@ -214,6 +214,15 @@
   align-items: center; /* Vertical centering */
   height: 200px; /* Or whatever height you prefer */
 }
+
+.img-thumbnail {
+  border-radius: 50%;
+  padding: 0;
+  border: 0;
+  background-color: #222222;
+  width: 80px;
+  height: 80px;
+}
 </style>
 
 <script>
