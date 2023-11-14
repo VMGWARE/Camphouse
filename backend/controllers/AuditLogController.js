@@ -491,10 +491,12 @@ router.get("/export", authenticateJWT, isAdmin, async (req, res) => {
  *                 data:
  *                   type: object
  *                   properties:
- *                     totalSignIns:
+ *                     ACCOUNT_LOGOUT:
  *                       type: integer
- *                     totalLogouts:
+ *                       example: 40
+ *                     ACCOUNT_LOGIN:
  *                       type: integer
+ *                       example: 40
  *       500:
  *         description: Server error.
  *         content:
@@ -514,32 +516,29 @@ router.get("/export", authenticateJWT, isAdmin, async (req, res) => {
  */
 router.get("/stats", authenticateJWT, isAdmin, async (req, res) => {
   try {
-    const totalSignIns = await AuditLog.countDocuments({
-      action: "ACCOUNT_LOGIN",
-    });
-    const totalLogouts = await AuditLog.countDocuments({
-      action: "ACCOUNT_LOGOUT",
-    });
-    const totalAccountCreated = await AuditLog.countDocuments({
-      action: "ACCOUNT_CREATED",
-    });
-    const totalAccountDeleted = await AuditLog.countDocuments({
-      action: "ACCOUNT_DELETED",
+    // Get all actions and their counts
+    const allActions = await AuditLog.aggregate([
+      {
+        $group: {
+          _id: "$action",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Create object to store actions    
+    const actions = {};
+
+    // Map actions to object
+    allActions.forEach((action) => {
+      actions[action._id] = action.count;
     });
 
-    // You can add more action statistics here by copying the above pattern
-    // Example: const totalAccountCreated = await AuditLog.countDocuments({ action: "ACCOUNT_CREATED" });
-
+    // Return actions
     res.json({
       status: "success",
       code: 200,
-      data: {
-        totalSignIns: totalSignIns,
-        totalLogouts: totalLogouts,
-        totalAccountCreated: totalAccountCreated,
-        totalAccountDeleted: totalAccountDeleted,
-        //... other action statistics
-      },
+      data: actions,
     });
   } catch (err) {
     res.status(500).json({ status: "error", code: 500, message: err.message });

@@ -1,122 +1,130 @@
 <template>
-  <!-- Welcome message -->
-  <div class="row">
-    <div class="col-md-12">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h4>Audit Log Dashboard</h4>
-        </div>
-        <div class="card-body">
-          <p>
-            Welcome to the Audit Log Dashboard. This is where you can view the
-            audit logs of the Camphouse application.
-          </p>
+  <div>
+    <!-- Welcome message -->
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h4>Audit Log Dashboard</h4>
+          </div>
+          <div class="card-body">
+            <p>
+              Welcome to the Audit Log Dashboard. This is where you can view the
+              audit logs of the Camphouse application.
+            </p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <!-- Stats: Sign In, Logout, etc -->
-  <div class="row">
-    <div class="col-md-3">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>
-            <i class="fas fa-sign-in-alt"></i>
-            Sign In
-          </h5>
+    <!-- Stats: Sign In, Logout, etc -->
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>
+              <i class="fas fa-sign-in-alt"></i>
+              Sign In
+            </h5>
+          </div>
+          <div class="card-body">
+            <h1 v-if="stats.ACCOUNT_LOGIN === null">
+              <i class="fas fa-spinner fa-spin"></i>
+            </h1>
+            <h1 v-else>{{ stats.ACCOUNT_LOGIN ? stats.ACCOUNT_LOGIN : 0 }}</h1>
+          </div>
         </div>
-        <div class="card-body">
-          <h1 v-if="stats.totalSignIns === null">
-            <i class="fas fa-spinner fa-spin"></i>
-          </h1>
-          <h1 v-else>{{ stats.totalSignIns }}</h1>
+      </div>
+      <div class="col-md-3">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>
+              <i class="fas fa-sign-out-alt"></i>
+              Logout
+            </h5>
+          </div>
+          <div class="card-body">
+            <h1 v-if="stats.ACCOUNT_LOGOUT === null">
+              <i class="fas fa-spinner fa-spin"></i>
+            </h1>
+            <h1 v-else>
+              {{ stats.ACCOUNT_LOGOUT ? stats.ACCOUNT_LOGOUT : 0 }}
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>
+              <i class="fas fa-user-plus"></i>
+              Account Created
+            </h5>
+          </div>
+          <div class="card-body">
+            <h1 v-if="stats.ACCOUNT_CREATED === null">
+              <i class="fas fa-spinner fa-spin"></i>
+            </h1>
+            <h1 v-else>
+              {{ stats.ACCOUNT_CREATED ? stats.ACCOUNT_CREATED : 0 }}
+            </h1>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>
+              <i class="fas fa-user-minus"></i>
+              Account Deleted
+            </h5>
+          </div>
+          <div class="card-body">
+            <h1 v-if="stats.ACCOUNT_DELETED === null">
+              <i class="fas fa-spinner fa-spin"></i>
+            </h1>
+            <h1 v-else>
+              {{ stats.ACCOUNT_DELETED ? stats.ACCOUNT_DELETED : 0 }}
+            </h1>
+          </div>
         </div>
       </div>
     </div>
-    <div class="col-md-3">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>
-            <i class="fas fa-sign-out-alt"></i>
-            Logout
-          </h5>
-        </div>
-        <div class="card-body">
-          <h1 v-if="stats.totalLogouts === null">
-            <i class="fas fa-spinner fa-spin"></i>
-          </h1>
-          <h1 v-else>{{ stats.totalLogouts }}</h1>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>
-            <i class="fas fa-user-plus"></i>
-            Account Created
-          </h5>
-        </div>
-        <div class="card-body">
-          <h1 v-if="stats.totalAccountCreated === null">
-            <i class="fas fa-spinner fa-spin"></i>
-          </h1>
-          <h1 v-else>{{ stats.totalAccountCreated }}</h1>
-        </div>
-      </div>
-    </div>
-    <div class="col-md-3">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>
-            <i class="fas fa-user-minus"></i>
-            Account Deleted
-          </h5>
-        </div>
-        <div class="card-body">
-          <h1 v-if="stats.totalAccountDeleted === null">
-            <i class="fas fa-spinner fa-spin"></i>
-          </h1>
-          <h1 v-else>{{ stats.totalAccountDeleted }}</h1>
-        </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- Line chart that can filter between each action, pie chart that shows the percentage of each action -->
-  <div class="row">
-    <div class="col-md-6">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>
-            <i class="fas fa-chart-line"></i>
-            Audit Log Line Chart
-          </h5>
-        </div>
-        <div class="card-body">
-          <Line
-            :data="auditLogLineChartData"
-            :options="auditLogLineChartOptions"
-            v-if="auditLogLineChartData.labels.length > 0"
-          />
+    <!-- Line chart that can filter between each action, pie chart that shows the percentage of each action -->
+    <div class="row">
+      <div class="col-md-6">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>
+              <i class="fas fa-chart-line"></i>
+              Audit Log Line Chart
+            </h5>
+          </div>
+          <div class="card-body">
+            <Line
+              :data="auditLogLineChartData"
+              :options="auditLogLineChartOptions"
+              v-if="auditLogLineChartData.labels.length > 0"
+            />
+          </div>
         </div>
       </div>
-    </div>
-    <div class="col-md-6">
-      <div class="card mb-3">
-        <div class="card-header">
-          <h5>
-            <i class="fas fa-chart-pie"></i>
-            Audit Log Pie Chart
-          </h5>
-        </div>
-        <div class="card-body">
-          <Pie
-            :data="auditLogPieChartData"
-            :options="pieChartOptions"
-            v-if="auditLogPieChartData.labels.length > 0"
-          />
+      <div class="col-md-6">
+        <div class="card mb-3">
+          <div class="card-header">
+            <h5>
+              <i class="fas fa-chart-pie"></i>
+              Audit Log Pie Chart
+            </h5>
+          </div>
+          <div class="card-body">
+            <Pie
+              :data="auditLogPieChartData"
+              :options="pieChartOptions"
+              v-if="auditLogPieChartData.labels.length > 0"
+            />
+          </div>
         </div>
       </div>
     </div>
@@ -153,10 +161,10 @@ export default {
   data() {
     return {
       stats: {
-        totalSignIns: null,
-        totalLogouts: null,
-        totalAccountCreated: null,
-        totalAccountDeleted: null,
+        ACCOUNT_LOGIN: null,
+        ACCOUNT_LOGOUT: null,
+        ACCOUNT_CREATED: null,
+        ACCOUNT_DELETED: null,
       },
       auditLogLineChartData: {
         labels: [],
