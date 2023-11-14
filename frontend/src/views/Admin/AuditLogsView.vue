@@ -91,32 +91,20 @@
       </div>
     </div>
 
-    <div class="row">
-      <div class="col-md-12">
-        <div class="card mb-3">
-          <div class="card-header">
-            <h4>Select Time Range</h4>
-          </div>
-          <div class="card-body">
-            <select v-model="selectedDays" @change="updateCharts">
-              <option value="1">Last 24 hours</option>
-              <option value="7" selected>Last week</option>
-              <option value="14">Last 14 days</option>
-              <option value="30">Last 30 days</option>
-            </select>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Line chart that can filter between each action, pie chart that shows the percentage of each action -->
     <div class="row">
       <div class="col-md-6">
         <div class="card mb-3">
           <div class="card-header">
-            <h5>
-              <i class="fas fa-chart-line"></i>
+            <h5 class="d-flex justify-content-between align-items-center">
               Audit Log Line Chart
+
+              <select v-model="selectedDays" @change="updateCharts">
+                <option value="1">Last 24 hours</option>
+                <option value="7" selected>Last week</option>
+                <option value="14">Last 14 days</option>
+                <option value="30">Last 30 days</option>
+              </select>
             </h5>
           </div>
           <div class="card-body">
@@ -131,9 +119,15 @@
       <div class="col-md-6">
         <div class="card mb-3">
           <div class="card-header">
-            <h5>
-              <i class="fas fa-chart-pie"></i>
+            <h5 class="d-flex justify-content-between align-items-center">
               Audit Log Pie Chart
+
+              <select v-model="selectedDays" @change="updateCharts">
+                <option value="1">Last 24 hours</option>
+                <option value="7" selected>Last week</option>
+                <option value="14">Last 14 days</option>
+                <option value="30">Last 30 days</option>
+              </select>
             </h5>
           </div>
           <div class="card-body">
