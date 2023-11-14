@@ -289,8 +289,16 @@ router.get("/chart", authenticateJWT, isAdmin, async (req, res) => {
  *   get:
  *     summary: Get Audit Logs aggregated by Action for Chart
  *     description: |
- *       This endpoint aggregates the number of audit logs by action type per day over the last 30 days.
+ *       This endpoint aggregates the number of audit logs by action type over a specified number of days, defaulting to 7 days.
+ *       Can also specify a custom range in days.
  *       Suitable for plotting a stacked bar chart or similar visualization.
+ *     parameters:
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: integer
+ *           default: 7
+ *         description: Number of days to look back for audit logs by action. Can be 1 for 24 hours, or any other number.
  *     produces:
  *       - application/json
  *     security:
@@ -343,15 +351,17 @@ router.get("/chart", authenticateJWT, isAdmin, async (req, res) => {
  */
 router.get("/chart-by-action", authenticateJWT, isAdmin, async (req, res) => {
   try {
-    // Calculate 30 days ago
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const days = parseInt(req.query.days) || 7; // Default to 7 days if no parameter is provided
+
+    // Calculate the start date based on the provided number of days
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
 
     // Aggregate logs by action type
     const logsAggregation = await AuditLog.aggregate([
       {
         $match: {
-          createdAt: { $gte: thirtyDaysAgo },
+          createdAt: { $gte: startDate },
         },
       },
       {
