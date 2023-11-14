@@ -181,8 +181,16 @@ router.get("/", authenticateJWT, isAdmin, async (req, res) => {
  *   get:
  *     summary: Get Audit Logs for Chart
  *     description: |
- *       This endpoint aggregates the number of audit logs per day over the last 30 days.
+ *       This endpoint aggregates the number of audit logs over a specified number of days, defaulting to 7 days.
+ *       Can also specify a custom range in days.
  *       Suitable for plotting a bar chart or line graph.
+ *     parameters:
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: integer
+ *           default: 7
+ *         description: Number of days to look back for audit logs. Can be 1 for 24 hours, or any other number.
  *     produces:
  *       - application/json
  *     security:
@@ -234,15 +242,17 @@ router.get("/", authenticateJWT, isAdmin, async (req, res) => {
  */
 router.get("/chart", authenticateJWT, isAdmin, async (req, res) => {
   try {
-    // Calculate 30 days ago
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const days = parseInt(req.query.days) || 7; // Default to 7 days if no parameter is provided
+
+    // Calculate the start date based on the provided number of days
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
 
     // Aggregate logs
     const logsAggregation = await AuditLog.aggregate([
       {
         $match: {
-          createdAt: { $gte: thirtyDaysAgo },
+          createdAt: { $gte: startDate },
         },
       },
       {
@@ -279,8 +289,16 @@ router.get("/chart", authenticateJWT, isAdmin, async (req, res) => {
  *   get:
  *     summary: Get Audit Logs aggregated by Action for Chart
  *     description: |
- *       This endpoint aggregates the number of audit logs by action type per day over the last 30 days.
+ *       This endpoint aggregates the number of audit logs by action type over a specified number of days, defaulting to 7 days.
+ *       Can also specify a custom range in days.
  *       Suitable for plotting a stacked bar chart or similar visualization.
+ *     parameters:
+ *       - in: query
+ *         name: days
+ *         schema:
+ *           type: integer
+ *           default: 7
+ *         description: Number of days to look back for audit logs by action. Can be 1 for 24 hours, or any other number.
  *     produces:
  *       - application/json
  *     security:
@@ -333,15 +351,17 @@ router.get("/chart", authenticateJWT, isAdmin, async (req, res) => {
  */
 router.get("/chart-by-action", authenticateJWT, isAdmin, async (req, res) => {
   try {
-    // Calculate 30 days ago
-    const thirtyDaysAgo = new Date();
-    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+    const days = parseInt(req.query.days) || 7; // Default to 7 days if no parameter is provided
+
+    // Calculate the start date based on the provided number of days
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
 
     // Aggregate logs by action type
     const logsAggregation = await AuditLog.aggregate([
       {
         $match: {
-          createdAt: { $gte: thirtyDaysAgo },
+          createdAt: { $gte: startDate },
         },
       },
       {
@@ -491,10 +511,12 @@ router.get("/export", authenticateJWT, isAdmin, async (req, res) => {
  *                 data:
  *                   type: object
  *                   properties:
- *                     totalSignIns:
+ *                     ACCOUNT_LOGOUT:
  *                       type: integer
- *                     totalLogouts:
+ *                       example: 40
+ *                     ACCOUNT_LOGIN:
  *                       type: integer
+ *                       example: 40
  *       500:
  *         description: Server error.
  *         content:
@@ -514,32 +536,29 @@ router.get("/export", authenticateJWT, isAdmin, async (req, res) => {
  */
 router.get("/stats", authenticateJWT, isAdmin, async (req, res) => {
   try {
-    const totalSignIns = await AuditLog.countDocuments({
-      action: "ACCOUNT_LOGIN",
-    });
-    const totalLogouts = await AuditLog.countDocuments({
-      action: "ACCOUNT_LOGOUT",
-    });
-    const totalAccountCreated = await AuditLog.countDocuments({
-      action: "ACCOUNT_CREATED",
-    });
-    const totalAccountDeleted = await AuditLog.countDocuments({
-      action: "ACCOUNT_DELETED",
+    // Get all actions and their counts
+    const allActions = await AuditLog.aggregate([
+      {
+        $group: {
+          _id: "$action",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    // Create object to store actions
+    const actions = {};
+
+    // Map actions to object
+    allActions.forEach((action) => {
+      actions[action._id] = action.count;
     });
 
-    // You can add more action statistics here by copying the above pattern
-    // Example: const totalAccountCreated = await AuditLog.countDocuments({ action: "ACCOUNT_CREATED" });
-
+    // Return actions
     res.json({
       status: "success",
       code: 200,
-      data: {
-        totalSignIns: totalSignIns,
-        totalLogouts: totalLogouts,
-        totalAccountCreated: totalAccountCreated,
-        totalAccountDeleted: totalAccountDeleted,
-        //... other action statistics
-      },
+      data: actions,
     });
   } catch (err) {
     res.status(500).json({ status: "error", code: 500, message: err.message });
