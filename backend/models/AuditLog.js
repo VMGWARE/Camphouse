@@ -17,56 +17,6 @@ const AuditLogSchema = new mongoose.Schema(
     action: {
       type: String,
       required: true,
-      enum: [
-        // Account
-        "ACCOUNT_CREATED",
-        "ACCOUNT_UPDATED",
-        "ACCOUNT_DELETED",
-        "ACCOUNT_LOGIN",
-        "ACCOUNT_LOGOUT",
-        // Post
-        "POST_CREATED",
-        "POST_UPDATED",
-        "POST_DELETED",
-        // Comment
-        "COMMENT_CREATED",
-        "COMMENT_UPDATED",
-        "COMMENT_DELETED",
-        // Like
-        "LIKE_CREATED",
-        "LIKE_DELETED",
-        // Follow
-        "FOLLOW_CREATED",
-        "FOLLOW_DELETED",
-        // Message
-        "MESSAGE_CREATED",
-        "MESSAGE_UPDATED",
-        "MESSAGE_DELETED",
-        // Blocked Email Domains
-        "BLOCKED_EMAIL_DOMAIN_CREATED",
-        "BLOCKED_EMAIL_DOMAIN_UPDATED",
-        "BLOCKED_EMAIL_DOMAIN_DELETED",
-        // Report
-        "REPORT_CREATED",
-        "REPORT_UPDATED",
-        "REPORT_DELETED",
-        "REPORT_REVIEWED",
-        // Notification
-        "NOTIFICATION_UPDATED",
-        // Misc
-        "PASSWORD_RESET_REQUESTED",
-        "PASSWORD_RESET",
-        "ACCOUNT_TOKEN_REFRESHED",
-        "ACCOUNT_PASSWORD_CHANGED",
-        // Admin
-        "ADMIN_UPDATED_USER",
-        "ADMIN_DELETED_USER",
-        // TFA
-        "TFA_ENABLED",
-        "TFA_DISABLED",
-        // Message Group
-        "GROUP_CREATED",
-      ],
       index: true,
     },
     // Request log associated with the action
