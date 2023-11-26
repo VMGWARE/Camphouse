@@ -166,7 +166,6 @@ app.use(express.urlencoded({ extended: true }));
 // Load the controllers
 const PostController = require("./controllers/PostController");
 const LikeController = require("./controllers/LikeController");
-const MessageController = require("./controllers/MessageController");
 const AuthController = require("./controllers/AuthController");
 const FollowController = require("./controllers/FollowController");
 const UserController = require("./controllers/UserController");
@@ -182,7 +181,6 @@ const AuditLogController = require("./controllers/AuditLogController");
 // Setup the routes
 app.use("/api/v1/posts", PostController);
 app.use("/api/v1/likes", LikeController);
-app.use("/api/v1/messages", MessageController);
 app.use("/api/v1/auth", AuthController);
 app.use("/api/v1/follows", FollowController);
 app.use("/api/v1/users", UserController);

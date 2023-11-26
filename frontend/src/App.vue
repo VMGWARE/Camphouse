@@ -101,9 +101,6 @@
                     v-if="this.$store.state.user.admin"
                     ><i class="fa fa-user-shield"> </i> Admin</router-link
                   >
-                  <router-link class="dropdown-item" to="/messages"
-                    ><i class="fa fa-envelope"></i> Messages</router-link
-                  >
                   <router-link class="dropdown-item" to="/settings"
                     ><i class="fa fa-cog"></i> Settings</router-link
                   >

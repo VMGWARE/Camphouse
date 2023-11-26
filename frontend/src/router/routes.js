@@ -3,7 +3,6 @@ import ProfileView from "@/views/ProfileView.vue";
 import LoginView from "@/views/LoginView.vue";
 import SignUpView from "@/views/SignUpView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
-import MessageView from "@/views/MessageView.vue";
 import SettingsView from "@/views/SettingsView.vue";
 import NotificationsView from "@/views/NotificationsView.vue";
 import SearchView from "@/views/SearchView.vue";
@@ -84,14 +83,6 @@ const routes = [
     component: SignUpView,
     meta: {
       title: "Sign Up",
-    },
-  },
-  {
-    path: "/messages/:userId?",
-    name: "Messages",
-    component: MessageView,
-    meta: {
-      title: "Messages",
     },
   },
   {

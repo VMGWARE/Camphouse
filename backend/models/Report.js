@@ -26,7 +26,7 @@ const reportSchema = new mongoose.Schema(
     // The type of content that was reported
     reportedContentType: {
       type: String,
-      enum: ["Post", "Comment", "Message", "User"], // User is for when a user is reported like in the case of a fake account or inappropriate profile picture
+      enum: ["Post", "Comment", "User"], // User is for when a user is reported like in the case of a fake account or inappropriate profile picture
       required: true,
       index: true,
     },

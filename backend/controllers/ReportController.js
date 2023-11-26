@@ -171,7 +171,6 @@ const express = require("express");
 const User = require("../models/User");
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
-const Message = require("../models/Message");
 
 // The report model
 const Report = require("../models/Report");
@@ -493,7 +492,7 @@ router.put("/:reportId", authenticateJWT, isAdmin, async (req, res) => {
  *             properties:
  *               type:
  *                 type: string
- *                 description: The type of content being reported (e.g., post, comment, message, or user).
+ *                 description: The type of content being reported (e.g., post, comment, or user).
  *                 example: Post
  *               contentId:
  *                 type: string
@@ -562,7 +561,7 @@ router.put("/:reportId", authenticateJWT, isAdmin, async (req, res) => {
 router.post("/", authenticateJWT, async (req, res) => {
   try {
     var errors = {};
-    const Types = ["Post", "Comment", "Message", "User"];
+    const Types = ["Post", "Comment", "User"];
     const { type, contentId, reason } = req.body;
 
     // Validate the request body
@@ -601,8 +600,6 @@ router.post("/", authenticateJWT, async (req, res) => {
       content = await Post.findById(contentId);
     } else if (type == "Comment") {
       content = await Comment.findById(contentId);
-    } else if (type == "Message") {
-      content = await Message.findById(contentId);
     } else if (type == "User") {
       content = await User.findById(contentId);
     } else {

@@ -56,7 +56,6 @@ const router = express.Router();
 const User = require("../models/User");
 const Post = require("../models/Post");
 const Comment = require("../models/Comment");
-const Message = require("../models/Message");
 const Report = require("../models/Report");
 const Notification = require("../models/Notification");
 const BlockedEmailDomain = require("../models/BlockedEmailDomain");
@@ -726,9 +725,6 @@ router.delete("/users/:id", authenticateJWT, isAdmin, async (req, res) => {
     // Delete all comments by the user
     await Comment.deleteMany({ user: req.params.id });
 
-    // Delete all messages by the user
-    await Message.deleteMany({ sender: req.params.id });
-
     // Delete all reports by the user
     await Report.deleteMany({ reportedBy: req.params.id });
 
@@ -842,9 +838,6 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
     // Number of posts
     const posts = await Post.countDocuments();
 
-    // Number of messages
-    const messages = await Message.countDocuments();
-
     // Number of comments
     const comments = await Comment.countDocuments();
 
@@ -862,7 +855,6 @@ router.get("/analytics", authenticateJWT, isAdmin, async (req, res) => {
       data: {
         users,
         posts,
-        messages,
         comments,
         blockedEmailDomains,
         auditLogs,
