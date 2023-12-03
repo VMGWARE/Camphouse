@@ -116,7 +116,7 @@ app.use((req, res, next) => {
   delete headers["authorization"];
 
   // IP address
-  var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+  var ip = req.headers["x-real-ip"] || req.socket.remoteAddress;
 
   // If ip is in the ENV VAR BLOCKED_IPS then block the request
   // TODO: Add a way to block IP addresses from the admin panel
