@@ -80,11 +80,11 @@
             </h5>
           </div>
           <div class="card-body">
-            <h1 v-if="stats.ACCOUNT_DELETED === null">
+            <h1 v-if="stats.ADMIN_DELETED_USER === null">
               <i class="fas fa-spinner fa-spin"></i>
             </h1>
             <h1 v-else>
-              {{ stats.ACCOUNT_DELETED ? stats.ACCOUNT_DELETED : 0 }}
+              {{ stats.ADMIN_DELETED_USER ? stats.ADMIN_DELETED_USER : 0 }}
             </h1>
           </div>
         </div>
