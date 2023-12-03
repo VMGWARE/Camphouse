@@ -7,5 +7,3 @@ RewriteRule ^api/ http://localhost:3000%{REQUEST_URI} [P,L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^ index.html [L]
-
-Header set Access-Control-Allow-Origin "*"
