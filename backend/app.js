@@ -117,6 +117,17 @@ app.use((req, res, next) => {
 
   // IP address
   var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+
+  // If ip is in the ENV VAR BLOCKED_IPS then block the request
+  if (process.env.BLOCKED_IPS.includes(ip)) {
+    return res.status(403).json({
+      status: "error",
+      code: 403,
+      message: "You are not allowed to access this resource.",
+      data: null,
+    });
+  }
+
   const requestLog = new RequestLog({
     ip: ip,
     method: req.method,
