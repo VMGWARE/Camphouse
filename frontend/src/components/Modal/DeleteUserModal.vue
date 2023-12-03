@@ -30,7 +30,7 @@
           <i class="fas fa-times"></i>
           Cancel
         </button>
-        <button class="btn btn-danger" @click="deleteUser(props.user.id)">
+        <button class="btn btn-danger" @click="deleteUser(props.user._id)">
           <i class="fas fa-trash"></i> Delete
         </button>
       </div>
