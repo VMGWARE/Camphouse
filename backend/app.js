@@ -119,6 +119,8 @@ app.use((req, res, next) => {
   var ip = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
 
   // If ip is in the ENV VAR BLOCKED_IPS then block the request
+  // TODO: Add a way to block IP addresses from the admin panel
+  // Can also be ip + browser fingerprint
   if (process.env.BLOCKED_IPS.includes(ip)) {
     return res.status(403).json({
       status: "error",
