@@ -247,6 +247,7 @@ export default {
       open();
     },
     async openDeleteUserModal(user) {
+      let parent = this;
       // Assign the modal instance to a variable
       const { open, close } = useModal({
         component: DeleteUserModal,
@@ -257,10 +258,10 @@ export default {
           },
           async onDelete(userId) {
             // Remove the user from the users array
-            this.users = this.users.filter((user) => user._id !== userId);
+            parent.users = parent.users.filter((user) => user._id !== userId);
 
             // Update the total number of users
-            this.totalUsers = this.totalUsers - 1;
+            parent.totalUsers = parent.totalUsers - 1;
             close();
           },
         },
