@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@sentry/node": "^7.66.0",
-    "@types/node": "^20.8.3",
+    "@types/node": "^20.10.5",
     "bcrypt": "^5.1.0",
     "bson": "6.1.0",
     "chai-http": "^4.4.0",
