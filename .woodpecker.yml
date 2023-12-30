@@ -80,10 +80,10 @@ steps:
     commands:
       - npm install -g caprover
       - caprover login
-      - caprover deploy -n caprover -a camphouse -b master
+      - caprover deploy -n caprover -a camphouse -b main
     when:
       event: [push, tag]
-      branch: master
+      branch: main
 
   Deploy to Docker Hub:
     image: *buildx_image
