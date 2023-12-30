@@ -74,6 +74,17 @@ steps:
       - npm run lint
       - cd ..
 
+  Deploy to CapRover:
+    image: *node_image
+    secrets: [caprover_password, caprover_url, caprover_name]
+    commands:
+      - npm install -g caprover
+      - caprover login
+      - caprover deploy -n caprover -a camphouse -b master
+    when:
+      event: [push, tag]
+      branch: master
+
   Deploy to Docker Hub:
     image: *buildx_image
     secrets: [docker_username, docker_password]
