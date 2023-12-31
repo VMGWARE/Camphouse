@@ -24,7 +24,7 @@ require("dotenv").config();
 
 // Create the Express app
 const app = express();
-const port = process.env.APP_PORT || 3000;
+const port = process.env.APP_PORT || 5000;
 
 // Connect to MongoDB
 require("./db");
@@ -57,7 +57,7 @@ app.use(Sentry.Handlers.tracingHandler());
 
 // Allow CORS
 app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://camphouse.vmgware.dev");
+  res.header("Access-Control-Allow-Origin", process.env.APP_URL);
   res.header(
     "Access-Control-Allow-Headers",
     "Origin, X-Requested-With, Content-Type, Accept, Authorization, X-Forwarded-For"
@@ -121,7 +121,7 @@ app.use((req, res, next) => {
   // If ip is in the ENV VAR BLOCKED_IPS then block the request
   // TODO: Add a way to block IP addresses from the admin panel
   // Can also be ip + browser fingerprint
-  if (process.env.BLOCKED_IPS.includes(ip)) {
+  if (process.env.BLOCKED_IPS && process.env.BLOCKED_IPS.includes(ip)) {
     return res.status(403).json({
       status: "error",
       code: 403,
