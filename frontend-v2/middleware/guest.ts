@@ -3,12 +3,13 @@ import { useAuthStore } from "~/stores/useAuthStore";
 
 export default defineNuxtRouteMiddleware(() => {
   const auth = useAuthStore();
+  const token = useCookie("token");
 
-  if (auth.isLoggedIn || auth.token) {
+  if (auth.isLoggedIn || token) {
     // Decode the token
     let decoded = null;
     try {
-      decoded = auth.token ? jwtDecode(auth.token) : null;
+      decoded = token ? jwtDecode(token) : null;
     } catch (e) {}
 
     // Check if the token is invalid or expired

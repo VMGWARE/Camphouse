@@ -139,6 +139,5 @@
 import { ref } from "vue";
 import { useAuthStore } from "~/stores/useAuthStore";
 const user = useAuthStore().user;
-console.log(user);
 const processingSignOut = ref(false);
 </script>

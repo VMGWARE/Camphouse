@@ -4,6 +4,7 @@ import { useAuthStore } from "~/stores/useAuthStore";
 export default defineNuxtRouteMiddleware((to) => {
   try {
     const auth = useAuthStore();
+    const token = useCookie("token");
 
     const goToLogin = () => {
       const originalDestination = to.fullPath;
@@ -14,14 +15,14 @@ export default defineNuxtRouteMiddleware((to) => {
       });
     };
 
-    if (!auth.isLoggedIn || !auth.token) {
+    if (!auth.isLoggedIn || !token) {
       return goToLogin();
     }
 
     // Decode the token
     let decoded = null;
     try {
-      decoded = jwtDecode(auth.token);
+      decoded = jwtDecode(token);
     } catch (e) {
       return goToLogin();
     }
