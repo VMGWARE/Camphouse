@@ -11,7 +11,7 @@ WORKDIR /app/frontend
 COPY frontend/package*.json ./
 RUN npm install
 COPY frontend/ ./
-RUN cd frontend && npm run build
+RUN npm run build
 
 # Build the backend
 WORKDIR /app/backend
