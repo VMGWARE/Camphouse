@@ -1,0 +1,58 @@
+{
+  "name": "frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node --max-old-space-size=4096 node_modules/nuxt/bin/nuxt.mjs build",
+    "dev": "node --max-old-space-size=4096 node_modules/nuxt/bin/nuxt.mjs dev",
+    "generate": "node --max-old-space-size=4096 node_modules/nuxt/bin/nuxt.mjs generate",
+    "preview": "node --max-old-space-size=4096 node_modules/nuxt/bin/nuxt.mjs preview",
+    "postinstall": "node --max-old-space-size=4096 node_modules/nuxt/bin/nuxt.mjs prepare",
+    "inspect": "node --expose-gc --inspect .output/server/index.mjs",
+    "lint:js": "eslint --ext \".ts,.vue\" --ignore-path .gitignore .",
+    "lint:prettier": "prettier --check .",
+    "lint": "npm run lint:js && npm run lint:prettier",
+    "lintfix:js": "prettier --write --list-different . && npm run lint:js --fix"
+  },
+  "devDependencies": {
+    "@nuxt/devtools": "latest",
+    "@nuxtjs/eslint-config-typescript": "^12.1.0",
+    "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
+    "@typescript-eslint/parser": "^6.16.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-prettier": "^5.1.2",
+    "nuxt": "^3.8.2",
+    "nuxt-icon": "^0.5.0",
+    "nuxt-simple-sitemap": "^3.4.1",
+    "nuxt-typed-router": "^3.5.0",
+    "prettier": "^3.1.1",
+    "sass": "^1.69.5",
+    "typescript": "^5.3.3",
+    "vue": "^3.3.12",
+    "vue-router": "^4.2.5"
+  },
+  "dependencies": {
+    "@iconify-json/mdi": "^1.1.54",
+    "@iconify-json/simple-icons": "^1.1.76",
+    "@nuxt-alt/proxy": "^2.4.8",
+    "@nuxtjs/robots": "^3.0.0",
+    "@pinia/nuxt": "^0.5.1",
+    "bootstrap": "^5.3.2",
+    "chart.js": "^4.4.0",
+    "core-js": "^3.33.1",
+    "jquery": "^3.7.1",
+    "jwt-decode": "^4.0.0",
+    "nuxt-jwt": "^1.0.51",
+    "pinia": "^2.1.7",
+    "vue-chartjs": "^5.2.0",
+    "vue-dompurify-html": "^4.1.4",
+    "vue-final-modal": "^4.4.5",
+    "vue-toastification": "^2.0.0-rc.5",
+    "showdown": "^2.1.0",
+    "vee-validate": "^4.11.8"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.6.1"
+  }
+}

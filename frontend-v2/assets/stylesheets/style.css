@@ -1,0 +1,627 @@
+/* General Styles */
+/* @import url('https://fonts.cdnfonts.com/css/gt-maru'); */
+@import url("https://fonts.googleapis.com/css2?family=Fira+Code:wght@500&display=swap");
+
+body {
+  background-color: #111111;
+  color: #ffffff;
+  /* font-family: 'GT Maru', sans-serif; */
+  font-family: "Fira Code", monospace;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.navbar {
+  margin-bottom: 20px;
+}
+
+.scrollable-feed {
+  /* max-height: 600px; */
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #666666 #111111;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #212529;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #666666;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #555555;
+}
+
+textarea::-webkit-resizer {
+  border-width: 8px;
+  border-style: solid;
+  border-color: transparent orangered orangered transparent;
+}
+
+/* Scroll speed should be a bit slower */
+.scrollable-feed {
+  scroll-behavior: smooth;
+}
+
+.card {
+  margin-bottom: 20px;
+  background-color: #222222;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+}
+
+.comment {
+  background-color: #222222;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.comment-form {
+  margin-top: 20px;
+}
+
+/* Card Styles */
+
+.card-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+.card-text {
+  font-size: 18px;
+  margin-bottom: 15px;
+  color: #ffffff;
+}
+
+.card-subtitle {
+  font-size: 16px;
+  font-weight: bold;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  color: #999999;
+}
+
+/* Comment Styles */
+
+.comment p.card-text {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #ffffff;
+}
+
+.comment small.text-muted {
+  font-size: 12px;
+  color: #999999;
+}
+
+/* Form Styles */
+
+.comment-form textarea {
+  width: 100%;
+  resize: none;
+  border: none;
+  border-radius: 8px;
+  background-color: #333333;
+  padding: 10px;
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #ffffff;
+}
+
+/* Button Styles */
+
+.btn-primary {
+  background-color: #ffc34d;
+  border-color: #ffc34d;
+  border-radius: 30px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+.btn-like {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  padding-left: 0%;
+}
+
+.btn-like:hover {
+  font-size: 14px;
+  font-weight: bold;
+  color: red;
+  padding-left: 0%;
+  animation: pulse 1s ease infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+.bg-dark {
+  background-color: #000000ff;
+}
+
+.btn-danger {
+  background-color: #e22c2c;
+  border-color: #e22c2c;
+  border-radius: 30px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: bold;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+.btn-secondary {
+  background-color: #ffc34d;
+  border-color: #ffc34d;
+  border-radius: 15px;
+  margin: 5px 10px 10px 10px;
+  transform: translateY(5px);
+  padding: 3px 8px;
+  font-size: 15px;
+  font-weight: bold;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #ffc34d;
+  border-color: #ffc34d;
+}
+
+.btn-primary:disabled {
+  background-color: #ffc34d;
+  border-color: #ffc34d;
+  transition:
+    background-color 0.3s,
+    border-color 0.3s;
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-primary:hover {
+  background-color: #ffc34d;
+  border-color: #ffc34d;
+}
+
+/* Icon Styles */
+
+.navbar-brand i,
+.nav-link i {
+  margin-right: 5px;
+  font-size: 18px;
+}
+
+.navbar-brand {
+  font-size: 20px;
+  margin-left: 20px;
+  font-weight: bold;
+  color: #ffffff;
+}
+
+.post-profile-picture {
+  width: 40px;
+  height: 40px;
+  border-radius: 25%;
+  margin-right: 10px;
+}
+
+.checkmark {
+  margin-bottom: 24px;
+  margin-left: 10px;
+  width: 30px;
+  height: 30px;
+  margin-right: 10px;
+}
+
+.comment-profile-picture {
+  width: 40px;
+  height: 40px;
+  border-radius: 25%;
+  margin-right: 10px;
+}
+
+.dark-card {
+  background-color: #222;
+  color: #fff;
+}
+
+.dark-list {
+  background-color: #333;
+}
+
+.dark-item {
+  background-color: #222222;
+  color: #fff;
+}
+
+.notification {
+  display: flex;
+  align-items: center;
+}
+
+.notification-icon {
+  margin-right: 10px;
+}
+
+.notification-message {
+  color: #fff;
+}
+
+.notification-time {
+  color: #bbb;
+}
+
+/* Styling for headings */
+.showdown-h1 {
+  font-size: 2.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.showdown-h2 {
+  font-size: 2rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.showdown-h3 {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+/* Styling for links */
+.showdown-link {
+  color: #007bff;
+  text-decoration: underline;
+}
+
+/* Styling for bold text */
+.showdown-strong {
+  font-weight: bold;
+}
+
+/* Styling for italic text */
+.showdown-em {
+  font-style: italic;
+}
+
+/* Styling for lists */
+.showdown-ul,
+.showdown-ol {
+  margin-bottom: 1rem;
+  padding-left: 1.25rem;
+}
+
+/* Styling for list items */
+.showdown-li {
+  margin-bottom: 0.25rem;
+}
+
+img-tag {
+  width: 5px;
+  height: 5px;
+}
+
+.showdown-img {
+  max-width: 70%;
+  /* Set the maximum width as needed */
+  height: auto;
+}
+
+.discord-embed {
+  background-color: #36393f;
+  border: 1px solid #2f3136;
+  border-radius: 4px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+}
+
+.embedded-title {
+  color: #00b0f4;
+  font-weight: bold;
+  text-decoration: none;
+  margin-bottom: 5px;
+}
+
+.embedded-description {
+  color: #b9bbbe;
+  font-size: 14px;
+}
+
+/* If you want to style images in the embed */
+.embedded-image {
+  max-width: 100%;
+  height: auto;
+  margin-top: 10px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  background-color: #333333;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.like-count {
+  margin-left: 5px;
+  padding: 5px;
+}
+
+.fake-link {
+  color: #007bff;
+  cursor: pointer;
+}
+
+.btn-share {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  padding-left: 0%;
+}
+
+.btn-share:hover {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffc34d;
+  padding-left: 0%;
+}
+
+.btn-share.btn-shared {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffc34d;
+  padding-left: 0%;
+}
+
+.btn-share.btn-shared:hover {
+  font-size: 14px;
+  font-weight: bold;
+  color: #ffffff;
+  padding-left: 0%;
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand i,
+.nav-link i {
+  transition: transform 0.3s;
+}
+
+.navbar-brand i:hover,
+.nav-link i:hover {
+  transform: scale(1.1);
+}
+
+.search-input:focus,
+.comment-form textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #ffc34d;
+}
+
+.scrollable-feed {
+  scroll-behavior: smooth;
+}
+
+.showdown-link:hover {
+  text-decoration: none;
+  color: #0056b3;
+}
+
+.card,
+.comment {
+  transition: transform 0.3s;
+}
+
+/* Toast Container Styles */
+.Vue-Toastification__toast-container {
+  font-family: "GT Maru", sans-serif !important;
+}
+
+/* General Toast Styles */
+.Vue-Toastification__toast {
+  background-color: #222222 !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+  color: #ffffff !important;
+}
+
+/* Toast Icon Styles */
+.Vue-Toastification__icon {
+  color: #ffc34d !important;
+}
+
+/* Close Button Styles */
+.Vue-Toastification__close-button {
+  color: #ffffff !important;
+}
+
+.post-content {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  overflow-wrap: break-word;
+  overflow-x: auto;
+}
+
+.post-content img {
+  max-width: 100%;
+  height: auto;
+}
+
+.post-content a {
+  color: #ffc34d;
+  text-decoration: none;
+}
+
+.post-content a:hover {
+  color: #ffc34d;
+  text-decoration: underline;
+}
+
+.post-content pre {
+  background-color: #333333;
+  color: #ffffff;
+  padding: 10px;
+  border-radius: 8px;
+  overflow-x: auto;
+}
+
+.post-content pre code {
+  background-color: #333333;
+  color: #ffffff;
+  padding: 0;
+  border-radius: 0;
+}
+
+.dropdown-menu {
+  background-color: #222222;
+}
+
+.dropdown-menu .dropdown-item {
+  color: #ffc34d;
+  border-bottom: 1px solid #333333;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  color: #ffc34d;
+  background-color: #333333;
+}
+
+.dropdown-menu .dropdown-item.active {
+  color: #ffc34d;
+  background-color: #333333;
+}
+
+.form-group .form-control,
+.form-control {
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+}
+
+.form-group .form-control:focus,
+.form-control:focus {
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px #ffc34d;
+}
+
+.form-group .form-control::placeholder,
+.form-control::placeholder {
+  color: #999999;
+}
+
+.form-group .form-control:focus::placeholder,
+.form-control:focus::placeholder {
+  color: #999999;
+}
+
+.form-check-input {
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  margin-right: 5px;
+}
+
+.form-check-input:checked {
+  background-color: #ffc34d;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+}
+
+.form-check-input:focus {
+  background-color: #333333;
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 0 0 2px #ffc34d;
+}
+
+.form-check-label {
+  color: #ffffff;
+}
+
+.form-check-label:hover {
+  color: #ffc34d;
+}
+
+.navbar-toggler {
+  border: none;
+  margin-right: 10px;
+}
+
+/* toggler aria-expanded=true */
+.navbar-toggler[aria-expanded="true"] {
+  color: #ffc34d;
+}
+
+.full-height {
+  /* Should ensure even on a large screen with no content, the footer stays at the bottom */
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* style file upload input */
+.form-control-file {
+  /* Lighter color */
+  color: #ffffff;
+  background-color: #333333;
+  border: none;
+  border-radius: 8px;
+  width: 100%;
+}

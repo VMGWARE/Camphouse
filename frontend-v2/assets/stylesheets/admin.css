@@ -1,0 +1,76 @@
+.post-item {
+  background-color: #2a2e33;
+  /* A shade darker than the card for visual separation */
+  border-radius: 5px;
+  /* Rounded corners */
+  padding: 15px;
+  /* Inner spacing */
+  margin-bottom: 20px;
+  /* Spacing between posts */
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  /* A subtle shadow */
+}
+
+.post-item h6 {
+  margin-bottom: 10px;
+}
+
+.post-item p {
+  margin-bottom: 5px;
+}
+
+.card-header {
+  background-color: #212529;
+  /* Slightly darker than body background */
+  border-bottom: 1px solid #495057;
+  /* Gives a slight border to separate */
+}
+
+.card {
+  background-color: #212529;
+  /* Slightly darker than body background */
+  border: none;
+}
+
+.card-body {
+  border-top: 1px solid #495057;
+  /* Gives a slight border to separate from header */
+}
+
+.report-item {
+  background-color: #2a2e33;
+  border-radius: 5px;
+  padding: 15px;
+  margin-bottom: 20px;
+  box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+  position: relative;
+}
+
+.report-item h6 {
+  margin-bottom: 10px;
+}
+
+.report-details {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.reporter-pic {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.view-report-link {
+  background-color: #007bff;
+  color: #ffffff;
+  padding: 5px 10px;
+  border-radius: 5px;
+  /* position: absolute; */
+  right: 15px;
+  bottom: 15px;
+  text-decoration: none;
+  border-radius: 5px;
+}
