@@ -15,14 +15,14 @@ export default defineNuxtRouteMiddleware((to) => {
       });
     };
 
-    if (!auth.isLoggedIn || !token) {
+    if (!auth.isLoggedIn || !token.value) {
       return goToLogin();
     }
 
     // Decode the token
     let decoded = null;
     try {
-      decoded = jwtDecode(token);
+      decoded = jwtDecode(token.value);
     } catch (e) {
       return goToLogin();
     }

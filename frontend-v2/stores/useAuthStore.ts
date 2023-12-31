@@ -3,15 +3,8 @@ import { useApiFetch } from "~/composables/useApiFetch";
 
 type User = {
   _id: string;
-  email: string;
-  username: string;
-  profilePicture: string;
-  bio: string;
   admin: boolean;
-  createdAt: string;
-  updatedAt: string;
   handle: string;
-  verified: boolean;
 };
 
 export const useAuthStore = defineStore(
@@ -19,7 +12,6 @@ export const useAuthStore = defineStore(
   () => {
     const user = ref<User | null>(null);
     const isLoggedIn = computed(() => !!user.value);
-    const token = ref<string | null>(null);
 
     function logout() {
       // No call made as we are using JWT
@@ -37,13 +29,14 @@ export const useAuthStore = defineStore(
       user,
       isLoggedIn,
       fetchUser,
-      logout,
-      token,
+      logout
     };
   },
   {
     persist: {
-      storage: persistedState.localStorage,
+      storage: persistedState.cookiesWithOptions({
+        sameSite: "strict",
+      }),
     },
   }
 );

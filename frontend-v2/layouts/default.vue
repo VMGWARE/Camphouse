@@ -71,7 +71,7 @@
           <li class="nav-item">
             <NuxtLink
               class="nav-link"
-              :to="'/@' + user.handle"
+              :to="'/@' + useAuthStore().user.handle"
               active-class="active"
               ><i class="fa fa-user"></i> Profile</NuxtLink
             >
@@ -96,7 +96,7 @@
                 <NuxtLink
                   class="dropdown-item"
                   to="/admin"
-                  v-if="user.admin"
+                  v-if="useAuthStore().user.admin"
                   active-class="active"
                   ><i class="fa fa-user-shield"> </i> Admin</NuxtLink
                 >
@@ -138,6 +138,5 @@
 <script setup>
 import { ref } from "vue";
 import { useAuthStore } from "~/stores/useAuthStore";
-const user = useAuthStore().user;
 const processingSignOut = ref(false);
 </script>

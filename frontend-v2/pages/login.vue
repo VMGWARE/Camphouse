@@ -201,9 +201,14 @@ const login = async () => {
 
     // If data is not null, then the request was successful
     if (data.value) {
+      const userInfo = {
+        _id: data.value.data.user._id,
+        admin: data.value.data.user.admin,
+        handle: data.value.data.user.handle,
+      };
+
       // Set auth store information
-      useAuthStore().token = data.value.data.token;
-      useAuthStore().user = data.value.data.user;
+      useAuthStore().user = userInfo;
 
       // Set token in cookie
       document.cookie = `token=${data.value.data.token}; path=/;SameSite=Strict;`;
