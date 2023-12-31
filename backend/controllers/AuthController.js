@@ -399,7 +399,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({
         status: "error",
         code: 401,
-        message: "2FA code is required.",
+        message: "Two-factor authentication is required!",
         data: null,
       });
     }
@@ -413,7 +413,7 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({
         status: "error",
         code: 401,
-        message: "Invalid 2FA code provided.",
+        message: "Your two-factor token is incorrect!",
         data: null,
       });
     }

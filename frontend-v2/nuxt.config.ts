@@ -42,7 +42,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      backendApi: "http://localhost:5000", // can be overridden by NUXT_PUBLIC_BACKEND_API environment variable
+      backendApi: "http://localhost:5000/api", // can be overridden by NUXT_PUBLIC_BACKEND_API environment variable
       baseUrl: "http://localhost:3000", // can be overridden by NUXT_PUBLIC_BASE_URL environment variable
     },
   },

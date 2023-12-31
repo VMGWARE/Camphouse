@@ -200,16 +200,16 @@ export default {
               this.errors.login = "Invalid credentials.";
             } else if (
               result.code != 200 &&
-              result.response.data.message === "2FA code is required." &&
+              result.response.data.message === "Two-factor authentication is required!" &&
               result.response.data.code === 401
             ) {
               this.twofaEnabled = true;
             } else if (
               result.code != 200 &&
-              result.response.data.message === "Invalid 2FA code provided." &&
+              result.response.data.message === "Your two-factor token is incorrect!" &&
               result.response.data.code === 401
             ) {
-              this.errors.twofaToken = "Invalid 2FA code provided.";
+              this.errors.twofaToken = "Your two-factor token is incorrect!";
             } else {
               this.errors.login = "Invalid credentials.";
             }

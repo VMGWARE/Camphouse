@@ -74,18 +74,18 @@
               </div>
               <div v-else>
                 <div class="form-group mb-3">
-                  <label for="twofaToken">2FA Code</label>
+                  <label for="twoFactorCode">2FA Code</label>
                   <input
                     type="text"
                     class="form-control"
-                    id="twofaToken"
-                    name="twofaToken"
+                    id="twoFactorCode"
+                    name="twoFactorCode"
                     placeholder="Enter your 2FA code"
                     required
-                    v-model="user.twofaToken"
-                    :class="{ 'is-invalid': errors.twofaToken }"
+                    v-model="user.twoFactorCode"
+                    :class="{ 'is-invalid': errors.twoFactorCode }"
                   />
-                  <div class="invalid-feedback">{{ errors.twofaToken }}</div>
+                  <div class="invalid-feedback">{{ errors.twoFactorCode }}</div>
                 </div>
                 <div class="form-group mb-3">
                   <button
@@ -133,14 +133,14 @@ definePageMeta({
 const user = ref({
   email: "",
   password: "",
-  twofaToken: "",
+  twoFactorCode: "",
 });
 const errors = ref({
   email: "",
   password: "",
   invalidEmail: "",
   login: "",
-  twofaToken: "",
+  twoFactorCode: "",
 });
 const processing = ref(false);
 const twoFactorAuthRequired = ref(false);
@@ -172,7 +172,7 @@ const login = async () => {
     const backendApi = runtimeConfig.public.backendApi;
     const baseUrl = runtimeConfig.publicsiteUrl;
 
-    const { data, error } = await useFetch(backendApi + "/auth/login", {
+    const { data, error } = await useFetch(backendApi + "/v1/auth/login", {
       method: "POST",
       body: JSON.stringify(user.value),
       headers: {
@@ -184,18 +184,35 @@ const login = async () => {
 
     // If the error is not null, then there is an error
     if (error.value) {
-      if (error.value.data.data) {
-        errors.value = error.value.data.data;
+      if (error.value.data.message === "Your email or password is incorrect!") {
+        errors.value.login = "Your email or password is incorrect!";
+      } else if (
+        error.value.data.message === "Two-factor authentication is required!"
+      ) {
+        twoFactorAuthRequired.value = true;
+      } else if (
+        error.value.data.message === "Your two-factor token is incorrect!"
+      ) {
+        errors.value.twoFactorCode = "Your two-factor token is incorrect!";
       } else {
-        errors.value.login = error.value.data.message;
+        errors.value.login = "An unknown error occurred!";
       }
     }
 
     // If data is not null, then the request was successful
     if (data.value) {
-      // If the user has 2FA enabled, then redirect to the 2FA page
-      if (data.value.data.twoFactorAuthEnabled) {
-        twoFactorAuthRequired.value = true;
+      // Set auth store information
+      useAuthStore().token = data.value.data.token;
+      useAuthStore().user = data.value.data.user;
+
+      // Set token in cookie
+      document.cookie = `token=${data.value.data.token}; path=/;SameSite=Strict;`;
+
+      // If there is a redirect URL in the query string, then redirect to that URL
+      if (useRoute().query.redirect) {
+        await navigateTo(useRoute().query.redirect);
+      } else {
+        await navigateTo("/");
       }
     }
   } catch (error) {

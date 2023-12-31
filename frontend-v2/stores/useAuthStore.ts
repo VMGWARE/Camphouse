@@ -2,9 +2,16 @@ import { defineStore } from "pinia";
 import { useApiFetch } from "~/composables/useApiFetch";
 
 type User = {
-  id: string;
-  name: string;
+  _id: string;
   email: string;
+  username: string;
+  profilePicture: string;
+  bio: string;
+  admin: boolean;
+  createdAt: string;
+  updatedAt: string;
+  handle: string;
+  verified: boolean;
 };
 
 type Credentials = {
@@ -74,5 +81,5 @@ export const useAuthStore = defineStore(
         sameSite: "strict",
       }),
     },
-  },
+  }
 );
