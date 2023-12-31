@@ -14,18 +14,6 @@ type User = {
   verified: boolean;
 };
 
-type Credentials = {
-  email: string;
-  password: string;
-};
-
-type RegistrationInfo = {
-  name: string;
-  email: string;
-  password: string;
-  password_confirmation: string;
-};
-
 export const useAuthStore = defineStore(
   "auth",
   () => {
@@ -45,41 +33,17 @@ export const useAuthStore = defineStore(
       user.value = data.value as User;
     }
 
-    async function login(credentials: Credentials) {
-      const login = await useApiFetch("/auth/login", {
-        method: "POST",
-        body: credentials,
-      });
-
-      await fetchUser();
-
-      return login;
-    }
-
-    async function register(info: RegistrationInfo) {
-      const register = await useApiFetch("/auth/register", {
-        method: "POST",
-        body: info,
-      });
-
-      return register;
-    }
-
     return {
       user,
-      login,
       isLoggedIn,
       fetchUser,
       logout,
-      register,
       token,
     };
   },
   {
     persist: {
-      storage: persistedState.cookiesWithOptions({
-        sameSite: "strict",
-      }),
+      storage: persistedState.localStorage,
     },
   }
 );

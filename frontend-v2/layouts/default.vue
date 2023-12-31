@@ -41,12 +41,12 @@
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav ms-auto" v-if="!useAuthStore().isLoggedIn">
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/login"
+            <NuxtLink class="nav-link" to="/login" active-class="active"
               ><i class="fa fa-user"></i> Login</NuxtLink
             >
           </li>
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/signup"
+            <NuxtLink class="nav-link" to="/signup" active-class="active"
               ><i class="fa fa-user-plus"></i> Sign Up</NuxtLink
             >
           </li>
@@ -59,22 +59,25 @@
 
         <ul class="navbar-nav ms-auto" v-else>
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/"
+            <NuxtLink class="nav-link" to="/" active-class="active"
               ><i class="fa fa-home"></i> Home</NuxtLink
             >
           </li>
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/search"
+            <NuxtLink class="nav-link" to="/search" active-class="active"
               ><i class="fa fa-search"></i> Search</NuxtLink
             >
           </li>
           <li class="nav-item">
-            <NuxtLink class="nav-link" :to="'/@' + user.handle"
+            <NuxtLink
+              class="nav-link"
+              :to="'/@' + user.handle"
+              active-class="active"
               ><i class="fa fa-user"></i> Profile</NuxtLink
             >
           </li>
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/notifications"
+            <NuxtLink class="nav-link" to="/notifications" active-class="active"
               ><i class="fa fa-bell"></i> Notifications</NuxtLink
             >
           </li>
@@ -90,10 +93,17 @@
                 Options
               </button>
               <div class="dropdown-menu dropdown-menu-end">
-                <NuxtLink class="dropdown-item" to="/admin" v-if="user.admin"
+                <NuxtLink
+                  class="dropdown-item"
+                  to="/admin"
+                  v-if="user.admin"
+                  active-class="active"
                   ><i class="fa fa-user-shield"> </i> Admin</NuxtLink
                 >
-                <NuxtLink class="dropdown-item" to="/settings"
+                <NuxtLink
+                  class="dropdown-item"
+                  to="/settings"
+                  active-class="active"
                   ><i class="fa fa-cog"></i> Settings</NuxtLink
                 >
                 <p
@@ -107,7 +117,10 @@
             </div>
           </li>
           <li class="nav-item">
-            <NuxtLink class="nav-link btn btn-secondary" to="/new-post"
+            <NuxtLink
+              class="nav-link btn btn-secondary"
+              to="/new-post"
+              active-class="active"
               ><i class="fa fa-plus"></i> New Post</NuxtLink
             >
           </li>
@@ -125,7 +138,7 @@
 <script setup>
 import { ref } from "vue";
 import { useAuthStore } from "~/stores/useAuthStore";
-const route = useRoute();
 const user = useAuthStore().user;
+console.log(user);
 const processingSignOut = ref(false);
 </script>

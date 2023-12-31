@@ -51,12 +51,6 @@ export default defineNuxtConfig({
     "vue-toastification/dist/index.css",
     "vue-final-modal/style.css",
   ],
-  piniaPersistedstate: {
-    cookieOptions: {
-      sameSite: "strict",
-    },
-    storage: "localStorage",
-  },
   sourcemap: {
     server: true,
     client: true,
