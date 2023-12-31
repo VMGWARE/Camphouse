@@ -108,7 +108,10 @@
                 >
                 <p
                   class="fake-link dropdown-item"
-                  @click="logout"
+                  @click="
+                    processingSignOut = true;
+                    useAuthStore().logout();
+                  "
                   v-if="!processingSignOut"
                 >
                   <i class="fas fa-sign-out-alt"></i> Logout

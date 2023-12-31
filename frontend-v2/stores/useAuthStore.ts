@@ -13,10 +13,16 @@ export const useAuthStore = defineStore(
     const user = ref<User | null>(null);
     const isLoggedIn = computed(() => !!user.value);
 
-    function logout() {
-      // No call made as we are using JWT
-      // await useApiFetch("/logout", { method: "POST" });
+    async function logout() {
+      // Logout the user
+      await useApiFetch("/v1/auth/logout", { method: "POST" });
+
+      // Clear the user and token cookies
       user.value = null;
+      const tokenCookie = useCookie("token");
+      tokenCookie.value = "";
+
+      // Redirect to the login page
       navigateTo("/login");
     }
 
@@ -29,7 +35,7 @@ export const useAuthStore = defineStore(
       user,
       isLoggedIn,
       fetchUser,
-      logout
+      logout,
     };
   },
   {

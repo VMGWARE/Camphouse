@@ -1,6 +1,5 @@
 import type { UseFetchOptions } from "nuxt/app";
 import { useRuntimeConfig } from "nuxt/app";
-import { useAuthStore } from "~/stores/useAuthStore";
 
 /**
  * This is a wrapper around the useFetch hook that adds the JWT token to the request headers.
@@ -24,7 +23,7 @@ export function useApiFetch<T>(path: string, options: UseFetchOptions<T> = {}) {
   };
 
   // The JWT token is stored in a cookie
-  const token = useAuthStore().token;
+  const token = useCookie("token").value;
 
   if (token) {
     headers.Authorization = `Bearer ${token}`;
