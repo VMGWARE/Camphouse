@@ -91,6 +91,11 @@
                 </span>
                 <span v-else>Register</span>
               </button>
+
+              <!-- Show login error -->
+              <div class="alert alert-danger mt-3" v-if="errors.general">
+                {{ errors.general }}
+              </div>
             </form>
           </div>
         </div>
@@ -124,6 +129,7 @@ const errors = ref({
   username: "",
   handle: "",
   invalidEmail: "",
+  general: "",
 });
 const processing = ref(false);
 
@@ -135,6 +141,42 @@ const register = async () => {
   // Clear the errors
   errors.value = {};
 
-  // TODO: Register the user
+  try {
+    const runtimeConfig = useRuntimeConfig();
+    const backendApi = runtimeConfig.public.backendApi;
+    const baseUrl = runtimeConfig.publicsiteUrl;
+
+    const { data, error } = await useFetch(backendApi + "/v1/auth/register", {
+      method: "POST",
+      body: JSON.stringify(user.value),
+      headers: {
+        "Content-Type": "application/json",
+        accept: "application/json",
+        referer: baseUrl,
+      },
+    });
+
+    // If the error is not null, then there is an error
+    if (error.value) {
+      if (error.value.data.message) {
+        errors.value.general = error.value.data.message;
+      } else {
+        errors.value = error.value.data.data.errors;
+      }
+    }
+
+    // If data is not null, then the request was successful
+    if (data.value) {
+      // Clear errors
+      errors.value = {};
+
+      // Redirect to login page
+      await navigateTo("/login");
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    processing.value = false;
+  }
 };
 </script>
