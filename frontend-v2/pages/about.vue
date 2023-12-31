@@ -84,6 +84,13 @@
   </div>
 </template>
 
+<script setup>
+useSeoMeta({
+  title: "About",
+  description: "About Camphouse",
+});
+</script>
+
 <style scoped>
 .container {
   max-width: 960px;
