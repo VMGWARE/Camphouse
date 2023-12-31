@@ -46,8 +46,8 @@
             >
           </li>
           <li class="nav-item">
-            <NuxtLink class="nav-link" to="/signup" active-class="active"
-              ><i class="fa fa-user-plus"></i> Sign Up</NuxtLink
+            <NuxtLink class="nav-link" to="/register" active-class="active"
+              ><i class="fa fa-user-plus"></i> Register</NuxtLink
             >
           </li>
           <li class="nav-item">

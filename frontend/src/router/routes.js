@@ -1,7 +1,7 @@
 import HomeView from "@/views/HomeView.vue";
 import ProfileView from "@/views/ProfileView.vue";
 import LoginView from "@/views/LoginView.vue";
-import SignUpView from "@/views/SignUpView.vue";
+import SignUpView from "@/views/registerView.vue";
 import NotFoundView from "@/views/NotFoundView.vue";
 import SettingsView from "@/views/SettingsView.vue";
 import NotificationsView from "@/views/NotificationsView.vue";
@@ -78,11 +78,11 @@ const routes = [
     },
   },
   {
-    path: "/signup",
+    path: "/register",
     name: "signup",
     component: SignUpView,
     meta: {
-      title: "Sign Up",
+      title: "Register",
     },
   },
   {

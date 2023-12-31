@@ -64,7 +64,7 @@ const updateMetaTags = (to) => {
 const handleAuthRedirection = (to, from, next) => {
   const isLoggedIn = store.getters.loggedIn;
 
-  const publicPaths = ["/login", "/signup", "/about"];
+  const publicPaths = ["/login", "/register", "/about"];
 
   if (!isLoggedIn && !publicPaths.includes(to.path)) {
     console.log("Redirecting to login");

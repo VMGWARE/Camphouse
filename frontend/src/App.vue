@@ -49,8 +49,8 @@
               >
             </li>
             <li class="nav-item">
-              <router-link class="nav-link" to="/signup"
-                ><i class="fa fa-user-plus"></i> Sign Up</router-link
+              <router-link class="nav-link" to="/register"
+                ><i class="fa fa-user-plus"></i> Register</router-link
               >
             </li>
             <li class="nav-item">
@@ -158,7 +158,7 @@ export default {
         // If redirect does not contain login or signup, redirect to login
         if (
           redirect != "/login" &&
-          redirect != "/signup" &&
+          redirect != "/register" &&
           redirect != "/about"
         ) {
           redirect = "/login?redirect=" + redirect;
