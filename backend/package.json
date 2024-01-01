@@ -39,7 +39,7 @@
     "metascraper-description": "^5.42.5",
     "metascraper-image": "^5.43.0",
     "metascraper-title": "^5.36.0",
-    "metascraper-url": "^5.36.0",
+    "metascraper-url": "^5.43.0",
     "minio": "^7.1.3",
     "moment": "^2.29.4",
     "mongoose": "^8.0.3",
