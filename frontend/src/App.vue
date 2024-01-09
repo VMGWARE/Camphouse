@@ -170,7 +170,8 @@ export default {
       }
       let exp;
       try {
-        exp = jwtDecode(token).exp;
+        const { exp: fixAttemptExp } = jwtDecode(token);
+        exp = fixAttemptExp;
       } catch (e) {
         console.log("Invalid token");
         this.logout();
