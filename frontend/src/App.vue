@@ -168,7 +168,14 @@ export default {
         this.$router.push(redirect);
         return;
       }
-      const { exp } = jwtDecode(token);
+      let exp;
+      try {
+        exp = jwtDecode(token).exp;
+      } catch (e) {
+        console.log("Invalid token");
+        this.logout();
+        return;
+      }
       console.log("Your JWT is", exp - Date.now() / 1000, "seconds to expiry");
       if (exp - Date.now() / 1000 < 0) {
         console.log("Token has expired");
