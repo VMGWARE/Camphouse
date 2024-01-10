@@ -131,7 +131,7 @@
 </template>
 
 <script>
-import jwtDecode from "jwt-decode";
+import { jwtDecode } from "jwt-decode";
 import axios from "axios";
 import { ModalsContainer } from "vue-final-modal";
 import AdminLayout from "./layouts/AdminLayout.vue";
