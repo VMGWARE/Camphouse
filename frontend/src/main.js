@@ -34,6 +34,14 @@ const ToastOptions = {
   draggablePercent: 0.7,
 };
 
+// Exceptionless
+import { Exceptionless } from "@exceptionless/browser";
+
+await Exceptionless.startup((c) => {
+  c.apiKey = process.env.VUE_APP_EXCEPTIONLESS_API_KEY;
+  c.serverUrl = process.env.VUE_APP_EXCEPTIONLESS_SERVER_URL;
+});
+
 const app = createApp({
   data() {
     return {
