@@ -1284,7 +1284,7 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
       }
 
       // Update the user's profile with the new picture URL
-      const newProfilePictureURL = `https://${process.env.MINIO_ENDPOINT}/${bucketName}/${objectName}`;
+      const newProfilePictureURL = `${process.env.MINIO_ENDPOINT}/${bucketName}/${objectName}`;
       const updatedUser = await User.findByIdAndUpdate(
         req.user._id,
         { profilePicture: newProfilePictureURL },
