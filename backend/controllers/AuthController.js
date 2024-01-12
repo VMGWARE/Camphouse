@@ -1210,7 +1210,7 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
       // Create a new Minio client
       const minioClient = new Minio.Client({
         endPoint: process.env.MINIO_ENDPOINT,
-        useSSL: false, // Change to true if your Minio server uses SSL
+        useSSL: process.env.MINIO_USE_SSL === "true",
         accessKey: process.env.MINIO_ACCESS_KEY,
         secretKey: process.env.MINIO_SECRET_KEY,
       });
@@ -1254,8 +1254,6 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
         file.mimetype.split("/")[1]
       }`;
 
-      console.log(objectName, bucketName);
-
       // Upload the file to Minio
       await minioClient.putObject(
         bucketName,
@@ -1284,7 +1282,7 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
       }
 
       // Update the user's profile with the new picture URL
-      const newProfilePictureURL = `${process.env.MINIO_ENDPOINT}/${bucketName}/${objectName}`;
+      const newProfilePictureURL = `https://${process.env.MINIO_ENDPOINT}/${bucketName}/${objectName}`;
       const updatedUser = await User.findByIdAndUpdate(
         req.user._id,
         { profilePicture: newProfilePictureURL },
