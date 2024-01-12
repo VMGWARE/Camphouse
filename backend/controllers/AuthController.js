@@ -1254,6 +1254,8 @@ router.put("/upload-profile-picture", authenticateJWT, async (req, res) => {
         file.mimetype.split("/")[1]
       }`;
 
+      console.log(objectName, bucketName);
+
       // Upload the file to Minio
       await minioClient.putObject(
         bucketName,
