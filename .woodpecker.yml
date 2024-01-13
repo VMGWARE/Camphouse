@@ -1,8 +1,5 @@
 when:
   event: [push, tag, pull_request]
-  branch: [main, release/*]
-  path:
-    exclude: [README.md, LICENSE, .github, .gitignore]
 
 variables:
   - &node_image "node:18"
