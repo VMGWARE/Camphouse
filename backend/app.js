@@ -1,7 +1,6 @@
 // Packages
 const Sentry = require("@sentry/node");
 const express = require("express");
-const markio = require("markio");
 const rateLimit = require("express-rate-limit");
 const mongoStore = require("rate-limit-mongo");
 const helmet = require("helmet");
@@ -185,9 +184,6 @@ const port = process.env.APP_PORT || 3000;
 
   // Disable X-Powered-By header
   app.use(helmet.hidePoweredBy());
-
-  // Enable XSS filtering
-  app.use(markio.markioMiddleware);
 
   // Default the request body as json
   app.use(express.json());
