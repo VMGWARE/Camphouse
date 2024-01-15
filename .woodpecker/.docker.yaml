@@ -9,14 +9,6 @@ variables:
   - &buildx_image "woodpeckerci/plugin-docker-buildx"
   - &platforms "linux/amd64"
 
-services:
-  mongodb:
-    image: mongo
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: admin
-      MONGO_INITDB_ROOT_PASSWORD: password
-    ports: ["27017"]
-
 steps:
   Deploy to CapRover:
     image: *node_image
