@@ -1,5 +1,7 @@
 when:
-  event: [push, tag, pull_request]
+  - event: push
+  - event: tag
+  - event: pull_request
 
 variables:
   - &node_image "node:18"
