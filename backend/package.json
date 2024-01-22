@@ -16,7 +16,7 @@
   "license": "ISC",
   "dependencies": {
     "@exceptionless/node": "^3.0.5",
-    "@sentry/node": "^7.91.0",
+    "@sentry/node": "^7.93.0",
     "bcrypt": "^5.1.0",
     "chai-http": "^4.4.0",
     "chalk": "^4.1.0",
