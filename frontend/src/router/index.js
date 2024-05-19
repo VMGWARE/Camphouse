@@ -61,12 +61,20 @@ const updateMetaTags = (to) => {
     .forEach((tag) => document.head.appendChild(tag));
 };
 
+/* eslint-disable */
+
 const handleAuthRedirection = (to, from, next) => {
   const isLoggedIn = store.getters.loggedIn;
 
   const publicPaths = ["/login", "/signup", "/about"];
+  const publicPathPatterns = [
+    /^\/@[^/]+$/,       // Matches paths like /@RollViral
+    /^\/post\/[^/]+$/   // Matches paths like /post/65faff92ebc47fed0299246c
+  ];
 
-  if (!isLoggedIn && !publicPaths.includes(to.path)) {
+  const isPublicPath = publicPaths.includes(to.path) || publicPathPatterns.some((pattern) => pattern.test(to.path));
+
+  if (!isLoggedIn && !isPublicPath) {
     console.log("Redirecting to login");
     return next({
       path: "/login",
