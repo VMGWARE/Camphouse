@@ -149,35 +149,33 @@ export default {
   },
   methods: {
     check_token() {
-  console.log("Checking JWT token");
-  const token = this.$store.state.token;
+      console.log("Checking JWT token");
+      const token = this.$store.state.token;
 
-  if (!token || token == null) {
-    console.log("No token found");
-    let redirect = window.location.pathname;
+      if (!token || token == null) {
+        console.log("No token found");
+        let redirect = window.location.pathname;
 
-    // Define public paths and patterns
-    const publicPaths = ["/login", "/signup", "/about"];
-    const publicPathPatterns = [
-      /^\/@[^/]+$/,       
-      /^\/post\/[^/]+$/   
-    ];
+        // Define public paths and patterns
+        const publicPaths = ["/login", "/signup", "/about"];
+        const publicPathPatterns = [/^\/@[^/]+$/, /^\/post\/[^/]+$/];
 
-    // Check if the current path is public
-    const isPublicPath = publicPaths.includes(redirect) || publicPathPatterns.some(pattern => pattern.test(redirect));
+        // Check if the current path is public
+        const isPublicPath =
+          publicPaths.includes(redirect) ||
+          publicPathPatterns.some((pattern) => pattern.test(redirect));
 
-    // If redirect does not contain a public path, redirect to login
-    if (!isPublicPath) {
-      redirect = "/login?redirect=" + redirect;
-    }
+        // If redirect does not contain a public path, redirect to login
+        if (!isPublicPath) {
+          redirect = "/login?redirect=" + redirect;
+        }
 
-    // Redirect to login page if needed
-    if (!isPublicPath || !publicPaths.includes(redirect)) {
-      this.$router.push(redirect);
-    }
-    return;
-  }
-}
+        // Redirect to login page if needed
+        if (!isPublicPath || !publicPaths.includes(redirect)) {
+          this.$router.push(redirect);
+        }
+        return;
+      }
       let exp;
       try {
         const { exp: fixAttemptExp } = jwtDecode(token);
