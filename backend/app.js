@@ -4,7 +4,10 @@ const express = require("express");
 const rateLimit = require("express-rate-limit");
 const mongoStore = require("rate-limit-mongo");
 const helmet = require("helmet");
-const fs = require("fs");
+const cors = require('cors');
+const { fs, createWriteStream } = require("fs");
+const fetch = require('node-fetch');
+const { SitemapStream, streamToPromise } = require('sitemap');
 const chalk = require("chalk");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -28,6 +31,8 @@ require("dotenv").config();
 // Create the Express app
 const app = express();
 const port = process.env.APP_PORT || 3000;
+
+app.use(cors());
 
 // Begin the server
 (async () => {
@@ -264,6 +269,97 @@ const port = process.env.APP_PORT || 3000;
       data: null,
     });
   });
+
+  // Setup sitemaps
+
+  const USERS_SITEMAP_FILE = path.join(__dirname, 'public', 'users-sitemap.xml');
+  const POSTS_SITEMAP_FILE = path.join(__dirname, 'public', 'posts-sitemap.xml');
+
+  const updateUsersSitemap = async () => {
+    try {
+      const response = await fetch('https://camphouse.vmgware.dev/api/v1/users?page=1&limit=1000');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch users: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const users = data.users;
+
+      const sitemapStream = new SitemapStream({
+        hostname: 'https://camphouse.vmgware.dev/',
+        lastmodDateOnly: false,
+      });
+
+      for (const user of users) {
+        const userHandle = user.handle;
+        const userLink = `https://camphouse.vmgware.dev/@${userHandle}`;
+
+        sitemapStream.write({
+          url: userLink,
+          changefreq: 'weekly',
+          lastmod: user.updatedAt,
+        });
+      }
+
+      sitemapStream.end();
+      const sitemapXML = await streamToPromise(sitemapStream);
+      const sitemapFile = createWriteStream(USERS_SITEMAP_FILE);
+      sitemapFile.write(sitemapXML.toString());
+      sitemapFile.end();
+
+      console.log('Users sitemap updated successfully!');
+    } catch (error) {
+      console.error('Failed to update users sitemap:', error);
+    }
+  };
+
+  const updatePostsSitemap = async () => {
+    try {
+      const response = await fetch('https://camphouse.vmgware.dev/api/v1/posts?page=1&limit=1000');
+      if (!response.ok) {
+        throw new Error(`Failed to fetch posts: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      const posts = data.posts;
+
+      const sitemapStream = new SitemapStream({
+        hostname: 'https://camphouse.vmgware.dev/',
+        lastmodDateOnly: false,
+      });
+
+      for (const post of posts) {
+        const postId = post._id;
+        const postLink = `https://camphouse.vmgware.dev/post/${postId}`;
+
+        sitemapStream.write({
+          url: postLink,
+          changefreq: 'daily',
+          lastmod: post.updatedAt,
+        });
+      }
+
+      sitemapStream.end();
+      const sitemapXML = await streamToPromise(sitemapStream);
+      const sitemapFile = createWriteStream(POSTS_SITEMAP_FILE);
+      sitemapFile.write(sitemapXML.toString());
+      sitemapFile.end();
+
+      console.log('Posts sitemap updated successfully!');
+    } catch (error) {
+      console.error('Failed to update posts sitemap:', error);
+    }
+  };
+
+  updatePostsSitemap();
+  updateUsersSitemap();
+
+  // Recheck every 10 minutes
+
+  setInterval(() => {
+    updatePostsSitemap();
+    updateUsersSitemap();
+  }, 600000);
 
   // Start listening for requests
   app.listen(port, async () => {
