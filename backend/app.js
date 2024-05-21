@@ -4,10 +4,10 @@ const express = require("express");
 const rateLimit = require("express-rate-limit");
 const mongoStore = require("rate-limit-mongo");
 const helmet = require("helmet");
-const cors = require('cors');
+const cors = require("cors");
 const { fs, createWriteStream } = require("fs");
-const axios = require('axios');
-const { SitemapStream, streamToPromise } = require('sitemap');
+const axios = require("axios");
+const { SitemapStream, streamToPromise } = require("sitemap");
 const chalk = require("chalk");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
@@ -195,7 +195,7 @@ app.use(cors());
   // Used to parse the form data that is sent to the server
   app.use(express.urlencoded({ extended: true }));
   // Public directory
-  app.use(express.static(path.join(__dirname, 'public')));
+  app.use(express.static(path.join(__dirname, "public")));
 
   // Load the controllers
   const PostController = require("./controllers/PostController");
@@ -274,18 +274,28 @@ app.use(cors());
 
   // Setup sitemaps
 
-  const USERS_SITEMAP_FILE = path.join(__dirname, 'public', 'users-sitemap.xml');
-  const POSTS_SITEMAP_FILE = path.join(__dirname, 'public', 'posts-sitemap.xml');
+  const USERS_SITEMAP_FILE = path.join(
+    __dirname,
+    "public",
+    "users-sitemap.xml"
+  );
+  const POSTS_SITEMAP_FILE = path.join(
+    __dirname,
+    "public",
+    "posts-sitemap.xml"
+  );
 
   // Function to update the users sitemap
   const updateUsersSitemap = async () => {
     try {
-      const response = await axios.get('https://camphouse.vmgware.dev/api/v1/users?page=1&limit=1000');
+      const response = await axios.get(
+        "https://camphouse.vmgware.dev/api/v1/users?page=1&limit=1000"
+      );
       const userData = response.data;
       const users = userData.data.users;
 
       const sitemapStream = new SitemapStream({
-        hostname: 'https://camphouse.vmgware.dev/',
+        hostname: "https://camphouse.vmgware.dev/",
         lastmodDateOnly: false,
       });
 
@@ -295,7 +305,7 @@ app.use(cors());
 
         sitemapStream.write({
           url: userLink,
-          changefreq: 'weekly',
+          changefreq: "weekly",
           lastmod: user.updatedAt,
         });
       }
@@ -306,21 +316,23 @@ app.use(cors());
       sitemapFile.write(sitemapXML.toString());
       sitemapFile.end();
 
-      console.log('Users sitemap updated successfully!');
+      console.log("Users sitemap updated successfully!");
     } catch (error) {
-      console.error('Failed to update users sitemap:', error);
+      console.error("Failed to update users sitemap:", error);
     }
   };
 
   // Function to update the posts sitemap
   const updatePostsSitemap = async () => {
     try {
-      const response = await axios.get('https://camphouse.vmgware.dev/api/v1/posts?page=1&limit=1000');
+      const response = await axios.get(
+        "https://camphouse.vmgware.dev/api/v1/posts?page=1&limit=1000"
+      );
       const postData = response.data;
       const posts = postData.data.posts;
 
       const sitemapStream = new SitemapStream({
-        hostname: 'https://camphouse.vmgware.dev/',
+        hostname: "https://camphouse.vmgware.dev/",
         lastmodDateOnly: false,
       });
 
@@ -330,7 +342,7 @@ app.use(cors());
 
         sitemapStream.write({
           url: postLink,
-          changefreq: 'daily',
+          changefreq: "daily",
           lastmod: post.updatedAt,
         });
       }
@@ -341,34 +353,33 @@ app.use(cors());
       sitemapFile.write(sitemapXML.toString());
       sitemapFile.end();
 
-      console.log('Posts sitemap updated successfully!');
+      console.log("Posts sitemap updated successfully!");
     } catch (error) {
-      console.error('Failed to update posts sitemap:', error);
+      console.error("Failed to update posts sitemap:", error);
     }
   };
-  
-  updatePostsSitemap();
-  updateUsersSitemap();
-
-  // Recheck every 10 minutes
-
-  setInterval(() => {
-    updatePostsSitemap();
-    updateUsersSitemap();
-  }, 600000);
 
   // Custom routes to serve the sitemap files
 
-  app.get('/api/users-sitemap.xml', (req, res) => {
+  app.get("/api/users-sitemap.xml", (req, res) => {
     res.sendFile(USERS_SITEMAP_FILE);
   });
 
-  app.get('/api/posts-sitemap.xml', (req, res) => {
+  app.get("/api/posts-sitemap.xml", (req, res) => {
     res.sendFile(POSTS_SITEMAP_FILE);
   });
 
   // Start listening for requests
   app.listen(port, async () => {
+    updatePostsSitemap();
+    updateUsersSitemap();
+
+    // Recheck every 10 minutes
+    setInterval(() => {
+      updatePostsSitemap();
+      updateUsersSitemap();
+    }, 600000);
+
     // Show the version number and the port that the app is running on
     console.log(
       chalk.green(`🎉 Camphouse version ${getVersion()} is now running!`)
