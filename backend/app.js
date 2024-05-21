@@ -6,7 +6,7 @@ const mongoStore = require("rate-limit-mongo");
 const helmet = require("helmet");
 const cors = require('cors');
 const { fs, createWriteStream } = require("fs");
-const fetch = require('node-fetch');
+const axios = require('axios');
 const { SitemapStream, streamToPromise } = require('sitemap');
 const chalk = require("chalk");
 const swaggerJsdoc = require("swagger-jsdoc");
@@ -277,13 +277,8 @@ app.use(cors());
 
   const updateUsersSitemap = async () => {
     try {
-      const response = await fetch('https://camphouse.vmgware.dev/api/v1/users?page=1&limit=1000');
-      if (!response.ok) {
-        throw new Error(`Failed to fetch users: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      const users = data.users;
+      const response = await axios.get('https://camphouse.vmgware.dev/api/v1/users?page=1&limit=1000');
+      const users = response.data.users;
 
       const sitemapStream = new SitemapStream({
         hostname: 'https://camphouse.vmgware.dev/',
@@ -315,13 +310,8 @@ app.use(cors());
 
   const updatePostsSitemap = async () => {
     try {
-      const response = await fetch('https://camphouse.vmgware.dev/api/v1/posts?page=1&limit=1000');
-      if (!response.ok) {
-        throw new Error(`Failed to fetch posts: ${response.statusText}`);
-      }
-
-      const data = await response.json();
-      const posts = data.posts;
+      const response = await axios.get('https://camphouse.vmgware.dev/api/v1/posts?page=1&limit=1000');
+      const posts = response.data.posts;
 
       const sitemapStream = new SitemapStream({
         hostname: 'https://camphouse.vmgware.dev/',
