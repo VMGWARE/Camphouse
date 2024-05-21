@@ -135,3 +135,6 @@ version
 # Ignore IDE files
 .idea
 .vscode
+
+# Sitemaps
+backend/public/*-sitemap.xml
