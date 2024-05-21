@@ -66,7 +66,7 @@ const updateMetaTags = (to) => {
 const handleAuthRedirection = (to, from, next) => {
   const isLoggedIn = store.getters.loggedIn;
 
-  const publicPaths = ["/login", "/signup", "/about", "/"];
+  const publicPaths = ["/login", "/signup", "/about"];
   const publicPathPatterns = [
     /^\/@[^/]+$/,       // Matches paths like /@RollViral
     /^\/post\/[^/]+$/   // Matches paths like /post/65faff92ebc47fed0299246c
