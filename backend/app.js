@@ -233,11 +233,31 @@ app.use(cors());
 
   // Custom routes to serve the sitemap files
   app.get("/api/users-sitemap.xml", async (req, res) => {
-    res.sendFile(USERS_SITEMAP_FILE);
+    res.sendFile(USERS_SITEMAP_FILE, (err) => {
+      if (err) {
+        console.error("Error sending users sitemap file:", err);
+        res.status(500).json({
+          status: "error",
+          code: 500,
+          message: "Internal server error",
+          data: null,
+        });
+      }
+    });
   });
 
   app.get("/api/posts-sitemap.xml", async (req, res) => {
-    res.sendFile(POSTS_SITEMAP_FILE);
+    res.sendFile(POSTS_SITEMAP_FILE, (err) => {
+      if (err) {
+        console.error("Error sending users sitemap file:", err);
+        res.status(500).json({
+          status: "error",
+          code: 500,
+          message: "Internal server error",
+          data: null,
+        });
+      }
+    });
   });
 
   // Swagger documentation
