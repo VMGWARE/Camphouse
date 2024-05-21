@@ -277,10 +277,12 @@ app.use(cors());
   const USERS_SITEMAP_FILE = path.join(__dirname, 'public', 'users-sitemap.xml');
   const POSTS_SITEMAP_FILE = path.join(__dirname, 'public', 'posts-sitemap.xml');
 
+  // Function to update the users sitemap
   const updateUsersSitemap = async () => {
     try {
       const response = await axios.get('https://camphouse.vmgware.dev/api/v1/users?page=1&limit=1000');
-      const users = response.data.users;
+      const userData = response.data;
+      const users = userData.data.users;
 
       const sitemapStream = new SitemapStream({
         hostname: 'https://camphouse.vmgware.dev/',
@@ -310,10 +312,12 @@ app.use(cors());
     }
   };
 
+  // Function to update the posts sitemap
   const updatePostsSitemap = async () => {
     try {
       const response = await axios.get('https://camphouse.vmgware.dev/api/v1/posts?page=1&limit=1000');
-      const posts = response.data.posts;
+      const postData = response.data;
+      const posts = postData.data.posts;
 
       const sitemapStream = new SitemapStream({
         hostname: 'https://camphouse.vmgware.dev/',
@@ -342,7 +346,7 @@ app.use(cors());
       console.error('Failed to update posts sitemap:', error);
     }
   };
-
+  
   updatePostsSitemap();
   updateUsersSitemap();
 
