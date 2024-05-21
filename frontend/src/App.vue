@@ -157,7 +157,7 @@ export default {
         let redirect = window.location.pathname;
 
         // Define public paths and patterns
-        const publicPaths = ["/login", "/signup", "/about"];
+        const publicPaths = ["/login", "/signup", "/about", "/"];
         const publicPathPatterns = [/^\/@[^/]+$/, /^\/post\/[^/]+$/];
 
         // Check if the current path is public
