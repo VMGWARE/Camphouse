@@ -361,13 +361,36 @@ app.use(cors());
 
   // Custom routes to serve the sitemap files
 
-  app.get("/api/users-sitemap.xml", (req, res) => {
-    res.sendFile(USERS_SITEMAP_FILE);
+  app.get('/api/users-sitemap.xml', (req, res) => {
+  const usersSitemapPath = path.join(__dirname, 'public', 'users-sitemap.xml');
+  res.sendFile(usersSitemapPath, (err) => {
+    if (err) {
+      console.error('Error sending users sitemap file:', err);
+      res.status(500).json({
+        status: 'error',
+        code: 500,
+        message: 'Internal server error',
+        data: null
+      });
+    }
   });
+});
 
-  app.get("/api/posts-sitemap.xml", (req, res) => {
-    res.sendFile(POSTS_SITEMAP_FILE);
+app.get('/api/posts-sitemap.xml', (req, res) => {
+  const postsSitemapPath = path.join(__dirname, 'public', 'posts-sitemap.xml');
+  res.sendFile(postsSitemapPath, (err) => {
+    if (err) {
+      console.error('Error sending posts sitemap file:', err);
+      res.status(500).json({
+        status: 'error',
+        code: 500,
+        message: 'Internal server error',
+        data: null
+      });
+    }
   });
+});
+
 
   // Start listening for requests
   app.listen(port, async () => {
