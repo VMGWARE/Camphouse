@@ -44,7 +44,7 @@
     "chai": "^4.3.8",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.52.0",
-    "eslint-plugin-chai-friendly": "^0.7.2",
+    "eslint-plugin-chai-friendly": "^0.7.4",
     "mocha": "^10.2.0",
     "sinon": "^7.5.0"
   }
