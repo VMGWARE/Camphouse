@@ -287,15 +287,6 @@ app.use(cors());
 
   // Start listening for requests
   app.listen(port, async () => {
-    updatePostsSitemap();
-    updateUsersSitemap();
-
-    // Recheck every 10 minutes
-    setInterval(() => {
-      updatePostsSitemap();
-      updateUsersSitemap();
-    }, 600000);
-
     // Show the version number and the port that the app is running on
     console.log(
       chalk.green(`🎉 Camphouse version ${getVersion()} is now running!`)
@@ -307,5 +298,16 @@ app.use(cors());
     console.log(
       chalk.yellow(`📚 API docs at http://localhost:${port}/api/docs`)
     );
+
+    setTimeout(() => {
+      updatePostsSitemap();
+      updateUsersSitemap();
+    }, 5000);
+
+    // Recheck every 10 minutes
+    setInterval(() => {
+      updatePostsSitemap();
+      updateUsersSitemap();
+    }, 600000);
   });
 })();
