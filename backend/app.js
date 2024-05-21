@@ -353,6 +353,16 @@ app.use(cors());
     updateUsersSitemap();
   }, 600000);
 
+  // Custom routes to serve the sitemap files
+
+  app.get('/api/users-sitemap.xml', (req, res) => {
+    res.sendFile(USERS_SITEMAP_FILE);
+  });
+
+  app.get('/api/posts-sitemap.xml', (req, res) => {
+    res.sendFile(POSTS_SITEMAP_FILE);
+  });
+
   // Start listening for requests
   app.listen(port, async () => {
     // Show the version number and the port that the app is running on
