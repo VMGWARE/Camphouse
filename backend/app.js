@@ -194,6 +194,8 @@ app.use(cors());
   app.use(express.json());
   // Used to parse the form data that is sent to the server
   app.use(express.urlencoded({ extended: true }));
+  // Public directory
+  app.use(express.static(path.join(__dirname, 'public')));
 
   // Load the controllers
   const PostController = require("./controllers/PostController");
