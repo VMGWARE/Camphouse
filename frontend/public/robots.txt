@@ -1,5 +1,4 @@
 User-agent: *
-Disallow: 
 Disallow: /admin
 Sitemap: https://camphouse.vmgware.dev/api/users-sitemap.xml
 Sitemap: https://camphouse.vmgware.dev/api/posts-sitemap.xml
