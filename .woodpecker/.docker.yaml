@@ -55,6 +55,3 @@ steps:
       tag: pull_${CI_COMMIT_PULL_REQUEST}
     when:
       event: pull_request
-
-depends_on:
-  - test
