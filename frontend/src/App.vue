@@ -151,21 +151,30 @@ export default {
     check_token() {
       console.log("Checking JWT token");
       const token = this.$store.state.token;
+
       if (!token || token == null) {
         console.log("No token found");
         let redirect = window.location.pathname;
 
-        // If redirect does not contain login or signup, redirect to login
-        if (
-          redirect != "/login" &&
-          redirect != "/signup" &&
-          redirect != "/about"
-        ) {
+        // Define public paths and patterns
+        const publicPaths = ["/login", "/signup", "/about", "/"];
+        const publicPathPatterns = [
+          /^\/@[^/]+$/, // Matches paths like /@RollViral
+          /^\/post\/[^/]+$/, // Matches paths like /post/65faff92ebc47fed0299246c
+        ];
+
+        // Check if the current path is public
+        const isPublicPath =
+          publicPaths.includes(redirect) ||
+          publicPathPatterns.some((pattern) => pattern.test(redirect));
+
+        // If redirect does not contain a public path, redirect to login
+        if (!isPublicPath) {
           redirect = "/login?redirect=" + redirect;
+          this.$router.push(redirect);
         }
 
-        // Redirect to login page
-        this.$router.push(redirect);
+        // Return here to prevent further execution
         return;
       }
       let exp;
@@ -294,30 +303,48 @@ export default {
 .fake-link {
   cursor: pointer;
 }
+
 #main {
   min-height: 100%;
   /* overflow: auto; */
 }
+
 .alpha-badge {
-  background-color: #ff4500; /* orange-red color */
-  color: #ffffff; /* white text color */
-  padding: 2px 8px; /* some padding for spacing */
-  border-radius: 4px; /* rounded corners */
-  font-size: 0.8em; /* smaller font size than regular text */
-  font-weight: bold; /* bold text */
-  vertical-align: middle; /* align it with the logo and site name */
-  margin-left: 5px; /* spacing from the logo or site name */
+  background-color: #ff4500;
+  /* orange-red color */
+  color: #ffffff;
+  /* white text color */
+  padding: 2px 8px;
+  /* some padding for spacing */
+  border-radius: 4px;
+  /* rounded corners */
+  font-size: 0.8em;
+  /* smaller font size than regular text */
+  font-weight: bold;
+  /* bold text */
+  vertical-align: middle;
+  /* align it with the logo and site name */
+  margin-left: 5px;
+  /* spacing from the logo or site name */
 }
 
 .production-badge {
-  background-color: #00ff00; /* green color */
-  color: #ffffff; /* white text color */
-  padding: 2px 8px; /* some padding for spacing */
-  border-radius: 4px; /* rounded corners */
-  font-size: 0.8em; /* smaller font size than regular text */
-  font-weight: bold; /* bold text */
-  vertical-align: middle; /* align it with the logo and site name */
-  margin-left: 5px; /* spacing from the logo or site name */
+  background-color: #00ff00;
+  /* green color */
+  color: #ffffff;
+  /* white text color */
+  padding: 2px 8px;
+  /* some padding for spacing */
+  border-radius: 4px;
+  /* rounded corners */
+  font-size: 0.8em;
+  /* smaller font size than regular text */
+  font-weight: bold;
+  /* bold text */
+  vertical-align: middle;
+  /* align it with the logo and site name */
+  margin-left: 5px;
+  /* spacing from the logo or site name */
 }
 
 .badge {

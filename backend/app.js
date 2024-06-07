@@ -4,13 +4,20 @@ const express = require("express");
 const rateLimit = require("express-rate-limit");
 const mongoStore = require("rate-limit-mongo");
 const helmet = require("helmet");
-const fs = require("fs");
+const cors = require("cors");
+const { fs } = require("fs");
 const chalk = require("chalk");
 const swaggerJsdoc = require("swagger-jsdoc");
 const swaggerUi = require("swagger-ui-express");
 const { getVersion } = require("./utils/general");
 const path = require("path");
 const fileUpload = require("express-fileupload");
+const {
+  updatePostsSitemap,
+  updateUsersSitemap,
+  USERS_SITEMAP_FILE,
+  POSTS_SITEMAP_FILE,
+} = require("./controllers/sitemap");
 
 // Initialize Exceptionless
 let Exceptionless;
@@ -28,6 +35,8 @@ require("dotenv").config();
 // Create the Express app
 const app = express();
 const port = process.env.APP_PORT || 3000;
+
+app.use(cors());
 
 // Begin the server
 (async () => {
@@ -189,6 +198,8 @@ const port = process.env.APP_PORT || 3000;
   app.use(express.json());
   // Used to parse the form data that is sent to the server
   app.use(express.urlencoded({ extended: true }));
+  // Public directory
+  app.use(express.static(path.join(__dirname, "public")));
 
   // Load the controllers
   const PostController = require("./controllers/PostController");
@@ -219,6 +230,35 @@ const port = process.env.APP_PORT || 3000;
   app.use("/api/v1/misc", MiscController);
   app.use("/api/v1/blocked-email-domains", BlockedEmailDomainController);
   app.use("/api/v1/audit-logs", AuditLogController);
+
+  // Custom routes to serve the sitemap files
+  app.get("/api/users-sitemap.xml", async (req, res) => {
+    res.sendFile(USERS_SITEMAP_FILE, (err) => {
+      if (err) {
+        console.error("Error sending users sitemap file:", err);
+        res.status(500).json({
+          status: "error",
+          code: 500,
+          message: "Internal server error",
+          data: null,
+        });
+      }
+    });
+  });
+
+  app.get("/api/posts-sitemap.xml", async (req, res) => {
+    res.sendFile(POSTS_SITEMAP_FILE, (err) => {
+      if (err) {
+        console.error("Error sending users sitemap file:", err);
+        res.status(500).json({
+          status: "error",
+          code: 500,
+          message: "Internal server error",
+          data: null,
+        });
+      }
+    });
+  });
 
   // Swagger documentation
   const options = require("./configs/swagger");
@@ -278,5 +318,16 @@ const port = process.env.APP_PORT || 3000;
     console.log(
       chalk.yellow(`📚 API docs at http://localhost:${port}/api/docs`)
     );
+
+    setTimeout(() => {
+      updatePostsSitemap();
+      updateUsersSitemap();
+    }, 5000);
+
+    // Recheck every 10 minutes
+    setInterval(() => {
+      updatePostsSitemap();
+      updateUsersSitemap();
+    }, 600000);
   });
 })();
